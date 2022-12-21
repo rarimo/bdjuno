@@ -1,5 +1,6 @@
 /* ---- SUPPLY ---- */
 
+-- +migrate Up
 CREATE TABLE supply
 (
     one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
@@ -8,3 +9,6 @@ CREATE TABLE supply
     CHECK (one_row_id)
 );
 CREATE INDEX supply_height_index ON supply (height);
+
+-- +migrate Down
+DROP TABLE supply;

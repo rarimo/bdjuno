@@ -1,5 +1,6 @@
 /* ---- PARAMS ---- */
 
+-- +migrate Up
 CREATE TABLE staking_params
 (
     one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
@@ -107,3 +108,14 @@ CREATE TABLE double_sign_evidence
     vote_b_id BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );
 CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);
+
+-- +migrate Down
+DROP TABLE staking_params;
+DROP TABLE staking_pool;
+DROP TABLE validator_info;
+DROP TABLE validator_description;
+DROP TABLE validator_commission;
+DROP TABLE validator_voting_power;
+DROP TABLE validator_status;
+DROP TABLE double_sign_vote;
+DROP TABLE double_sign_evidence;

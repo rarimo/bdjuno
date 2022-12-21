@@ -7,16 +7,17 @@ import (
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v3/cmd/start"
 	"github.com/forbole/juno/v3/modules/messages"
+	migratecmd "gitlab.com/rarimo/bdjuno/v3/cmd/migrate"
+	parsecmd "gitlab.com/rarimo/bdjuno/v3/cmd/parse"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	"gitlab.com/rarimo/bdjuno/v3/types/config"
 
-	"github.com/forbole/bdjuno/v3/types/config"
-
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
+	"gitlab.com/rarimo/bdjuno/v3/database"
+	"gitlab.com/rarimo/bdjuno/v3/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v7/app"
+	migratedbcmd "gitlab.com/rarimo/bdjuno/v3/cmd/migrate_db"
+	rarimoapp "gitlab.com/rarimo/rarimo-core/app"
 )
 
 func main() {
@@ -41,6 +42,7 @@ func main() {
 		parsecmd.NewParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(cfg.GetName(), cfg.GetParseConfig()),
 		startcmd.NewStartCmd(cfg.GetParseConfig()),
+		migratedbcmd.NewMigrateDBCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
@@ -56,6 +58,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		rarimoapp.ModuleBasics,
 	}
 }
 

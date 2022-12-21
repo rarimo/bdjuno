@@ -8,9 +8,9 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
 
 	"github.com/lib/pq"
 )
@@ -139,10 +139,10 @@ INSERT INTO proposal(
 			proposal.ProposalRoute,
 			proposal.ProposalType,
 			proposal.Status,
-			proposal.SubmitTime,
-			proposal.DepositEndTime,
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			proposal.SubmitBlock,
+			proposal.DepositEndBlock,
+			proposal.VotingStartBlock,
+			proposal.VotingEndBlock,
 		)
 	}
 
@@ -195,10 +195,10 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 		row.ProposalType,
 		content,
 		row.Status,
-		row.SubmitTime,
-		row.DepositEndTime,
-		row.VotingStartTime,
-		row.VotingEndTime,
+		row.SubmitBlock,
+		row.DepositEndBlock,
+		row.VotingStartBlock,
+		row.VotingEndBlock,
 		row.Proposer,
 	)
 	return &proposal, nil
@@ -229,8 +229,8 @@ func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
 	_, err := db.Sql.Exec(query,
 		update.Status,
-		update.VotingStartTime,
-		update.VotingEndTime,
+		update.VotingStartBlock,
+		update.VotingEndBlock,
 		update.ProposalID,
 	)
 	if err != nil {

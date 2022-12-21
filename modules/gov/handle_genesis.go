@@ -6,7 +6,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/v3/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
@@ -57,10 +57,10 @@ func (m *Module) saveProposals(slice govtypes.Proposals) error {
 			proposal.ProposalType(),
 			proposal.GetContent(),
 			proposal.Status.String(),
-			proposal.SubmitTime,
-			proposal.DepositEndTime,
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			proposal.SubmitBlock,
+			proposal.DepositEndBlock,
+			proposal.VotingStartBlock,
+			proposal.VotingEndBlock,
 			"",
 		)
 

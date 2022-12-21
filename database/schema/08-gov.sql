@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TABLE gov_params
 (
     one_row_id     BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
@@ -10,18 +11,18 @@ CREATE TABLE gov_params
 
 CREATE TABLE proposal
 (
-    id                INTEGER   NOT NULL PRIMARY KEY,
-    title             TEXT      NOT NULL,
-    description       TEXT      NOT NULL,
-    content           JSONB     NOT NULL,
-    proposal_route    TEXT      NOT NULL,
-    proposal_type     TEXT      NOT NULL,
-    submit_time       TIMESTAMP NOT NULL,
-    deposit_end_time  TIMESTAMP,
-    voting_start_time TIMESTAMP,
-    voting_end_time   TIMESTAMP,
-    proposer_address  TEXT      NOT NULL REFERENCES account (address),
-    status            TEXT
+    id                 INTEGER   NOT NULL PRIMARY KEY,
+    title              TEXT      NOT NULL,
+    description        TEXT      NOT NULL,
+    content            JSONB     NOT NULL,
+    proposal_route     TEXT      NOT NULL,
+    proposal_type      TEXT      NOT NULL,
+    submit_block       BIGINT    NOT NULL,
+    deposit_end_block  BIGINT,
+    voting_start_block BIGINT,
+    voting_end_block   BIGINT,
+    proposer_address   TEXT      NOT NULL REFERENCES account (address),
+    status             TEXT
 );
 CREATE INDEX proposal_proposer_address_index ON proposal (proposer_address);
 
@@ -85,3 +86,12 @@ CREATE TABLE proposal_validator_status_snapshot
 );
 CREATE INDEX proposal_validator_status_snapshot_proposal_id_index ON proposal_validator_status_snapshot (proposal_id);
 CREATE INDEX proposal_validator_status_snapshot_validator_address_index ON proposal_validator_status_snapshot (validator_address);
+
+-- +migrate Down
+DROP TABLE gov_params;
+DROP TABLE proposal;
+DROP TABLE proposal_deposit;
+DROP TABLE proposal_vote;
+DROP TABLE proposal_tally_result;
+DROP TABLE proposal_staking_pool_snapshot;
+DROP TABLE proposal_validator_status_snapshot;

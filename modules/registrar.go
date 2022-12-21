@@ -1,13 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v3/modules/actions"
-	"github.com/forbole/bdjuno/v3/modules/types"
+	"gitlab.com/rarimo/bdjuno/v3/modules/actions"
+	"gitlab.com/rarimo/bdjuno/v3/modules/types"
 
 	"github.com/forbole/juno/v3/modules/pruning"
 	"github.com/forbole/juno/v3/modules/telemetry"
 
-	"github.com/forbole/bdjuno/v3/modules/slashing"
+	"gitlab.com/rarimo/bdjuno/v3/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,20 +15,20 @@ import (
 	"github.com/forbole/juno/v3/modules/messages"
 	"github.com/forbole/juno/v3/modules/registrar"
 
-	"github.com/forbole/bdjuno/v3/utils"
+	"gitlab.com/rarimo/bdjuno/v3/utils"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/auth"
-	"github.com/forbole/bdjuno/v3/modules/bank"
-	"github.com/forbole/bdjuno/v3/modules/consensus"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
-	"github.com/forbole/bdjuno/v3/modules/feegrant"
+	"gitlab.com/rarimo/bdjuno/v3/database"
+	"gitlab.com/rarimo/bdjuno/v3/modules/auth"
+	"gitlab.com/rarimo/bdjuno/v3/modules/bank"
+	"gitlab.com/rarimo/bdjuno/v3/modules/consensus"
+	"gitlab.com/rarimo/bdjuno/v3/modules/distribution"
+	"gitlab.com/rarimo/bdjuno/v3/modules/feegrant"
 
-	"github.com/forbole/bdjuno/v3/modules/gov"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	"github.com/forbole/bdjuno/v3/modules/modules"
-	"github.com/forbole/bdjuno/v3/modules/pricefeed"
-	"github.com/forbole/bdjuno/v3/modules/staking"
+	"gitlab.com/rarimo/bdjuno/v3/modules/gov"
+	"gitlab.com/rarimo/bdjuno/v3/modules/mint"
+	"gitlab.com/rarimo/bdjuno/v3/modules/modules"
+	"gitlab.com/rarimo/bdjuno/v3/modules/pricefeed"
+	"gitlab.com/rarimo/bdjuno/v3/modules/staking"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses

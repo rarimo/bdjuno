@@ -4,9 +4,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccount() {

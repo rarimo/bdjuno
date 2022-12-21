@@ -3,11 +3,11 @@ package distribution
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
+	distrsource "gitlab.com/rarimo/bdjuno/v3/modules/distribution/source"
 
 	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
+	"gitlab.com/rarimo/bdjuno/v3/database"
 )
 
 var (

@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TYPE DEC_COIN AS
 (
     denom  TEXT,
@@ -26,3 +27,8 @@ CREATE TABLE community_pool
     CONSTRAINT one_row_uni CHECK (one_row_id)
 );
 CREATE INDEX community_pool_height_index ON community_pool (height);
+
+-- +migrate Down
+DROP TABLE distribution_params;
+DROP TABLE community_pool;
+DROP TYPE DEC_COIN;

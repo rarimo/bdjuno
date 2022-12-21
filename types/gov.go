@@ -1,8 +1,6 @@
 package types
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -15,26 +13,26 @@ const (
 // DepositParams contains the data of the deposit parameters of the x/gov module
 type DepositParams struct {
 	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
-	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
+	MaxDepositPeriod uint64    `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
 }
 
 // NewDepositParam allows to build a new DepositParams
 func NewDepositParam(d govtypes.DepositParams) DepositParams {
 	return DepositParams{
 		MinDeposit:       d.MinDeposit,
-		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
+		MaxDepositPeriod: d.MaxDepositPeriod,
 	}
 }
 
 // VotingParams contains the voting parameters of the x/gov module
 type VotingParams struct {
-	VotingPeriod int64 `json:"voting_period,omitempty" yaml:"voting_period"`
+	VotingPeriod uint64 `json:"voting_period,omitempty" yaml:"voting_period"`
 }
 
 // NewVotingParams allows to build a new VotingParams instance
 func NewVotingParams(v govtypes.VotingParams) VotingParams {
 	return VotingParams{
-		VotingPeriod: v.VotingPeriod.Nanoseconds(),
+		VotingPeriod: v.VotingPeriod,
 	}
 }
 
@@ -76,16 +74,16 @@ func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyP
 
 // Proposal represents a single governance proposal
 type Proposal struct {
-	ProposalRoute   string
-	ProposalType    string
-	ProposalID      uint64
-	Content         govtypes.Content
-	Status          string
-	SubmitTime      time.Time
-	DepositEndTime  time.Time
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
-	Proposer        string
+	ProposalRoute    string
+	ProposalType     string
+	ProposalID       uint64
+	Content          govtypes.Content
+	Status           string
+	SubmitBlock      uint64
+	DepositEndBlock  uint64
+	VotingStartBlock uint64
+	VotingEndBlock   uint64
+	Proposer         string
 }
 
 // NewProposal return a new Proposal instance
@@ -95,23 +93,23 @@ func NewProposal(
 	proposalType string,
 	content govtypes.Content,
 	status string,
-	submitTime time.Time,
-	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	submitBlock,
+	depositEndBlock,
+	votingStartBlock,
+	votingEndBlock uint64,
 	proposer string,
 ) Proposal {
 	return Proposal{
-		Content:         content,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
-		ProposalID:      proposalID,
-		Status:          status,
-		SubmitTime:      submitTime,
-		DepositEndTime:  depositEndTime,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
-		Proposer:        proposer,
+		Content:          content,
+		ProposalRoute:    proposalRoute,
+		ProposalType:     proposalType,
+		ProposalID:       proposalID,
+		Status:           status,
+		SubmitBlock:      submitBlock,
+		DepositEndBlock:  depositEndBlock,
+		VotingStartBlock: votingStartBlock,
+		VotingEndBlock:   votingEndBlock,
+		Proposer:         proposer,
 	}
 }
 
@@ -122,30 +120,30 @@ func (p Proposal) Equal(other Proposal) bool {
 		p.ProposalID == other.ProposalID &&
 		p.Content.String() == other.Content.String() &&
 		p.Status == other.Status &&
-		p.SubmitTime.Equal(other.SubmitTime) &&
-		p.DepositEndTime.Equal(other.DepositEndTime) &&
-		p.VotingStartTime.Equal(other.VotingStartTime) &&
-		p.VotingEndTime.Equal(other.VotingEndTime) &&
+		p.SubmitBlock == other.SubmitBlock &&
+		p.DepositEndBlock == other.DepositEndBlock &&
+		p.VotingStartBlock == other.VotingStartBlock &&
+		p.VotingEndBlock == other.VotingEndBlock &&
 		p.Proposer == other.Proposer
 }
 
 // ProposalUpdate contains the data that should be used when updating a governance proposal
 type ProposalUpdate struct {
-	ProposalID      uint64
-	Status          string
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
+	ProposalID       uint64
+	Status           string
+	VotingStartBlock uint64
+	VotingEndBlock   uint64
 }
 
 // NewProposalUpdate allows to build a new ProposalUpdate instance
 func NewProposalUpdate(
-	proposalID uint64, status string, votingStartTime, votingEndTime time.Time,
+	proposalID uint64, status string, votingStartBlock, votingEndBlock uint64,
 ) ProposalUpdate {
 	return ProposalUpdate{
-		ProposalID:      proposalID,
-		Status:          status,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
+		ProposalID:       proposalID,
+		Status:           status,
+		VotingStartBlock: votingStartBlock,
+		VotingEndBlock:   votingEndBlock,
 	}
 }
 

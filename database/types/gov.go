@@ -1,9 +1,5 @@
 package types
 
-import (
-	"time"
-)
-
 // GovParamsRow represents a single row of the "gov_params" table
 type GovParamsRow struct {
 	OneRowID      bool   `db:"one_row_id"`
@@ -17,18 +13,18 @@ type GovParamsRow struct {
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string    `db:"title"`
-	Description     string    `db:"description"`
-	Content         string    `db:"content"`
-	ProposalRoute   string    `db:"proposal_route"`
-	ProposalType    string    `db:"proposal_type"`
-	ProposalID      uint64    `db:"id"`
-	SubmitTime      time.Time `db:"submit_time"`
-	DepositEndTime  time.Time `db:"deposit_end_time"`
-	VotingStartTime time.Time `db:"voting_start_time"`
-	VotingEndTime   time.Time `db:"voting_end_time"`
-	Proposer        string    `db:"proposer_address"`
-	Status          string    `db:"status"`
+	Title            string `db:"title"`
+	Description      string `db:"description"`
+	Content          string `db:"content"`
+	ProposalRoute    string `db:"proposal_route"`
+	ProposalType     string `db:"proposal_type"`
+	ProposalID       uint64 `db:"id"`
+	SubmitBlock      uint64 `db:"submit_block"`
+	DepositEndBlock  uint64 `db:"deposit_end_block"`
+	VotingStartBlock uint64 `db:"voting_start_block"`
+	VotingEndBlock   uint64 `db:"voting_end_block"`
+	Proposer         string `db:"proposer_address"`
+	Status           string `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
@@ -39,26 +35,26 @@ func NewProposalRow(
 	title string,
 	description string,
 	content string,
-	submitTime time.Time,
-	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	submitBlock,
+	depositBlock,
+	votingStartBlock,
+	votingEndBlock uint64,
 	proposer string,
 	status string,
 ) ProposalRow {
 	return ProposalRow{
-		Title:           title,
-		Description:     description,
-		Content:         content,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
-		ProposalID:      proposalID,
-		SubmitTime:      submitTime,
-		DepositEndTime:  depositEndTime,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
-		Proposer:        proposer,
-		Status:          status,
+		Title:            title,
+		Description:      description,
+		Content:          content,
+		ProposalRoute:    proposalRoute,
+		ProposalType:     proposalType,
+		ProposalID:       proposalID,
+		SubmitBlock:      submitBlock,
+		DepositEndBlock:  depositBlock,
+		VotingStartBlock: votingStartBlock,
+		VotingEndBlock:   votingEndBlock,
+		Proposer:         proposer,
+		Status:           status,
 	}
 }
 
@@ -69,10 +65,10 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.ProposalRoute == v.ProposalRoute &&
 		w.ProposalType == v.ProposalType &&
 		w.ProposalID == v.ProposalID &&
-		w.SubmitTime.Equal(v.SubmitTime) &&
-		w.DepositEndTime.Equal(v.DepositEndTime) &&
-		w.VotingStartTime.Equal(v.VotingStartTime) &&
-		w.VotingEndTime.Equal(v.VotingEndTime) &&
+		w.SubmitBlock == v.SubmitBlock &&
+		w.DepositEndBlock == v.DepositEndBlock &&
+		w.VotingStartBlock == v.VotingStartBlock &&
+		w.VotingEndBlock == v.VotingEndBlock &&
 		w.Proposer == v.Proposer &&
 		w.Status == v.Status
 }

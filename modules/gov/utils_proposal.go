@@ -12,7 +12,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/v3/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
@@ -79,8 +79,8 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 		types.NewProposalUpdate(
 			stored.ProposalID,
 			types.ProposalStatusInvalid,
-			stored.VotingStartTime,
-			stored.VotingEndTime,
+			stored.VotingStartBlock,
+			stored.VotingEndBlock,
 		),
 	)
 }

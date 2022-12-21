@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/forbole/bdjuno/v3/modules/actions/types"
+	"gitlab.com/rarimo/bdjuno/v3/modules/actions/types"
 
 	"github.com/rs/zerolog/log"
 )

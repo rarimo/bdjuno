@@ -1,5 +1,6 @@
 /* ---- TOKENS ---- */
 
+-- +migrate Up
 CREATE TABLE token
 (
     name TEXT NOT NULL UNIQUE
@@ -40,3 +41,9 @@ CREATE TABLE token_price_history
     CONSTRAINT unique_price_for_timestamp UNIQUE (unit_name, timestamp)
 );
 CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp);
+
+-- +migrate Down
+DROP TABLE token;
+DROP TABLE token_unit;
+DROP TABLE token_price;
+DROP TABLE token_price_history;

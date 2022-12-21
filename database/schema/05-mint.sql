@@ -1,5 +1,6 @@
 /* ---- PARAMS ---- */
 
+-- +migrate Up
 CREATE TABLE mint_params
 (
     one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
@@ -18,3 +19,7 @@ CREATE TABLE inflation
     CONSTRAINT one_row_uni CHECK (one_row_id)
 );
 CREATE INDEX inflation_height_index ON inflation (height);
+
+-- +migrate Down
+DROP TABLE mint_params;
+DROP TABLE inflation;

@@ -12,8 +12,8 @@ import (
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/forbole/bdjuno/v3/modules/utils"
-	"github.com/forbole/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/v3/modules/utils"
+	"gitlab.com/rarimo/bdjuno/v3/types"
 )
 
 // HandleMsg implements modules.MessageModule
