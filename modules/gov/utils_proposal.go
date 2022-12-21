@@ -148,8 +148,8 @@ func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
 		types.NewProposalUpdate(
 			proposal.ProposalId,
 			proposal.Status.String(),
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			proposal.VotingStartBlock,
+			proposal.VotingEndBlock,
 		),
 	)
 }

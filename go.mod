@@ -1,6 +1,6 @@
 module gitlab.com/rarimo/bdjuno/v3
 
-go 1.17
+go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.5
@@ -195,6 +195,6 @@ require (
 replace (
 	github.com/cosmos/cosmos-sdk => gitlab.com/rarimo/cosmos-sdk v0.45.5-dev.4
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.19-forbole
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

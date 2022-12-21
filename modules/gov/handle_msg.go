@@ -70,10 +70,10 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		proposal.ProposalType(),
 		proposal.GetContent(),
 		proposal.Status.String(),
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
-		proposal.VotingStartTime,
-		proposal.VotingEndTime,
+		proposal.SubmitBlock,
+		proposal.DepositEndBlock,
+		proposal.VotingStartBlock,
+		proposal.VotingEndBlock,
 		msg.Proposer,
 	)
 	err = m.db.SaveProposals([]types.Proposal{proposalObj})

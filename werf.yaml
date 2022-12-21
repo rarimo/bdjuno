@@ -2,7 +2,7 @@ configVersion: 1
 project: "backend"
 ---
 image: builder
-from: golang:1.17-alpine
+from: golang:1.18-alpine
 docker:
   WORKDIR: /go/src/gitlab.com/rarimo/bdjuno
 git:
@@ -20,7 +20,7 @@ shell:
     - go env -w GONOSUMDB=gitlab.com/*
     - go env -w GONOPROXY=gitlab.com/*
     - cd /go/src/gitlab.com/rarimo/bdjuno
-    - go mod tidy -compat=1.17
+    - go mod tidy
     - go mod vendor
   setup:
     - export GOPRIVATE=gitlab.com/*
