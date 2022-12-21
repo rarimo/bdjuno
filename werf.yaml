@@ -1,0 +1,40 @@
+configVersion: 1
+project: "backend"
+---
+image: builder
+from: golang:1.17-alpine
+docker:
+  WORKDIR: /go/src/gitlab.com/rarimo/bdjuno
+git:
+  - add: /
+    to: /go/src/gitlab.com/rarimo/bdjuno
+    stageDependencies:
+      setup:
+        - "**/*"
+shell:
+  install:
+    - apk add git build-base
+    - git config --global url."https://gitlab-ci-token:{{ env "CI_JOB_TOKEN" }}@gitlab.com/".insteadOf https://gitlab.com/
+    - go env -w GOPRIVATE=gitlab.com/*
+  setup:
+    - export CGO_ENABLED=1
+    - export GO111MODULE=on
+    - export GOOS=linux
+    - cd /go/src/gitlab.com/rarimo/bdjuno
+    - go mod tidy
+    - go mod vendor
+    - go build -o /usr/local/bin/bdjuno /go/src/gitlab.com/rarimo/bdjuno
+
+---
+image: service
+from: alpine:3.9
+docker:
+  ENTRYPOINT: bdjuno
+shell:
+  setup:
+    - apk add --no-cache ca-certificates
+import:
+  - image: builder
+    add: /usr/local/bin/bdjuno
+    to: /usr/local/bin/bdjuno
+    after: setup
