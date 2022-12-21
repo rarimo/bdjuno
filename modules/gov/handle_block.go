@@ -24,7 +24,7 @@ func (m *Module) HandleBlock(
 
 // updateProposals updates the proposals
 func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidators) error {
-	ids, err := m.db.GetOpenProposalsIds()
+	ids, err := m.db.GetOpenProposalsIds(uint64(height))
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open ids")
 	}
