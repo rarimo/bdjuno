@@ -1,11 +1,16 @@
-FROM golang:1.17-alpine AS builder
-RUN apk update && apk add --no-cache make git
-WORKDIR /go/src/gitlab.com/rarimo/bdjuno
-COPY . ./
-RUN go mod download
-RUN make build
+FROM golang:1.18-alpine as buildbase
 
-FROM alpine:latest
-WORKDIR /bdjuno
-COPY --from=builder /go/src/gitlab.com/rarimo/bdjuno/build/bdjuno /usr/bin/bdjuno
-CMD [ "bdjuno" ]
+WORKDIR /go/src/gitlab.com/rarimo/bdjuno
+COPY vendor .
+COPY . .
+ENV GO111MODULE="on"
+ENV CGO_ENABLED=1
+ENV GOOS="linux"
+RUN go build -o /usr/local/bin/bdjuno gitlab.com/rarimo/bdjuno
+
+###
+
+FROM alpine:3.9
+COPY --from=buildbase /usr/local/bin/bdjuno /usr/local/bin/bdjuno
+
+ENTRYPOINT ["bdjuno"]
