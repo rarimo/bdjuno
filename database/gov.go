@@ -8,9 +8,9 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/gogo/protobuf/proto"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 
 	"github.com/lib/pq"
 )
@@ -101,7 +101,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 	proposalsQuery := `
 INSERT INTO proposal(
 	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
-    submit_time, deposit_end_time, voting_start_time, voting_end_time
+    submit_block, deposit_end_block, voting_start_block, voting_end_block
 ) VALUES`
 	var proposalsParams []interface{}
 
@@ -215,7 +215,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 
 	// Get also the invalid status proposals due to gRPC failure but still are in deposit period or voting period
 	var idsInvalid []uint64
-	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_time > NOW() OR deposit_end_time > NOW())`
+	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_block > NOW() OR deposit_end_block > NOW())`
 	err = db.Sqlx.Select(&idsInvalid, stmt, types.ProposalStatusInvalid)
 	ids = append(ids, idsInvalid...)
 
@@ -226,7 +226,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 
 // UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
-	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
+	query := `UPDATE proposal SET status = $1, voting_start_block = $2, voting_end_block = $3 where id = $4`
 	_, err := db.Sql.Exec(query,
 		update.Status,
 		update.VotingStartBlock,

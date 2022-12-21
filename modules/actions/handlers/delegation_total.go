@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/v3/modules/actions/types"
+	"gitlab.com/rarimo/bdjuno/modules/actions/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog/log"

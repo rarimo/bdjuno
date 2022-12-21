@@ -7,16 +7,16 @@ import (
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v3/cmd/start"
 	"github.com/forbole/juno/v3/modules/messages"
-	migratecmd "gitlab.com/rarimo/bdjuno/v3/cmd/migrate"
-	parsecmd "gitlab.com/rarimo/bdjuno/v3/cmd/parse"
+	migratecmd "gitlab.com/rarimo/bdjuno/cmd/migrate"
+	parsecmd "gitlab.com/rarimo/bdjuno/cmd/parse"
 
-	"gitlab.com/rarimo/bdjuno/v3/types/config"
+	"gitlab.com/rarimo/bdjuno/types/config"
 
-	"gitlab.com/rarimo/bdjuno/v3/database"
-	"gitlab.com/rarimo/bdjuno/v3/modules"
+	"gitlab.com/rarimo/bdjuno/database"
+	"gitlab.com/rarimo/bdjuno/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v7/app"
-	migratedbcmd "gitlab.com/rarimo/bdjuno/v3/cmd/migrate_db"
+	migratedbcmd "gitlab.com/rarimo/bdjuno/cmd/migrate_db"
 	rarimoapp "gitlab.com/rarimo/rarimo-core/app"
 )
 

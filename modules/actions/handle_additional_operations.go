@@ -6,8 +6,8 @@ import (
 	"sync"
 	"syscall"
 
-	"gitlab.com/rarimo/bdjuno/v3/modules/actions/handlers"
-	actionstypes "gitlab.com/rarimo/bdjuno/v3/modules/actions/types"
+	"gitlab.com/rarimo/bdjuno/modules/actions/handlers"
+	actionstypes "gitlab.com/rarimo/bdjuno/modules/actions/types"
 )
 
 var (

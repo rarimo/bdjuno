@@ -7,7 +7,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/juno/v3/node/local"
 
-	mintsource "gitlab.com/rarimo/bdjuno/v3/modules/mint/source"
+	mintsource "gitlab.com/rarimo/bdjuno/modules/mint/source"
 )
 
 var (

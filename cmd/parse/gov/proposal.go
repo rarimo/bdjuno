@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/rs/zerolog/log"
-	modulestypes "gitlab.com/rarimo/bdjuno/v3/modules/types"
+	modulestypes "gitlab.com/rarimo/bdjuno/modules/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -15,13 +15,13 @@ import (
 
 	"github.com/forbole/juno/v3/parser"
 
-	"gitlab.com/rarimo/bdjuno/v3/database"
-	"gitlab.com/rarimo/bdjuno/v3/modules/distribution"
-	"gitlab.com/rarimo/bdjuno/v3/modules/gov"
-	"gitlab.com/rarimo/bdjuno/v3/modules/mint"
-	"gitlab.com/rarimo/bdjuno/v3/modules/slashing"
-	"gitlab.com/rarimo/bdjuno/v3/modules/staking"
-	"gitlab.com/rarimo/bdjuno/v3/utils"
+	"gitlab.com/rarimo/bdjuno/database"
+	"gitlab.com/rarimo/bdjuno/modules/distribution"
+	"gitlab.com/rarimo/bdjuno/modules/gov"
+	"gitlab.com/rarimo/bdjuno/modules/mint"
+	"gitlab.com/rarimo/bdjuno/modules/slashing"
+	"gitlab.com/rarimo/bdjuno/modules/staking"
+	"gitlab.com/rarimo/bdjuno/utils"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal

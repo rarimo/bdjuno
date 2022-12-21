@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"

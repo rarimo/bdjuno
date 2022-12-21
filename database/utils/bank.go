@@ -1,6 +1,6 @@
 package utils
 
-import "gitlab.com/rarimo/bdjuno/v3/types"
+import "gitlab.com/rarimo/bdjuno/types"
 
 const (
 	maxPostgreSQLParams = 65535

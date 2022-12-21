@@ -62,9 +62,9 @@ select_permissions:
     - proposal_type
     - id
     - submit_time
-    - deposit_end_time
-    - voting_start_time
-    - voting_end_time
+    - deposit_end_block
+    - voting_start_block
+    - voting_end_block
     - proposer_address
     - status
     - content

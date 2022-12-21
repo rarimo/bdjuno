@@ -4,7 +4,7 @@ import (
 	"github.com/forbole/juno/v3/modules"
 	"github.com/forbole/juno/v3/types/config"
 
-	"gitlab.com/rarimo/bdjuno/v3/database"
+	"gitlab.com/rarimo/bdjuno/database"
 )
 
 var (

@@ -8,7 +8,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/forbole/juno/v3/node/local"
 
-	slashingsource "gitlab.com/rarimo/bdjuno/v3/modules/slashing/source"
+	slashingsource "gitlab.com/rarimo/bdjuno/modules/slashing/source"
 )
 
 var (

@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/v3/modules/actions/types"
+	"gitlab.com/rarimo/bdjuno/modules/actions/types"
 
 	"github.com/rs/zerolog/log"
 )

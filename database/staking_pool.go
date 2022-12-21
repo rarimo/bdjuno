@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool

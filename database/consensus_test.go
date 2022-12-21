@@ -3,8 +3,8 @@ package database_test
 import (
 	time "time"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
+	"gitlab.com/rarimo/bdjuno/types"
 )
 
 func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {

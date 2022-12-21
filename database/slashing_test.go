@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"time"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {

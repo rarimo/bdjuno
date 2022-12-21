@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {

@@ -3,7 +3,7 @@ package staking
 import (
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 )
 
 func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) insertToken(name string) {

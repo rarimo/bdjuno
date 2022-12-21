@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"gitlab.com/rarimo/bdjuno/v3/database/types"
+	"gitlab.com/rarimo/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_InsertEnableModules() {

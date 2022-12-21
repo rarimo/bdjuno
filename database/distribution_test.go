@@ -5,12 +5,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 
-	"gitlab.com/rarimo/bdjuno/v3/types"
+	"gitlab.com/rarimo/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	bddbtypes "gitlab.com/rarimo/bdjuno/v3/database/types"
+	bddbtypes "gitlab.com/rarimo/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {

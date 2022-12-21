@@ -4,9 +4,9 @@ WORKDIR /go/src/gitlab.com/rarimo/bdjuno
 COPY vendor .
 COPY . .
 ENV GO111MODULE="on"
-ENV CGO_ENABLED=1
+ENV CGO_ENABLED=0
 ENV GOOS="linux"
-RUN go build -o /usr/local/bin/bdjuno gitlab.com/rarimo/bdjuno
+RUN go build -o /usr/local/bin/bdjuno gitlab.com/rarimo/bdjuno/cmd/bdjuno
 
 ###
 

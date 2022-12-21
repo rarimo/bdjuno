@@ -1,4 +1,4 @@
-module gitlab.com/rarimo/bdjuno/v3
+module gitlab.com/rarimo/bdjuno
 
 go 1.18
 

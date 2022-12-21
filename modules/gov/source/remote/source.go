@@ -4,7 +4,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/forbole/juno/v3/node/remote"
 
-	govsource "gitlab.com/rarimo/bdjuno/v3/modules/gov/source"
+	govsource "gitlab.com/rarimo/bdjuno/modules/gov/source"
 )
 
 var (

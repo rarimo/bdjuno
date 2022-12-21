@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/spf13/cobra"
-	"gitlab.com/rarimo/bdjuno/v3/database"
+	"gitlab.com/rarimo/bdjuno/database"
 )
 
 var migrations = &migrate.EmbedFileSystemMigrationSource{
