@@ -20,7 +20,7 @@ shell:
     - go env -w GONOSUMDB=gitlab.com/*
     - go env -w GONOPROXY=gitlab.com/*
     - cd /go/src/gitlab.com/rarimo/bdjuno
-    - go mod tidy
+    - go mod tidy -compat=1.17
     - go mod vendor
   setup:
     - export GOPRIVATE=gitlab.com/*
