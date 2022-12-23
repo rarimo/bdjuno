@@ -108,9 +108,11 @@ CREATE TABLE pruning
 );
 
 -- +migrate Down
-DROP TABLE validator;
-DROP TABLE pre_commit;
-DROP TABLE block;
-DROP TABLE transaction;
-DROP TABLE message;
 DROP TABLE pruning;
+DROP FUNCTION messages_by_address;
+DROP TABLE message;
+DROP TABLE transaction;
+DROP TABLE block;
+DROP TABLE pre_commit;
+DROP TABLE validator;
+

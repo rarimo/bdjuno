@@ -30,7 +30,7 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
-
+	// TODO: handleAddOrRemoveSignerProposal
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)

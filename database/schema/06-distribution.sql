@@ -29,6 +29,6 @@ CREATE TABLE community_pool
 CREATE INDEX community_pool_height_index ON community_pool (height);
 
 -- +migrate Down
-DROP TABLE distribution_params;
 DROP TABLE community_pool;
+DROP TABLE distribution_params;
 DROP TYPE DEC_COIN;

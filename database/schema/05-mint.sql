@@ -21,5 +21,5 @@ CREATE TABLE inflation
 CREATE INDEX inflation_height_index ON inflation (height);
 
 -- +migrate Down
-DROP TABLE mint_params;
 DROP TABLE inflation;
+DROP TABLE mint_params;

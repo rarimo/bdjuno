@@ -110,12 +110,13 @@ CREATE TABLE double_sign_evidence
 CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);
 
 -- +migrate Down
-DROP TABLE staking_params;
-DROP TABLE staking_pool;
-DROP TABLE validator_info;
-DROP TABLE validator_description;
-DROP TABLE validator_commission;
-DROP TABLE validator_voting_power;
-DROP TABLE validator_status;
-DROP TABLE double_sign_vote;
 DROP TABLE double_sign_evidence;
+DROP TABLE double_sign_vote;
+DROP TABLE validator_status;
+DROP TABLE validator_voting_power;
+DROP TABLE validator_commission;
+DROP TABLE validator_description;
+DROP TABLE validator_info;
+DROP TABLE staking_pool;
+DROP TABLE staking_params;
+
