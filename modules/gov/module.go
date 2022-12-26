@@ -19,14 +19,15 @@ var (
 
 // Module represent x/gov module
 type Module struct {
-	cdc            codec.Codec
-	db             *database.Db
-	source         govsource.Source
-	authModule     AuthModule
-	distrModule    DistrModule
-	mintModule     MintModule
-	slashingModule SlashingModule
-	stakingModule  StakingModule
+	cdc              codec.Codec
+	db               *database.Db
+	source           govsource.Source
+	authModule       AuthModule
+	distrModule      DistrModule
+	mintModule       MintModule
+	slashingModule   SlashingModule
+	stakingModule    StakingModule
+	rarimocoreModule RarimocoreModule
 }
 
 // NewModule returns a new Module instance
@@ -37,18 +38,20 @@ func NewModule(
 	mintModule MintModule,
 	slashingModule SlashingModule,
 	stakingModule StakingModule,
+	rarimocoreModule RarimocoreModule,
 	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:            cdc,
-		source:         source,
-		authModule:     authModule,
-		distrModule:    distrModule,
-		mintModule:     mintModule,
-		slashingModule: slashingModule,
-		stakingModule:  stakingModule,
-		db:             db,
+		cdc:              cdc,
+		source:           source,
+		authModule:       authModule,
+		distrModule:      distrModule,
+		mintModule:       mintModule,
+		slashingModule:   slashingModule,
+		stakingModule:    stakingModule,
+		rarimocoreModule: rarimocoreModule,
+		db:               db,
 	}
 }
 

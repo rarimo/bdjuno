@@ -13,7 +13,7 @@ import (
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "rarimocore").Msg("parsing genesis")
+	log.Debug().Str("module", m.Name()).Msg("parsing genesis")
 
 	// Read the genesis state
 	var genState rarimocoretypes.GenesisState
@@ -124,7 +124,7 @@ func (m *Module) getOperationDetails(slice []rarimocoretypes.Operation) ([]types
 			}
 			changeParties = append(changeParties, changeParty)
 		default:
-			log.Warn().Str("module", "rarimocore").
+			log.Warn().Str("module", m.Name()).
 				Str("operation_type", string(operation.OperationType)).
 				Msg("unknown operation type")
 			return nil, nil, sdkerrors.Wrap(sdkerrors.ErrInvalidType, "invalid operation type")
