@@ -31,9 +31,11 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
-	err = m.handleRarimoCoreProposal(height, proposal)
 
-	// TODO: handleAddOrRemoveSignerProposal
+	err = m.handleRarimoCoreProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while handling rarimocore proposal: %s", err)
+	}
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
@@ -100,7 +102,10 @@ func (m *Module) handleRarimoCoreProposal(height int64, proposal govtypes.Propos
 	}
 
 	switch content.(type) {
-	case *rarimocoretypes.AddSignerPartyProposal, *rarimocoretypes.RemoveSignerPartyProposal:
+	case *rarimocoretypes.AddSignerPartyProposal,
+		*rarimocoretypes.RemoveSignerPartyProposal,
+		*rarimocoretypes.ReshareKeysProposal,
+		*rarimocoretypes.ChangeThresholdProposal:
 		return m.rarimocoreModule.UpdateParams(height)
 	default:
 		return nil

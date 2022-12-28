@@ -3,6 +3,7 @@ package gov
 import (
 	"encoding/hex"
 	"fmt"
+	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
@@ -52,10 +53,21 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
+			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(
+				sources.GovSource,
+				nil,
+				distrModule,
+				mintModule,
+				slashingModule,
+				stakingModule,
+				rarimocoreModule,
+				parseCtx.EncodingConfig.Marshaler,
+				db,
+			)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

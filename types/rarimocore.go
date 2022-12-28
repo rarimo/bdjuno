@@ -24,12 +24,13 @@ func NewParty(p rarimocoretypes.Party) Party {
 
 // RarimoCoreParams contains the data of the x/rarimocore module params instance
 type RarimoCoreParams struct {
-	KeyECDSA         string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
-	Threshold        uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
-	IsUpdateRequired bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
-	LastSignature    string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
-	Parties          []string `json:"parties,omitempty" yaml:"parties,omitempty"`
-	Height           int64    `json:"height,omitempty" yaml:"height,omitempty"`
+	KeyECDSA                  string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
+	Threshold                 uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
+	IsUpdateRequired          bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
+	LastSignature             string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
+	Parties                   []string `json:"parties,omitempty" yaml:"parties,omitempty"`
+	Height                    int64    `json:"height,omitempty" yaml:"height,omitempty"`
+	AvailableResignBlockDelta uint64   `json:"available_resign_block_delta,omitempty" yaml:"available_resign_block_delta,omitempty"`
 }
 
 // NewRarimoCoreParams allows to build a new RarimoCoreParams instance
@@ -39,12 +40,13 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 		parties[i] = party.Account
 	}
 	return &RarimoCoreParams{
-		KeyECDSA:         p.KeyECDSA,
-		Threshold:        p.Threshold,
-		IsUpdateRequired: p.IsUpdateRequired,
-		LastSignature:    p.LastSignature,
-		Parties:          parties,
-		Height:           height,
+		KeyECDSA:                  p.KeyECDSA,
+		Threshold:                 p.Threshold,
+		IsUpdateRequired:          p.IsUpdateRequired,
+		LastSignature:             p.LastSignature,
+		AvailableResignBlockDelta: p.AvailableResignBlockDelta,
+		Parties:                   parties,
+		Height:                    height,
 	}
 }
 
@@ -58,13 +60,13 @@ type Operation struct {
 }
 
 // NewOperation allows to build a new Operation instance
-func NewOperation(index string, opType rarimocoretypes.OpType, signed bool, creator string, timestamp int64) Operation {
+func NewOperation(index string, opType int32, signed bool, creator string, timestamp uint64) Operation {
 	return Operation{
 		Index:         index,
-		OperationType: opType,
+		OperationType: rarimocoretypes.OpType(opType),
 		Signed:        signed,
 		Creator:       creator,
-		Timestamp:     timestamp,
+		Timestamp:     int64(timestamp),
 	}
 }
 

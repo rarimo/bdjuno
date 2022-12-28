@@ -1,0 +1,23 @@
+table:
+  name: confirmation
+  schema: public
+object_relationships:
+  - name: creator_account
+    using:
+      manual_configuration:
+        column_mapping:
+          creator: address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - root
+        - indexes
+        - signature_ecdsa
+        - creator
+      filter: {}
+    role: anonymous

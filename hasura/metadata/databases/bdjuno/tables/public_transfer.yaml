@@ -1,0 +1,30 @@
+table:
+  name: transfer
+  schema: public
+object_relationships:
+  - name: operation
+    using:
+      manual_configuration:
+        column_mapping:
+          operation_index: index
+        insertion_order: null
+        remote_table:
+          name: operation
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - operation_index
+        - origin
+        - tx
+        - event_id
+        - from_chain
+        - to_chain
+        - receiver
+        - amount
+        - bundle_data
+        - bundle_salt
+        - token_index
+      filter: {}
+    role: anonymous

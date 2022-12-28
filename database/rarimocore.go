@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"github.com/lib/pq"
 	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 	"gitlab.com/rarimo/bdjuno/types"
 )
@@ -14,7 +15,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 
 	var accounts []types.Account
 
-	partiesQuery := `INSERT INTO party (address, account, public_key, verified) VALUES `
+	partiesQuery := `INSERT INTO parties (address, account, pub_key, verified) VALUES `
 
 	var partiesParams []interface{}
 
@@ -35,7 +36,10 @@ func (db *Db) SaveParties(parties []types.Party) error {
 
 	// Store the proposals
 	partiesQuery = partiesQuery[:len(partiesQuery)-1] // Remove trailing ","
-	partiesQuery += " ON CONFLICT DO NOTHING"
+	partiesQuery += ` ON CONFLICT (account) DO UPDATE 
+	SET verified = excluded.verified, pub_key = excluded.pub_key 
+WHERE parties.account = excluded.account
+`
 	_, err = db.Sql.Exec(partiesQuery, partiesParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing parties: %s", err)
@@ -47,15 +51,16 @@ func (db *Db) SaveParties(parties []types.Party) error {
 // SaveRarimoCoreParams saves the given x/rarimocore parameters inside the database
 func (db *Db) SaveRarimoCoreParams(params *types.RarimoCoreParams) (err error) {
 	stmt := `
-INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height, available_resign_block_delta)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET key_ecdsa = excluded.key_ecdsa,
 		threshold = excluded.threshold,
 		is_update_required = excluded.is_update_required,
 		last_signature = excluded.last_signature,
 		parties = excluded.parties,
-		height = excluded.height
+		height = excluded.height,
+		available_resign_block_delta = excluded.available_resign_block_delta 
 WHERE rarimocore_params.height <= excluded.height
 `
 	_, err = db.Sql.Exec(
@@ -64,8 +69,9 @@ WHERE rarimocore_params.height <= excluded.height
 		params.Threshold,
 		params.IsUpdateRequired,
 		params.LastSignature,
-		params.Parties,
+		pq.Array(params.Parties),
 		params.Height,
+		params.AvailableResignBlockDelta,
 	)
 	if err != nil {
 		return fmt.Errorf("error while storing rarimocore params: %s", err)
@@ -121,7 +127,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 }
 
 func (db *Db) UpdateOperation(operation types.Operation) error {
-	query := `UPDATE operation SET signed = $1, where index = $2`
+	query := `UPDATE operation SET signed = $1 WHERE index = $2`
 	_, err := db.Sql.Exec(query,
 		operation.Signed,
 		operation.Index,
@@ -217,7 +223,7 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 
 		changePartiesParams = append(changePartiesParams,
 			changeParty.OperationIndex,
-			changeParty.Parties,
+			pq.Array(changeParty.Parties),
 			changeParty.NewPublicKey,
 			changeParty.Signature,
 		)
@@ -236,7 +242,7 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 func (db *Db) UpdateChangeParties(changeParties types.ChangeParties) (err error) {
 	query := `UPDATE change_parties SET parties = $1, new_public_key = $2, signature = $3 WHERE operation_index = $4`
 	_, err = db.Sql.Exec(query,
-		changeParties.Parties,
+		pq.Array(changeParties.Parties),
 		changeParties.NewPublicKey,
 		changeParties.Signature,
 		changeParties.OperationIndex,
@@ -262,7 +268,7 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 
 		confirmationsParams = append(confirmationsParams,
 			confirmation.Root,
-			confirmation.Indexes,
+			pq.Array(confirmation.Indexes),
 			confirmation.SignatureECDSA,
 			confirmation.Creator,
 		)
