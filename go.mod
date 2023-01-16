@@ -20,7 +20,7 @@ require (
 	github.com/spf13/cobra v1.6.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.23
-	gitlab.com/rarimo/rarimo-core v0.0.0-20221224160636-7b499af0d564
+	gitlab.com/rarimo/rarimo-core v0.0.0-20230116142118-a5edf6a65a49
 	google.golang.org/grpc v1.51.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -193,7 +193,7 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => gitlab.com/rarimo/cosmos-sdk v0.45.5-dev.4
+	github.com/cosmos/cosmos-sdk => gitlab.com/rarimo/cosmos-sdk v0.45.5-dev.5
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.19-forbole
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
