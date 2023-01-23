@@ -45,8 +45,8 @@ CREATE TABLE average_block_time_from_genesis
 CREATE INDEX average_block_time_from_genesis_height_index ON average_block_time_from_genesis (height);
 
 -- +migrate Down
-DROP TABLE genesis;
-DROP TABLE average_block_time_per_minute;
-DROP TABLE average_block_time_per_hour;
-DROP TABLE average_block_time_per_day;
 DROP TABLE average_block_time_from_genesis;
+DROP TABLE average_block_time_per_day;
+DROP TABLE average_block_time_per_hour;
+DROP TABLE average_block_time_per_minute;
+DROP TABLE genesis;

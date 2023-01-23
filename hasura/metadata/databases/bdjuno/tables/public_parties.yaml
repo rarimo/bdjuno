@@ -1,0 +1,23 @@
+table:
+  name: parties
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      manual_configuration:
+        column_mapping:
+          account: address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - account
+        - pub_key
+        - address
+        - verified
+      filter: {}
+    role: anonymous

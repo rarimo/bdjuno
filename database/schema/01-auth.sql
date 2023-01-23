@@ -36,7 +36,7 @@ CREATE TABLE vesting_period
 
 -- +migrate Down
 
-DROP TABLE account;
-DROP TABLE vesting_account;
 DROP TABLE vesting_period;
+DROP TABLE vesting_account;
 DROP TYPE COIN;
+DROP TABLE account;

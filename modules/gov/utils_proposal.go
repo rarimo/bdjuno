@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 	"strings"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
@@ -31,6 +32,10 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
+	err = m.handleRarimoCoreProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while handling rarimocore proposal: %s", err)
+	}
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
@@ -83,6 +88,28 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 			stored.VotingEndBlock,
 		),
 	)
+}
+
+func (m *Module) handleRarimoCoreProposal(height int64, proposal govtypes.Proposal) error {
+	if proposal.Status != govtypes.StatusPassed {
+		return nil
+	}
+
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling rarimo core proposal: %s", err)
+	}
+
+	switch content.(type) {
+	case *rarimocoretypes.AddSignerPartyProposal,
+		*rarimocoretypes.RemoveSignerPartyProposal,
+		*rarimocoretypes.ReshareKeysProposal,
+		*rarimocoretypes.ChangeThresholdProposal:
+		return m.rarimocoreModule.UpdateParams(height)
+	default:
+		return nil
+	}
 }
 
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed

@@ -43,7 +43,7 @@ CREATE TABLE token_price_history
 CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp);
 
 -- +migrate Down
-DROP TABLE token;
-DROP TABLE token_unit;
-DROP TABLE token_price;
 DROP TABLE token_price_history;
+DROP TABLE token_price;
+DROP TABLE token_unit;
+DROP TABLE token;

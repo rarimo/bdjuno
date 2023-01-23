@@ -1,0 +1,23 @@
+table:
+  name: change_parties
+  schema: public
+object_relationships:
+  - name: operation
+    using:
+      manual_configuration:
+        column_mapping:
+          operation_index: index
+        insertion_order: null
+        remote_table:
+          name: operation
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - operation_index
+        - parties
+        - new_public_key
+        - signature
+      filter: {}
+    role: anonymous

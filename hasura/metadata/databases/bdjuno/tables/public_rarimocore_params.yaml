@@ -1,0 +1,16 @@
+table:
+  name: rarimocore_params
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - one_row_id
+    - key_ecdsa
+    - threshold
+    - is_update_required
+    - last_signature
+    - available_resign_block_delta
+    - height
+    filter: {}
+  role: anonymous

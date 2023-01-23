@@ -21,5 +21,5 @@ CREATE TABLE slashing_params
 CREATE INDEX slashing_params_height_index ON slashing_params (height);
 
 -- +migrate Down
-DROP TABLE validator_signing_info;
 DROP TABLE slashing_params;
+DROP TABLE validator_signing_info;

@@ -12,6 +12,20 @@ object_relationships:
         name: vesting_account
         schema: public
 array_relationships:
+- name: confirmations
+  using:
+    foreign_key_constraint_on:
+      column: creator
+      table:
+        name: operation
+        schema: public
+- name: transfers
+  using:
+    foreign_key_constraint_on:
+      column: creator
+      table:
+        name: operation
+        schema: public
 - name: proposal_deposits
   using:
     foreign_key_constraint_on:

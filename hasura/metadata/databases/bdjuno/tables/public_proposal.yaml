@@ -61,7 +61,7 @@ select_permissions:
     - proposal_route
     - proposal_type
     - id
-    - submit_time
+    - submit_block
     - deposit_end_block
     - voting_start_block
     - voting_end_block
