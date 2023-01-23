@@ -11,30 +11,32 @@ import (
 func (m *Module) saveOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 
-	// Save the operations
-	err := m.db.SaveOperations(operations)
-	if err != nil {
-		return err
-	}
+	return m.db.Transaction(func() error {
+		// Save the operations
+		err := m.db.SaveOperations(operations)
+		if err != nil {
+			return err
+		}
 
-	transfers, changeParties, err := getOperationDetails(slice)
-	if err != nil {
+		transfers, changeParties, err := getOperationDetails(slice)
+		if err != nil {
+			return nil
+		}
+
+		// Save the transfers
+		err = m.db.SaveTransfers(transfers)
+		if err != nil {
+			return err
+		}
+
+		// Save the change parties
+		err = m.db.SaveChangeParties(changeParties)
+		if err != nil {
+			return err
+		}
+
 		return nil
-	}
-
-	// Save the transfers
-	err = m.db.SaveTransfers(transfers)
-	if err != nil {
-		return err
-	}
-
-	// Save the change parties
-	err = m.db.SaveChangeParties(changeParties)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	})
 }
 
 func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
