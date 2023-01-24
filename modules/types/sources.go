@@ -3,7 +3,9 @@ package types
 import (
 	"fmt"
 	rarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
+	tokenmanagersource "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -42,16 +44,18 @@ import (
 	stakingsource "gitlab.com/rarimo/bdjuno/modules/staking/source"
 	localstakingsource "gitlab.com/rarimo/bdjuno/modules/staking/source/local"
 	remotestakingsource "gitlab.com/rarimo/bdjuno/modules/staking/source/remote"
+	remotetokenmanagersource "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source/remote"
 )
 
 type Sources struct {
-	BankSource       banksource.Source
-	DistrSource      distrsource.Source
-	GovSource        govsource.Source
-	MintSource       mintsource.Source
-	SlashingSource   slashingsource.Source
-	StakingSource    stakingsource.Source
-	RarimoCoreSource rarimocoresource.Source
+	BankSource         banksource.Source
+	DistrSource        distrsource.Source
+	GovSource          govsource.Source
+	MintSource         mintsource.Source
+	SlashingSource     slashingsource.Source
+	StakingSource      stakingsource.Source
+	RarimoCoreSource   rarimocoresource.Source
+	TokenManagerSource tokenmanagersource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -117,12 +121,13 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:       remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:      remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:        remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:       remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource:   remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:    remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
-		RarimoCoreSource: remoterarimocoresource.NewSource(source, rarimocoretypes.NewQueryClient(source.GrpcConn)),
+		BankSource:         remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:        remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:          remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:         remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:     remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:      remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		RarimoCoreSource:   remoterarimocoresource.NewSource(source, rarimocoretypes.NewQueryClient(source.GrpcConn)),
+		TokenManagerSource: remotetokenmanagersource.NewSource(source, tokenmanagertypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

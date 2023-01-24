@@ -3,6 +3,7 @@ package modules
 import (
 	"gitlab.com/rarimo/bdjuno/modules/actions"
 	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
+	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
 	"gitlab.com/rarimo/bdjuno/modules/types"
 
 	"github.com/forbole/juno/v3/modules/pruning"
@@ -82,6 +83,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, cdc, db)
+	tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, rarimocoreModule, cdc, db)
 
 	return []jmodules.Module{
@@ -102,5 +104,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 		rarimocoreModule,
+		tokenmanagerModule,
 	}
 }

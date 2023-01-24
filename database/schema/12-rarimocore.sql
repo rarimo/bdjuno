@@ -14,11 +14,12 @@ CREATE TABLE rarimocore_params
     threshold                    BIGINT  NOT NULL,
     is_update_required           BOOLEAN NOT NULL,
     last_signature               TEXT    NOT NULL,
-    parties                      TEXT[]  NOT NULL DEFAULT '{}'::TEXT[],
+    parties                      TEXT[]  NOT NULL DEFAULT '[]'::TEXT[],
     height                       BIGINT  NOT NULL,
     available_resign_block_delta BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
+CREATE INDEX rarimocore_params_height_index ON rarimocore_params (height);
 
 CREATE TABLE operation
 (
@@ -47,7 +48,7 @@ CREATE TABLE transfer
 CREATE TABLE change_parties
 (
     operation_index TEXT   NOT NULL PRIMARY KEY REFERENCES operation (index),
-    parties         TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
+    parties         TEXT[] NOT NULL DEFAULT '[]'::TEXT[],
     new_public_key  TEXT   NOT NULL,
     signature       TEXT   NOT NULL
 );
@@ -55,7 +56,7 @@ CREATE TABLE change_parties
 CREATE TABLE confirmation
 (
     root            TEXT   NOT NULL PRIMARY KEY,
-    indexes         TEXT[] NOT NULL DEFAULT '{}',
+    indexes         TEXT[] NOT NULL DEFAULT '[]',
     signature_ecdsa TEXT   NOT NULL,
     creator         TEXT   NOT NULL REFERENCES account (address)
 );

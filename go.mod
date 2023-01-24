@@ -20,7 +20,7 @@ require (
 	github.com/spf13/cobra v1.6.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.23
-	gitlab.com/rarimo/rarimo-core v0.0.0-20230116142118-a5edf6a65a49
+	gitlab.com/rarimo/rarimo-core v0.0.0-20230124003453-01715e2837d8
 	google.golang.org/grpc v1.51.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -43,7 +43,7 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
+	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coinbase/rosetta-sdk-go v0.7.9 // indirect
