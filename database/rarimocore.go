@@ -87,7 +87,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 
 	var accounts []types.Account
 
-	operationsQuery := `INSERT INTO operation (index, operation_type, signed, creator, timestamp) VALUES `
+	operationsQuery := `INSERT INTO operation (index, operation_type, signed, approved, creator, timestamp) VALUES `
 
 	var operationsParams []interface{}
 
@@ -96,14 +96,15 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 		accounts = append(accounts, types.NewAccount(operation.Creator))
 
 		// Prepare the operation query
-		vi := i * 5
-		operationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		vi := i * 6
+		operationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 
 		operationsParams = append(
 			operationsParams,
 			operation.Index,
 			operation.OperationType,
 			operation.Signed,
+			operation.Approved,
 			operation.Creator,
 			operation.Timestamp,
 		)
@@ -180,7 +181,7 @@ INSERT INTO transfer (
 
 	for i, transfer := range transfers {
 		// Prepare the transfer query
-		vi := i * 11
+		vi := i * 13
 		transfersQuery += fmt.Sprintf(
 			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13,

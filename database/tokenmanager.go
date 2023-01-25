@@ -18,7 +18,7 @@ WHERE tokenmanager_params.height <= excluded.height
 `
 	_, err = db.Sql.Exec(
 		stmt,
-		pq.Array(params.Params),
+		params.Params,
 		params.Height,
 	)
 	if err != nil {
@@ -73,7 +73,7 @@ func (db *Db) SaveCollectionDatas(collectionDatas []types.CollectionData) error 
 
 	for i, collectionData := range collectionDatas {
 		// Prepare the collection data query
-		vi := i * 5
+		vi := i * 6
 		collectionDatasQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 
 		collectionDatasParams = append(
@@ -126,7 +126,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 
 	for i, item := range items {
 		// Prepare the item data query
-		vi := i * 3
+		vi := i * 4
 		itemQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
 
 		itemParams = append(
@@ -134,7 +134,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 			item.Index,
 			item.IndexKey,
 			item.Meta,
-			item.ChainParams,
+			pq.Array(item.ChainParams),
 		)
 	}
 
