@@ -25,6 +25,8 @@ select_permissions:
         - amount
         - bundle_data
         - bundle_salt
-        - token_index
+        - item_index
+        - item_index_key
+        - item_meta
       filter: {}
     role: anonymous

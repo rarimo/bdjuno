@@ -50,6 +50,7 @@ CREATE TABLE collection
     data      COLLECTION_DATA_INDEX[] NOT NULL DEFAULT '[]'::COLLECTION_DATA_INDEX[]
 );
 
+
 CREATE TABLE collection_data
 (
     index_key  BYTEA                 NOT NULL PRIMARY KEY,

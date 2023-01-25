@@ -2,6 +2,7 @@ package types
 
 import (
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 // Party contains the data of the x/rarimocore module signer instance
@@ -55,34 +56,50 @@ type Operation struct {
 	Index         string                 `json:"index,omitempty" yaml:"index,omitempty"`
 	OperationType rarimocoretypes.OpType `json:"operation_type,omitempty" yaml:"operation_type,omitempty"`
 	Signed        bool                   `json:"signed,omitempty" yaml:"signed,omitempty"`
+	Approved      bool                   `json:"approved,omitempty" yaml:"approved,omitempty"`
 	Creator       string                 `json:"creator,omitempty" yaml:"creator,omitempty"`
 	Timestamp     int64                  `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
 }
 
 // NewOperation allows to build a new Operation instance
-func NewOperation(index string, opType int32, signed bool, creator string, timestamp uint64) Operation {
+func NewOperation(index string, opType int32, signed, approved bool, creator string, timestamp uint64) Operation {
 	return Operation{
 		Index:         index,
 		OperationType: rarimocoretypes.OpType(opType),
+		Approved:      approved,
 		Signed:        signed,
 		Creator:       creator,
 		Timestamp:     int64(timestamp),
 	}
 }
 
+// OperationFromCore allows to build a new Operation instance from a rarimocoretypes.Operation instance
+func OperationFromCore(operation rarimocoretypes.Operation) Operation {
+	return Operation{
+		Index:         operation.Index,
+		OperationType: operation.OperationType,
+		Approved:      operation.Approved,
+		Signed:        operation.Signed,
+		Creator:       operation.Creator,
+		Timestamp:     int64(operation.Timestamp),
+	}
+}
+
 // Transfer represents a single transfer instance
 type Transfer struct {
-	OperationIndex string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
-	Origin         string `json:"origin,omitempty" yaml:"origin,omitempty"`
-	Tx             string `json:"tx,omitempty" yaml:"tx,omitempty"`
-	EventID        string `json:"event_id,omitempty" yaml:"event_id,omitempty"`
-	FromChain      string `json:"from_chain,omitempty" yaml:"from_chain,omitempty"`
-	ToChain        string `json:"to_chain,omitempty" yaml:"to_chain,omitempty"`
-	Receiver       string `json:"receiver,omitempty" yaml:"receiver,omitempty"`
-	Amount         string `json:"amount,omitempty" yaml:"amount,omitempty"`
-	BundleData     string `json:"bundle_data,omitempty" yaml:"bundle_data,omitempty"`
-	BundleSalt     string `json:"bundle_salt,omitempty" yaml:"bundle_salt,omitempty"`
-	TokenIndex     string `json:"token_index,omitempty" yaml:"token_index,omitempty"`
+	OperationIndex string           `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Origin         string           `json:"origin,omitempty" yaml:"origin,omitempty"`
+	Tx             string           `json:"tx,omitempty" yaml:"tx,omitempty"`
+	EventID        string           `json:"event_id,omitempty" yaml:"event_id,omitempty"`
+	Receiver       string           `json:"receiver,omitempty" yaml:"receiver,omitempty"`
+	Amount         string           `json:"amount,omitempty" yaml:"amount,omitempty"`
+	BundleData     string           `json:"bundle_data,omitempty" yaml:"bundle_data,omitempty"`
+	BundleSalt     string           `json:"bundle_salt,omitempty" yaml:"bundle_salt,omitempty"`
+	ItemIndexKey   []byte           `json:"item_index_key,omitempty" yaml:"item_index_key,omitempty"`
+	FromChain      *ItemChainParams `json:"from_chain,omitempty" yaml:"from_chain,omitempty"`
+	ToChain        *ItemChainParams `json:"to_chain,omitempty" yaml:"to_chain,omitempty"`
+	ItemIndex      *ItemIndex       `json:"item_index,omitempty" yaml:"item_index,omitempty"`
+	ItemMeta       *ItemMetadata    `json:"item_meta,omitempty" yaml:"item_meta,omitempty"`
 }
 
 // NewTransfer allows to build a new Transfer instance
@@ -92,13 +109,15 @@ func NewTransfer(operationIndex string, t rarimocoretypes.Transfer) Transfer {
 		Origin:         t.Origin,
 		Tx:             t.Tx,
 		EventID:        t.EventId,
-		FromChain:      t.FromChain,
-		ToChain:        t.ToChain,
 		Receiver:       t.Receiver,
 		Amount:         t.Amount,
 		BundleData:     t.BundleData,
 		BundleSalt:     t.BundleSalt,
-		TokenIndex:     t.TokenIndex,
+		ItemIndexKey:   tokenmanagertypes.ItemKey(t.Item),
+		ItemIndex:      ItemIndexFromCore(t.Item),
+		ItemMeta:       ItemMetadataFromCore(t.Meta),
+		FromChain:      ItemChainParamsFromCore(t.From),
+		ToChain:        ItemChainParamsFromCore(t.To),
 	}
 }
 

@@ -36,6 +36,7 @@ select_permissions:
         - index
         - operation_type
         - signed
+        - approved
         - creator
         - timestamp
       filter: {}

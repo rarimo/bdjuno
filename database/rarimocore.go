@@ -127,9 +127,10 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 }
 
 func (db *Db) UpdateOperation(operation types.Operation) error {
-	query := `UPDATE operation SET signed = $1 WHERE index = $2`
+	query := `UPDATE operation SET signed = $1, approved = $2 WHERE index = $3`
 	_, err := db.Sql.Exec(query,
 		operation.Signed,
+		operation.Approved,
 		operation.Index,
 	)
 	if err != nil {
@@ -155,6 +156,7 @@ func (db *Db) GetOperation(index string) (*types.Operation, error) {
 	operation := types.NewOperation(
 		row.Index,
 		row.OperationType,
+		row.Approved,
 		row.Signed,
 		row.Creator,
 		row.Timestamp,
@@ -171,7 +173,7 @@ func (db *Db) SaveTransfers(transfers []types.Transfer) (err error) {
 	transfersQuery := `
 INSERT INTO transfer (
 	operation_index, origin, tx, event_id, from_chain, to_chain, receiver, amount, bundle_data, 
-    bundle_salt, token_index
+    bundle_salt, item_index, item_index_key, item_meta
 ) VALUES`
 
 	var transfersParams []interface{}
@@ -180,8 +182,8 @@ INSERT INTO transfer (
 		// Prepare the transfer query
 		vi := i * 11
 		transfersQuery += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11,
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13,
 		)
 
 		transfersParams = append(transfersParams,
@@ -195,7 +197,9 @@ INSERT INTO transfer (
 			transfer.Amount,
 			transfer.BundleData,
 			transfer.BundleSalt,
-			transfer.TokenIndex,
+			transfer.ItemIndex,
+			transfer.ItemIndexKey,
+			transfer.ItemMeta,
 		)
 	}
 

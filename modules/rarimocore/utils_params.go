@@ -17,17 +17,19 @@ func (m *Module) UpdateParams(height int64) error {
 		return fmt.Errorf("error while getting params: %s", err)
 	}
 
-	err = m.saveParams(params, height)
-	if err != nil {
-		return fmt.Errorf("error while storing params during update rarimocore params: %s", err)
-	}
+	return m.db.Transaction(func() error {
+		err = m.saveParams(params, height)
+		if err != nil {
+			return fmt.Errorf("error while storing params during update rarimocore params: %s", err)
+		}
 
-	err = m.saveParties(params.Parties)
-	if err != nil {
-		return fmt.Errorf("error while storing parties during update rarimocore params: %s", err)
-	}
+		err = m.saveParties(params.Parties)
+		if err != nil {
+			return fmt.Errorf("error while storing parties during update rarimocore params: %s", err)
+		}
 
-	return nil
+		return nil
+	})
 }
 
 func (m *Module) saveParties(slice []*rarimocoretypes.Party) error {

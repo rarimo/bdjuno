@@ -50,40 +50,36 @@ func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
 func (m *Module) updateOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 
-	// Update the operations
-	for _, operation := range operations {
-		err := m.db.UpdateOperation(operation)
+	return m.db.Transaction(func() error {
+		// Update the operations
+		for _, operation := range operations {
+			err := m.db.UpdateOperation(operation)
+			if err != nil {
+				return err
+			}
+		}
+
+		_, changeParties, err := getOperationDetails(slice)
 		if err != nil {
 			return err
 		}
-	}
 
-	_, changeParties, err := getOperationDetails(slice)
-	if err != nil {
-		return err
-	}
-
-	// Update the change parties
-	for _, changeParty := range changeParties {
-		err = m.db.UpdateChangeParties(changeParty)
-		if err != nil {
-			return err
+		// Update the change parties
+		for _, changeParty := range changeParties {
+			err = m.db.UpdateChangeParties(changeParty)
+			if err != nil {
+				return err
+			}
 		}
-	}
 
-	return nil
+		return nil
+	})
 }
 
 func coreOperationsToInternal(slice []rarimocoretypes.Operation) []types.Operation {
 	operations := make([]types.Operation, len(slice))
 	for i, operation := range slice {
-		operations[i] = types.NewOperation(
-			operation.Index,
-			int32(operation.OperationType),
-			operation.Signed,
-			operation.Creator,
-			operation.Timestamp,
-		)
+		operations[i] = types.OperationFromCore(operation)
 	}
 
 	return operations

@@ -25,23 +25,26 @@ type OperationRow struct {
 	Index         string `db:"index"`
 	OperationType int32  `db:"operation_type"`
 	Signed        bool   `db:"signed"`
+	Approved      bool   `db:"approved"`
 	Creator       string `db:"creator"`
 	Timestamp     uint64 `db:"timestamp"`
 }
 
 // TransferRow represents a single row of the "transfer" table
 type TransferRow struct {
-	OperationIndex string `db:"operation_index"`
-	Origin         string `db:"origin,omitempty"`
-	Tx             string `db:"tx,omitempty"`
-	EventId        string `db:"event_id,omitempty"`
-	FromChain      string `db:"from_chain,omitempty"`
-	ToChain        string `db:"to_chain,omitempty"`
-	Receiver       string `db:"receiver,omitempty"`
-	Amount         string `db:"amount,omitempty"`
-	BundleData     string `db:"bundle_data,omitempty"`
-	BundleSalt     string `db:"bundle_salt,omitempty"`
-	TokenIndex     string `db:"token_index,omitempty"`
+	OperationIndex string           `db:"operation_index"`
+	Origin         string           `db:"origin"`
+	Tx             string           `db:"tx"`
+	EventId        string           `db:"event_id"`
+	Receiver       string           `db:"receiver"`
+	Amount         string           `db:"amount"`
+	BundleData     string           `db:"bundle_data"`
+	BundleSalt     string           `db:"bundle_salt"`
+	ItemIndexKey   []byte           `db:"item_index_key"`
+	FromChain      *ItemChainParams `db:"from_chain"`
+	ToChain        *ItemChainParams `db:"to_chain"`
+	ItemIndex      *ItemIndex       `db:"item_index"`
+	ItemMeta       *ItemMetadata    `db:"item_meta"`
 }
 
 // ChangePartiesRow represents a single row of the "change_parties" table

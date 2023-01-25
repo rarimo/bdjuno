@@ -26,23 +26,26 @@ CREATE TABLE operation
     index          TEXT    NOT NULL PRIMARY KEY,
     operation_type INT     NOT NULL,
     signed         BOOLEAN NOT NULL,
+    approved       BOOLEAN NOT NULL,
     creator        TEXT    NOT NULL REFERENCES account (address),
     timestamp      BIGINT  NOT NULL
 );
 
 CREATE TABLE transfer
 (
-    operation_index TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
-    origin          TEXT NOT NULL,
-    tx              TEXT NOT NULL,
-    event_id        TEXT NOT NULL,
-    from_chain      TEXT NOT NULL,
-    to_chain        TEXT NOT NULL,
-    receiver        TEXT NOT NULL,
-    amount          TEXT NOT NULL,
+    operation_index TEXT              NOT NULL PRIMARY KEY REFERENCES operation (index),
+    origin          TEXT              NOT NULL,
+    tx              TEXT              NOT NULL,
+    event_id        TEXT              NOT NULL,
+    receiver        TEXT              NOT NULL,
+    amount          TEXT              NOT NULL,
     bundle_data     TEXT,
     bundle_salt     TEXT,
-    token_index     TEXT NOT NULL -- TODO: ADD REFERENCES TO TOKEN TABLE
+    chain_from      ITEM_CHAIN_PARAMS NOT NULL,
+    chain_to        ITEM_CHAIN_PARAMS NOT NULL,
+    item_index      ITEM_INDEX        NOT NULL,
+    item_index_key  BYTEA             NOT NULL REFERENCES item (index_key),
+    item_meta       ITEM_METADATA -- Optional (if item currently does not exists
 );
 
 CREATE TABLE change_parties
@@ -61,7 +64,15 @@ CREATE TABLE confirmation
     creator         TEXT   NOT NULL REFERENCES account (address)
 );
 
+CREATE TABLE vote
+(
+    operation TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
+    validator TEXT NOT NULL REFERENCES validator_info (operator_address),
+    vote      INT  NOT NULL
+);
+
 -- +migrate Down
+DROP TABLE vote;
 DROP TABLE confirmation;
 DROP TABLE change_parties;
 DROP TABLE transfer;
