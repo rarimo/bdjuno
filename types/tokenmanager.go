@@ -82,6 +82,7 @@ func NewCollectionDataIndex(chain, address string) *CollectionDataIndex {
 // CollectionData contains the data of the x/tokenmanager collection data instance
 type CollectionData struct {
 	Index      *CollectionDataIndex   `json:"index,omitempty" yaml:"index,omitempty"`
+	IndexKey   []byte                 `json:"index_key" yaml:"index_key"`
 	Collection string                 `json:"collection,omitempty" yaml:"collection,omitempty"`
 	TokenType  tokenmanagertypes.Type `json:"token_type,omitempty" yaml:"tokenType,omitempty"`
 	Wrapped    bool                   `json:"wrapped,omitempty" yaml:"wrapped,omitempty"`
@@ -96,13 +97,30 @@ func NewCollectionData(
 	wrapped bool,
 	decimals uint32,
 ) CollectionData {
+	indexKey := tokenmanagertypes.CollectionDataKey(&tokenmanagertypes.CollectionDataIndex{
+		Chain:   index.Chain,
+		Address: index.Address,
+	})
+
 	return CollectionData{
 		Index:      index,
+		IndexKey:   indexKey,
 		Collection: collection,
 		TokenType:  tokenType,
 		Wrapped:    wrapped,
 		Decimals:   decimals,
 	}
+}
+
+// CollectionDataFromCore allows to build a new CollectionData instance from tokenmanager.CollectionData instance
+func CollectionDataFromCore(data tokenmanagertypes.CollectionData) CollectionData {
+	return NewCollectionData(
+		NewCollectionDataIndex(data.Index.Chain, data.Index.Address),
+		data.Collection,
+		data.TokenType,
+		data.Wrapped,
+		data.Decimals,
+	)
 }
 
 // CollectionMetadata contains the data of the x/tokenmanager collection metadata related to collection instance
@@ -123,18 +141,43 @@ func NewCollectionMetadata(name, symbol, metadataUri string) *CollectionMetadata
 
 // Collection contains the data of the x/tokenmanager collection instance
 type Collection struct {
-	Index string                 `json:"index,omitempty" yaml:"index,omitempty"`
-	Meta  *CollectionMetadata    `json:"meta,omitempty" yaml:"data,omitempty"`
-	Data  []*CollectionDataIndex `json:"data,omitempty" yaml:"data,omitempty"`
+	Index    string                 `json:"index,omitempty" yaml:"index,omitempty"`
+	IndexKey []byte                 `json:"index_key" yaml:"index_key"`
+	Meta     *CollectionMetadata    `json:"meta,omitempty" yaml:"data,omitempty"`
+	Data     []*CollectionDataIndex `json:"data,omitempty" yaml:"data,omitempty"`
 }
 
 // NewCollection allows to build a new Collection instance
 func NewCollection(index string, meta *CollectionMetadata, data []*CollectionDataIndex) Collection {
 	return Collection{
-		Index: index,
-		Meta:  meta,
-		Data:  data,
+		Index:    index,
+		IndexKey: tokenmanagertypes.CollectionKey(index),
+		Meta:     meta,
+		Data:     data,
 	}
+}
+
+// CollectionFromCore allows to build a new Collection instance from tokenmanager.Collection instance
+func CollectionFromCore(collection tokenmanagertypes.Collection) Collection {
+	indexes := make([]*CollectionDataIndex, 0)
+
+	for _, data := range collection.Data {
+		if data == nil {
+			continue
+		}
+
+		indexes = append(indexes, NewCollectionDataIndex(data.Chain, data.Address))
+	}
+
+	return NewCollection(
+		collection.Index,
+		NewCollectionMetadata(
+			collection.Meta.Name,
+			collection.Meta.Symbol,
+			collection.Meta.MetadataURI,
+		),
+		indexes,
+	)
 }
 
 // ItemIndex contains the data of the x/tokenmanager item index
@@ -188,15 +231,52 @@ func NewItemChainParams(chain, tokenID string) *ItemChainParams {
 // Item contains the data of the x/tokenmanager item instance
 type Item struct {
 	Index       *ItemIndex         `json:"index,omitempty" yaml:"index,omitempty"`
+	IndexKey    []byte             `json:"index_key" yaml:"index_key"`
 	Meta        *ItemMetadata      `json:"meta,omitempty" yaml:"meta,omitempty"`
 	ChainParams []*ItemChainParams `json:"chain_params,omitempty" yaml:"chain_params,omitempty"`
 }
 
 // NewItem allows to build a new Item instance
 func NewItem(index *ItemIndex, meta *ItemMetadata, chainParams []*ItemChainParams) Item {
+	indexKey := tokenmanagertypes.ItemKey(&tokenmanagertypes.ItemIndex{
+		Collection: index.Collection,
+		Name:       index.Name,
+		Symbol:     index.Symbol,
+		Uri:        index.Uri,
+	})
+
 	return Item{
 		Index:       index,
+		IndexKey:    indexKey,
 		Meta:        meta,
 		ChainParams: chainParams,
 	}
+}
+
+// ItemFromCore allows to build a new Item instance from tokenmanager.Item instance
+func ItemFromCore(item tokenmanagertypes.Item) Item {
+	params := make([]*ItemChainParams, 0)
+
+	for _, param := range item.ChainParams {
+		if param == nil {
+			continue
+		}
+
+		params = append(params, NewItemChainParams(param.Chain, param.TokenID))
+	}
+
+	return NewItem(
+		NewItemIndex(
+			item.Index.Collection,
+			item.Index.Name,
+			item.Index.Symbol,
+			item.Index.Uri,
+		),
+		NewItemMetadata(
+			item.Meta.ImageUri,
+			item.Meta.ImageHash,
+			item.Meta.Seed,
+		),
+		params,
+	)
 }

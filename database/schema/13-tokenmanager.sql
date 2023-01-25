@@ -44,13 +44,15 @@ CREATE TYPE COLLECTION_METADATA as
 
 CREATE TABLE collection
 (
-    index TEXT                    NOT NULL PRIMARY KEY,
-    meta  COLLECTION_METADATA     NOT NULL,
-    data  COLLECTION_DATA_INDEX[] NOT NULL DEFAULT '[]'::COLLECTION_DATA_INDEX[]
+    index_key BYTEA                   NOT NULL PRIMARY KEY,
+    index     TEXT                    NOT NULL,
+    meta      COLLECTION_METADATA     NOT NULL,
+    data      COLLECTION_DATA_INDEX[] NOT NULL DEFAULT '[]'::COLLECTION_DATA_INDEX[]
 );
 
 CREATE TABLE collection_data
 (
+    index_key  BYTEA                 NOT NULL PRIMARY KEY,
     index      COLLECTION_DATA_INDEX NOT NULL DEFAULT '{}'::COLLECTION_DATA_INDEX,
     collection TEXT REFERENCES collection (index),
     token_type INT                   NOT NULL,
@@ -81,6 +83,7 @@ CREATE TYPE ITEM_METADATA as
 
 CREATE TABLE item
 (
+    index_key    BYTEA               NOT NULL PRIMARY KEY,
     index        ITEM_INDEX          NOT NULL,
     meta         ITEM_METADATA       NOT NULL DEFAULT '{}'::ITEM_METADATA,
     chain_params ITEM_CHAIN_PARAMS[] NOT NULL DEFAULT '[]'::ITEM_CHAIN_PARAMS[]
@@ -96,5 +99,6 @@ DROP TABLE collection;
 DROP TYPE COLLECTION_METADATA;
 DROP TYPE COLLECTION_DATA_INDEX;
 DROP TABLE tokenmanager_params;
+DROP TYPE TOKENMANAGER_PARAMS;
 DROP TYPE NETWORK_PARAMS;
 DROP TYPE NETWORK_TYPE_BINDING;

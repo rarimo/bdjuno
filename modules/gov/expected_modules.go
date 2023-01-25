@@ -3,6 +3,7 @@ package gov
 import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 
 	"gitlab.com/rarimo/bdjuno/types"
 )
@@ -24,8 +25,19 @@ type SlashingModule interface {
 	UpdateParams(height int64) error
 }
 
-type RarimocoreModule interface {
+type RarimoCoreModule interface {
 	UpdateParams(height int64) error
+}
+
+type TokenManagerModule interface {
+	UpdateParams(height int64) error
+	UpdateItems(items []*tokenmanagertypes.Item) error
+	RemoveItems(indexes []*tokenmanagertypes.ItemIndex) error
+	CreateCollection(index string, meta *tokenmanagertypes.CollectionMetadata, data []*tokenmanagertypes.CollectionData) error
+	UpdateCollectionDatas(datas []*tokenmanagertypes.CollectionData) error
+	CreateCollectionDatas(datas []*tokenmanagertypes.CollectionData) error
+	RemoveCollectionDatas(indexes []*tokenmanagertypes.CollectionDataIndex) error
+	RemoveCollection(index string) error
 }
 
 type StakingModule interface {

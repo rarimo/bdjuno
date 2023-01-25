@@ -84,7 +84,18 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, cdc, db)
 	tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, rarimocoreModule, cdc, db)
+	govModule := gov.NewModule(
+		sources.GovSource,
+		authModule,
+		distrModule,
+		mintModule,
+		slashingModule,
+		stakingModule,
+		rarimocoreModule,
+		tokenmanagerModule,
+		cdc,
+		db,
+	)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),

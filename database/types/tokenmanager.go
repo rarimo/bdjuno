@@ -41,6 +41,7 @@ type CollectionMetadata struct {
 // CollectionDataRow represents a single row of the "collection_data" table
 type CollectionDataRow struct {
 	Index      *CollectionDataIndex `db:"index"`
+	IndexKey   []byte               `db:"index_key"`
 	Collection string               `db:"collection"`
 	TokenType  int32                `db:"tokenType"`
 	Wrapped    bool                 `db:"wrapped"`
@@ -49,9 +50,10 @@ type CollectionDataRow struct {
 
 // CollectionRow represents a single row of the "collection" table
 type CollectionRow struct {
-	Index string                 `db:"index"`
-	Meta  *CollectionMetadata    `db:"meta"`
-	Data  []*CollectionDataIndex `db:"data"`
+	Index    string                 `db:"index"`
+	IndexKey []byte                 `db:"index_key"`
+	Meta     *CollectionMetadata    `db:"meta"`
+	Data     []*CollectionDataIndex `db:"data"`
 }
 
 // ItemIndex represents the information stored inside the database about an item index
@@ -78,6 +80,7 @@ type ItemChainParams struct {
 // ItemRow represents a single row of the "item" table
 type ItemRow struct {
 	Index       *ItemIndex         `db:"index"`
+	IndexKey    []byte             `db:"index_key"`
 	Meta        *ItemMetadata      `db:"meta"`
 	ChainParams []*ItemChainParams `db:"chain_params"`
 }

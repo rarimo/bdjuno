@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
+	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
@@ -54,6 +55,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
 			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, parseCtx.EncodingConfig.Marshaler, db)
+			tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
@@ -65,6 +67,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				slashingModule,
 				stakingModule,
 				rarimocoreModule,
+				tokenmanagerModule,
 				parseCtx.EncodingConfig.Marshaler,
 				db,
 			)
