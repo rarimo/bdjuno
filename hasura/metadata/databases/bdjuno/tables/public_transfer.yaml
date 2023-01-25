@@ -11,6 +11,15 @@ object_relationships:
         remote_table:
           name: operation
           schema: public
+  - name: item_info
+    using:
+      manual_configuration:
+        column_mapping:
+          item_index_key: index_key
+        insertion_order: null
+        remote_table:
+          name: item
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
