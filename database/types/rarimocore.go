@@ -62,3 +62,10 @@ type ConfirmationRow struct {
 	SignatureECDSA string   `db:"signature_ecdsa"`
 	Creator        string   `db:"creator"`
 }
+
+// RarimoCoreVoteRow represents a single row of the "vote" table
+type RarimoCoreVoteRow struct {
+	Operation string `db:"operation"`
+	Validator string `db:"validator"`
+	Vote      int32  `db:"vote"`
+}

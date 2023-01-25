@@ -27,11 +27,33 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgCreateConfirmation(tx, cosmosMsg)
 	case *rarimocoretypes.MsgResignOperation:
 		return m.handleMsgResignOperation(tx, cosmosMsg)
+	case *rarimocoretypes.MsgVote:
+		return m.handleMsgVote(tx, cosmosMsg)
 	case *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
 		return m.UpdateParams(tx.Height)
 	}
 
 	return nil
+}
+
+func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error {
+	op, err := m.source.Operation(tx.Height, msg.Operation)
+	if err != nil {
+		return fmt.Errorf("failed to get change operation: %s", err)
+	}
+
+	return m.db.Transaction(func() error {
+		err = m.db.UpdateOperation(types.OperationFromCore(op))
+		if err != nil {
+			return fmt.Errorf("failed to update operation: %s", err)
+		}
+
+		err = m.db.SaveRarimoCoreVotes(
+			[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, msg.Vote)},
+		)
+
+		return nil
+	})
 }
 
 func (m *Module) handleMsgResignOperation(tx *juno.Tx, msg *rarimocoretypes.MsgResignOperation) error {

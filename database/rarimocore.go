@@ -287,3 +287,23 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 
 	return nil
 }
+
+func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
+	query := `INSERT INTO vote (operation, validator, vote) VALUES`
+	var queryParams []interface{}
+
+	for i, vote := range votes {
+		vi := i * 3
+		query += fmt.Sprintf("($%d, $%d, $%d),", vi+1, vi+2, vi+3)
+		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote)
+	}
+
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(query, queryParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing confirmations: %s", err)
+	}
+
+	return nil
+}

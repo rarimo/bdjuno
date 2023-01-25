@@ -161,3 +161,19 @@ func NewConfirmation(c rarimocoretypes.Confirmation) Confirmation {
 		Creator:        c.Creator,
 	}
 }
+
+// RarimoCoreVote represents a single vote instance
+type RarimoCoreVote struct {
+	Operation string                   `json:"operation,omitempty" yaml:"operation,omitempty"`
+	Validator string                   `json:"validator,omitempty" yaml:"validator,omitempty"`
+	Vote      rarimocoretypes.VoteType `json:"vote,omitempty" yaml:"vote,omitempty"`
+}
+
+// NewRarimoCoreVote allows to build a new RarimoCoreVote instance
+func NewRarimoCoreVote(operation, validator string, vote rarimocoretypes.VoteType) RarimoCoreVote {
+	return RarimoCoreVote{
+		Operation: operation,
+		Validator: validator,
+		Vote:      vote,
+	}
+}
