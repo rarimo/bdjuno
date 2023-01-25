@@ -1,0 +1,13 @@
+table:
+  name: collection_data
+  schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - index_key
+        - index
+        - meta
+        - chain_params
+      filter: {}
+    role: anonymous

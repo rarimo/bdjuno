@@ -1,0 +1,31 @@
+table:
+  name: vote
+  schema: public
+object_relationships:
+  - name: validator_info
+    using:
+      manual_configuration:
+        column_mapping:
+          validator: operator_address
+        insertion_order: null
+        remote_table:
+          name: validator_info
+          schema: public
+  - name: operation_info
+    using:
+      manual_configuration:
+        column_mapping:
+          operation: index
+        insertion_order: null
+        remote_table:
+          name: operation
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - operation
+        - validator
+        - vote
+      filter: {}
+    role: anonymous

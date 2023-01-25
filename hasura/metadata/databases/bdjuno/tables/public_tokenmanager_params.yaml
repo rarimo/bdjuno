@@ -1,0 +1,11 @@
+table:
+  name: tokenmanager_params
+  schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - params
+        - height
+      filter: {}
+    role: anonymous

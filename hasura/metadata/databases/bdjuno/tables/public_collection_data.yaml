@@ -1,0 +1,25 @@
+table:
+  name: collection_data
+  schema: public
+object_relationships:
+  - name: collection_info
+    using:
+      manual_configuration:
+        column_mapping:
+          collection: index
+        insertion_order: null
+        remote_table:
+          name: collection
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - index_key
+        - index
+        - collection
+        - token_type
+        - wrapped
+        - decimals
+      filter: {}
+    role: anonymous
