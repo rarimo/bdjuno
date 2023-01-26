@@ -4,17 +4,10 @@ import (
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
-// NetworkTypeBinding contains the data of the x/tokenmanager network core and saver type bindings
-type NetworkTypeBinding struct {
-	CoreType  uint32 `json:"core_type,omitempty" yaml:"core_type,omitempty"`
-	SaverType uint32 `json:"saver_type,omitempty" yaml:"saver_type,omitempty"`
-}
-
 // NetworkParams contains the data of the x/tokenmanager network params
 type NetworkParams struct {
 	Name     string                        `json:"name,omitempty" yaml:"name,omitempty"`
 	Contract string                        `json:"contract,omitempty" yaml:"contract,omitempty"`
-	Types    []*NetworkTypeBinding         `json:"types,omitempty" yaml:"types,omitempty"`
 	Type     tokenmanagertypes.NetworkType `json:"type,omitempty" yaml:"type,omitempty"`
 }
 
@@ -33,28 +26,10 @@ func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) *Token
 	networks := make([]NetworkParams, 0)
 
 	for _, network := range params.Networks {
-		if network == nil {
-			continue
-		}
-
-		networkTypes := make([]*NetworkTypeBinding, len(network.Types))
-
-		for _, networkType := range network.Types {
-			if networkType == nil {
-				continue
-			}
-
-			networkTypes = append(networkTypes, &NetworkTypeBinding{
-				CoreType:  networkType.CoreType,
-				SaverType: networkType.SaverType,
-			})
-		}
-
 		networks = append(networks, NetworkParams{
 			Name:     network.Name,
 			Contract: network.Contract,
 			Type:     network.Type,
-			Types:    networkTypes,
 		})
 
 	}
@@ -180,31 +155,28 @@ func CollectionFromCore(collection tokenmanagertypes.Collection) Collection {
 	)
 }
 
-// ItemIndex contains the data of the x/tokenmanager item index
-type ItemIndex struct {
-	Collection string `json:"collection,omitempty" yaml:"collection,omitempty"`
-	Name       string `json:"name,omitempty" yaml:"name,omitempty"`
-	Symbol     string `json:"symbol,omitempty" yaml:"symbol,omitempty"`
-	Uri        string `json:"uri,omitempty" yaml:"uri,omitempty"`
+// OnChainItemIndex contains the data of the x/tokenmanager on chain item index
+type OnChainItemIndex struct {
+	Chain   string `json:"chain,omitempty" yaml:"chain,omitempty"`
+	Address string `json:"address,omitempty" yaml:"address,omitempty"`
+	TokenID string `json:"token_id,omitempty" yaml:"token_id,omitempty"`
 }
 
-// NewItemIndex allows to build a new ItemIndex instance
-func NewItemIndex(collection, name, symbol, uri string) *ItemIndex {
-	return &ItemIndex{
-		Collection: collection,
-		Name:       name,
-		Symbol:     symbol,
-		Uri:        uri,
+// NewOnChainItemIndex allows to build a new OnChainItemIndex instance
+func NewOnChainItemIndex(chain, address, tokenID string) *OnChainItemIndex {
+	return &OnChainItemIndex{
+		Chain:   chain,
+		Address: address,
+		TokenID: tokenID,
 	}
 }
 
-// ItemIndexFromCore allows to build a new ItemIndex instance from tokenmanager.ItemIndex instance
-func ItemIndexFromCore(index *tokenmanagertypes.ItemIndex) *ItemIndex {
-	return &ItemIndex{
-		Collection: index.Collection,
-		Name:       index.Name,
-		Symbol:     index.Symbol,
-		Uri:        index.Uri,
+// OnChainItemIndexFromCore allows to build a new OnChainItemIndex instance from tokenmanager.OnChainItemIndex instance
+func OnChainItemIndexFromCore(index *tokenmanagertypes.OnChainItemIndex) *OnChainItemIndex {
+	return &OnChainItemIndex{
+		Chain:   index.Chain,
+		Address: index.Address,
+		TokenID: index.TokenID,
 	}
 }
 
@@ -213,14 +185,20 @@ type ItemMetadata struct {
 	ImageUri  string `json:"image_uri,omitempty" yaml:"image_uri,omitempty"`
 	ImageHash string `json:"image_hash,omitempty" yaml:"image_hash,omitempty"`
 	Seed      string `json:"seed,omitempty" yaml:"seed,omitempty"`
+	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
+	Symbol    string `json:"symbol,omitempty" yaml:"symbol,omitempty"`
+	Uri       string `json:"uri,omitempty" yaml:"uri,omitempty"`
 }
 
 // NewItemMetadata allows to build a new ItemMetadata instance
-func NewItemMetadata(imageUri, imageHash, seed string) *ItemMetadata {
+func NewItemMetadata(imageUri, imageHash, seed, name, symbol, uri string) *ItemMetadata {
 	return &ItemMetadata{
 		ImageUri:  imageUri,
 		ImageHash: imageHash,
 		Seed:      seed,
+		Name:      name,
+		Symbol:    symbol,
+		Uri:       uri,
 	}
 }
 
@@ -230,80 +208,54 @@ func ItemMetadataFromCore(meta *tokenmanagertypes.ItemMetadata) *ItemMetadata {
 		ImageUri:  meta.ImageUri,
 		ImageHash: meta.ImageHash,
 		Seed:      meta.Seed,
-	}
-}
-
-// ItemChainParams contains the data of the x/tokenmanager item chain params
-type ItemChainParams struct {
-	Chain   string `json:"chain,omitempty" yaml:"chain,omitempty"`
-	TokenID string `json:"tokenID,omitempty" yaml:"tokenID,omitempty"`
-}
-
-// NewItemChainParams allows to build a new ItemChainParams instance
-func NewItemChainParams(chain, tokenID string) *ItemChainParams {
-	return &ItemChainParams{
-		Chain:   chain,
-		TokenID: tokenID,
-	}
-}
-
-// ItemChainParamsFromCore allows to build a new ItemChainParams instance from tokenmanager.ItemChainParams instance
-func ItemChainParamsFromCore(params *tokenmanagertypes.ItemChainParams) *ItemChainParams {
-	return &ItemChainParams{
-		Chain:   params.Chain,
-		TokenID: params.TokenID,
+		Name:      meta.Name,
+		Symbol:    meta.Symbol,
+		Uri:       meta.Uri,
 	}
 }
 
 // Item contains the data of the x/tokenmanager item instance
 type Item struct {
-	Index       *ItemIndex         `json:"index,omitempty" yaml:"index,omitempty"`
-	IndexKey    []byte             `json:"index_key" yaml:"index_key"`
-	Meta        *ItemMetadata      `json:"meta,omitempty" yaml:"meta,omitempty"`
-	ChainParams []*ItemChainParams `json:"chain_params,omitempty" yaml:"chain_params,omitempty"`
+	Index      string              `json:"index,omitempty" yaml:"index,omitempty"`
+	Collection string              `json:"collection,omitempty" yaml:"collection,omitempty"`
+	Meta       *ItemMetadata       `json:"meta,omitempty" yaml:"meta,omitempty"`
+	OnChain    []*OnChainItemIndex `json:"on_chain,omitempty" yaml:"on_chain,omitempty"`
 }
 
 // NewItem allows to build a new Item instance
-func NewItem(index *ItemIndex, meta *ItemMetadata, chainParams []*ItemChainParams) Item {
-	indexKey := tokenmanagertypes.ItemKey(&tokenmanagertypes.ItemIndex{
-		Collection: index.Collection,
-		Name:       index.Name,
-		Symbol:     index.Symbol,
-		Uri:        index.Uri,
-	})
-
+func NewItem(index, collection string, meta *ItemMetadata, onChain []*OnChainItemIndex) Item {
 	return Item{
-		Index:       index,
-		IndexKey:    indexKey,
-		Meta:        meta,
-		ChainParams: chainParams,
+		Index:      index,
+		Collection: collection,
+		Meta:       meta,
+		OnChain:    onChain,
 	}
 }
 
 // ItemFromCore allows to build a new Item instance from tokenmanager.Item instance
 func ItemFromCore(item tokenmanagertypes.Item) Item {
-	params := make([]*ItemChainParams, 0)
+	indexes := make([]*OnChainItemIndex, 0)
 
-	for _, param := range item.ChainParams {
-		if param == nil {
+	for _, onChain := range item.OnChain {
+		if onChain == nil {
 			continue
 		}
 
-		params = append(params, NewItemChainParams(param.Chain, param.TokenID))
+		indexes = append(indexes, OnChainItemIndexFromCore(onChain))
 	}
 
+	meta := ItemMetadataFromCore(item.Meta)
+
 	return NewItem(
-		NewItemIndex(
-			item.Index.Collection,
-			item.Index.Name,
-			item.Index.Symbol,
-			item.Index.Uri,
-		),
-		NewItemMetadata(
-			item.Meta.ImageUri,
-			item.Meta.ImageHash,
-			item.Meta.Seed,
-		),
-		params,
+		item.Index,
+		item.Collection,
+		meta,
+		indexes,
 	)
+}
+
+// OnChainItem contains the data of the x/tokenmanager on chain item instance
+type OnChainItem struct {
+	Index *OnChainItemIndex `json:"index,omitempty" yaml:"index,omitempty"`
+	Item  string            `json:"item,omitempty" yaml:"item,omitempty"`
 }

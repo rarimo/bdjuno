@@ -33,19 +33,17 @@ CREATE TABLE operation
 
 CREATE TABLE transfer
 (
-    operation_index TEXT              NOT NULL PRIMARY KEY REFERENCES operation (index),
-    origin          TEXT              NOT NULL,
-    tx              TEXT              NOT NULL,
-    event_id        TEXT              NOT NULL,
-    receiver        TEXT              NOT NULL,
-    amount          TEXT              NOT NULL,
+    operation_index TEXT                NOT NULL PRIMARY KEY REFERENCES operation (index),
+    origin          TEXT                NOT NULL,
+    tx              TEXT                NOT NULL,
+    event_id        TEXT                NOT NULL,
+    receiver        TEXT                NOT NULL,
+    amount          TEXT                NOT NULL,
     bundle_data     TEXT,
     bundle_salt     TEXT,
-    chain_from      ITEM_CHAIN_PARAMS NOT NULL,
-    chain_to        ITEM_CHAIN_PARAMS NOT NULL,
-    item_index      ITEM_INDEX        NOT NULL,
-    item_index_key  BYTEA             NOT NULL REFERENCES item (index_key),
-    item_meta       ITEM_METADATA -- Optional (if item currently does not exists
+    "from"          ON_CHAIN_ITEM_INDEX NOT NULL,
+    "to"            ON_CHAIN_ITEM_INDEX NOT NULL,
+    item_meta       ITEM_METADATA -- Optional (if item currently does not exists)
 );
 
 CREATE TABLE change_parties

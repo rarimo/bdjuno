@@ -1,15 +1,8 @@
 -- +migrate Up
-CREATE TYPE NETWORK_TYPE_BINDING as
-(
-    core_type  INT,
-    saver_type INT
-);
-
 CREATE TYPE NETWORK_PARAMS as
 (
     name    TEXT,
     contact TEXT,
-    types   NETWORK_TYPE_BINDING[],
     type    INT
 );
 
@@ -61,40 +54,42 @@ CREATE TABLE collection_data
     decimals   INT                   NOT NULL
 );
 
-CREATE TYPE ITEM_CHAIN_PARAMS as
+CREATE TYPE ON_CHAIN_ITEM_INDEX as
 (
     chain    TEXT,
+    address  TEXT,
     token_id TEXT
-);
-
-CREATE TYPE ITEM_INDEX as
-(
-    collection TEXT,
-    name       TEXT,
-    symbol     TEXT,
-    uri        TEXT
 );
 
 CREATE TYPE ITEM_METADATA as
 (
     image_uri  TEXT,
     image_hash TEXT,
-    seed       TEXT
+    seed       TEXT,
+    name       TEXT,
+    symbol     TEXT,
+    uri        TEXT
 );
 
 CREATE TABLE item
 (
-    index_key    BYTEA               NOT NULL PRIMARY KEY,
-    index        ITEM_INDEX          NOT NULL,
-    meta         ITEM_METADATA       NOT NULL DEFAULT '{}'::ITEM_METADATA,
-    chain_params ITEM_CHAIN_PARAMS[] NOT NULL DEFAULT '[]'::ITEM_CHAIN_PARAMS[]
+    index      TEXT                  NOT NULL PRIMARY KEY,
+    collection TEXT                  NOT NULL REFERENCES collection (index),
+    meta       ITEM_METADATA         NOT NULL DEFAULT '{}'::ITEM_METADATA,
+    on_chain   ON_CHAIN_ITEM_INDEX[] NOT NULL DEFAULT '[]'::ON_CHAIN_ITEM_INDEX[]
+);
+
+CREATE TABLE on_chain_item
+(
+    index     ON_CHAIN_ITEM_INDEX NOT NULL,
+    item      TEXT                NOT NULL REFERENCES item (index)
 );
 
 -- +migrate Down
+DROP TABLE on_chain_item;
 DROP TABLE item;
 DROP TYPE ITEM_METADATA;
-DROP TYPE ITEM_INDEX;
-DROP TYPE ITEM_CHAIN_PARAMS;
+DROP TYPE ON_CHAIN_ITEM_INDEX;
 DROP TABLE collection_data;
 DROP TABLE collection;
 DROP TYPE COLLECTION_METADATA;
@@ -102,4 +97,3 @@ DROP TYPE COLLECTION_DATA_INDEX;
 DROP TABLE tokenmanager_params;
 DROP TYPE TOKENMANAGER_PARAMS;
 DROP TYPE NETWORK_PARAMS;
-DROP TYPE NETWORK_TYPE_BINDING;

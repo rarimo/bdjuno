@@ -134,7 +134,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 			item.Index,
 			item.IndexKey,
 			item.Meta,
-			pq.Array(item.ChainParams),
+			pq.Array(item.OnChain),
 		)
 	}
 
@@ -154,7 +154,7 @@ func (db *Db) UpdateItem(item types.Item) error {
 
 	_, err := db.Sql.Exec(query,
 		item.Meta,
-		pq.Array(item.ChainParams),
+		pq.Array(item.OnChain),
 		item.IndexKey,
 	)
 	if err != nil {

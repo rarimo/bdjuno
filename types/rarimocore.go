@@ -2,7 +2,6 @@ package types
 
 import (
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 // Party contains the data of the x/rarimocore module signer instance
@@ -87,19 +86,17 @@ func OperationFromCore(operation rarimocoretypes.Operation) Operation {
 
 // Transfer represents a single transfer instance
 type Transfer struct {
-	OperationIndex string           `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
-	Origin         string           `json:"origin,omitempty" yaml:"origin,omitempty"`
-	Tx             string           `json:"tx,omitempty" yaml:"tx,omitempty"`
-	EventID        string           `json:"event_id,omitempty" yaml:"event_id,omitempty"`
-	Receiver       string           `json:"receiver,omitempty" yaml:"receiver,omitempty"`
-	Amount         string           `json:"amount,omitempty" yaml:"amount,omitempty"`
-	BundleData     string           `json:"bundle_data,omitempty" yaml:"bundle_data,omitempty"`
-	BundleSalt     string           `json:"bundle_salt,omitempty" yaml:"bundle_salt,omitempty"`
-	ItemIndexKey   []byte           `json:"item_index_key,omitempty" yaml:"item_index_key,omitempty"`
-	FromChain      *ItemChainParams `json:"from_chain,omitempty" yaml:"from_chain,omitempty"`
-	ToChain        *ItemChainParams `json:"to_chain,omitempty" yaml:"to_chain,omitempty"`
-	ItemIndex      *ItemIndex       `json:"item_index,omitempty" yaml:"item_index,omitempty"`
-	ItemMeta       *ItemMetadata    `json:"item_meta,omitempty" yaml:"item_meta,omitempty"`
+	OperationIndex string            `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Origin         string            `json:"origin,omitempty" yaml:"origin,omitempty"`
+	Tx             string            `json:"tx,omitempty" yaml:"tx,omitempty"`
+	EventID        string            `json:"event_id,omitempty" yaml:"event_id,omitempty"`
+	Receiver       string            `json:"receiver,omitempty" yaml:"receiver,omitempty"`
+	Amount         string            `json:"amount,omitempty" yaml:"amount,omitempty"`
+	BundleData     string            `json:"bundle_data,omitempty" yaml:"bundle_data,omitempty"`
+	BundleSalt     string            `json:"bundle_salt,omitempty" yaml:"bundle_salt,omitempty"`
+	From           *OnChainItemIndex `json:"from,omitempty" yaml:"from,omitempty"`
+	To             *OnChainItemIndex `json:"to,omitempty" yaml:"to,omitempty"`
+	ItemMeta       *ItemMetadata     `json:"item_meta,omitempty" yaml:"item_meta,omitempty"`
 }
 
 // NewTransfer allows to build a new Transfer instance
@@ -113,11 +110,9 @@ func NewTransfer(operationIndex string, t rarimocoretypes.Transfer) Transfer {
 		Amount:         t.Amount,
 		BundleData:     t.BundleData,
 		BundleSalt:     t.BundleSalt,
-		ItemIndexKey:   tokenmanagertypes.ItemKey(t.Item),
-		ItemIndex:      ItemIndexFromCore(t.Item),
 		ItemMeta:       ItemMetadataFromCore(t.Meta),
-		FromChain:      ItemChainParamsFromCore(t.From),
-		ToChain:        ItemChainParamsFromCore(t.To),
+		From:           OnChainItemIndexFromCore(t.From),
+		To:             OnChainItemIndexFromCore(t.To),
 	}
 }
 
