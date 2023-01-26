@@ -173,18 +173,18 @@ func (db *Db) SaveTransfers(transfers []types.Transfer) (err error) {
 
 	transfersQuery := `
 INSERT INTO transfer (
-	operation_index, origin, tx, event_id, from_chain, to_chain, receiver, amount, bundle_data, 
-    bundle_salt, item_index, item_index_key, item_meta
+	operation_index, origin, tx, event_id, "from", "to", receiver, amount, bundle_data, 
+    bundle_salt, item_meta
 ) VALUES`
 
 	var transfersParams []interface{}
 
 	for i, transfer := range transfers {
 		// Prepare the transfer query
-		vi := i * 13
+		vi := i * 11
 		transfersQuery += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13,
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11,
 		)
 
 		transfersParams = append(transfersParams,
@@ -198,8 +198,6 @@ INSERT INTO transfer (
 			transfer.Amount,
 			transfer.BundleData,
 			transfer.BundleSalt,
-			transfer.ItemIndex,
-			transfer.ItemIndexKey,
 			transfer.ItemMeta,
 		)
 	}

@@ -120,7 +120,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 		return nil
 	}
 
-	itemQuery := `INSERT INTO item (index, item_key, meta, chain_params) VALUES `
+	itemQuery := `INSERT INTO item (index, collection, meta, on_chain) VALUES `
 
 	var itemParams []interface{}
 
@@ -132,7 +132,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 		itemParams = append(
 			itemParams,
 			item.Index,
-			item.IndexKey,
+			item.Collection,
 			item.Meta,
 			pq.Array(item.OnChain),
 		)
@@ -150,12 +150,12 @@ func (db *Db) SaveItems(items []types.Item) error {
 }
 
 func (db *Db) UpdateItem(item types.Item) error {
-	query := `UPDATE item SET meta = $1, chain_params = $2 WHERE index_key = $3`
+	query := `UPDATE item SET meta = $1, on_chain = $2 WHERE index = $3`
 
 	_, err := db.Sql.Exec(query,
 		item.Meta,
 		pq.Array(item.OnChain),
-		item.IndexKey,
+		item.Index,
 	)
 	if err != nil {
 		return fmt.Errorf("error while updating item: %s", err)
@@ -164,9 +164,9 @@ func (db *Db) UpdateItem(item types.Item) error {
 	return nil
 }
 
-func (db *Db) RemoveItem(indexKey []byte) error {
-	stmt := `DELETE FROM item WHERE index_key = $1`
-	_, err := db.Sql.Exec(stmt, indexKey)
+func (db *Db) RemoveItem(index string) error {
+	stmt := `DELETE FROM item WHERE index = $1`
+	_, err := db.Sql.Exec(stmt, index)
 	if err != nil {
 		return fmt.Errorf("error while deleting item: %s", err)
 	}
