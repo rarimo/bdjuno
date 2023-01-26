@@ -47,6 +47,14 @@ func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
 	return m.db.SaveConfirmations(confirmations)
 }
 
+func (m *Module) saveVotes(slice []rarimocoretypes.Vote) error {
+	votes := make([]types.RarimoCoreVote, len(slice))
+	for index, vote := range slice {
+		votes[index] = types.NewRarimoCoreVote(vote.Index.Operation, vote.Index.Validator, vote.Vote)
+	}
+	return m.db.SaveRarimoCoreVotes(votes)
+}
+
 func (m *Module) updateOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 

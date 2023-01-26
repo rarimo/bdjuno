@@ -85,7 +85,14 @@ CREATE TABLE on_chain_item
     item      TEXT                NOT NULL REFERENCES item (index)
 );
 
+CREATE TABLE seed
+(
+    seed TEXT NOT NULL PRIMARY KEY,
+    item TEXT NOT NULL REFERENCES item (index)
+);
+
 -- +migrate Down
+DROP TABLE seed;
 DROP TABLE on_chain_item;
 DROP TABLE item;
 DROP TYPE ITEM_METADATA;

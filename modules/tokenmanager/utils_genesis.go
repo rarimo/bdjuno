@@ -38,3 +38,23 @@ func (m *Module) saveItems(items []tokenmanagertypes.Item) (err error) {
 
 	return m.db.SaveItems(list)
 }
+
+func (m *Module) saveOnChainItems(items []tokenmanagertypes.OnChainItem) (err error) {
+	list := make([]types.OnChainItem, len(items))
+
+	for i, item := range items {
+		list[i] = types.OnChainItemFromCore(item)
+	}
+
+	return m.db.SaveOnChainItems(list)
+}
+
+func (m *Module) saveSeeds(seeds []tokenmanagertypes.Seed) (err error) {
+	list := make([]types.Seed, len(seeds))
+
+	for i, seed := range seeds {
+		list[i] = types.SeedFromCore(seed)
+	}
+
+	return m.db.SaveSeeds(list)
+}

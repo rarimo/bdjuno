@@ -259,3 +259,25 @@ type OnChainItem struct {
 	Index *OnChainItemIndex `json:"index,omitempty" yaml:"index,omitempty"`
 	Item  string            `json:"item,omitempty" yaml:"item,omitempty"`
 }
+
+// OnChainItemFromCore allows to build a new OnChainItem instance from tokenmanager.OnChainItem instance
+func OnChainItemFromCore(item tokenmanagertypes.OnChainItem) OnChainItem {
+	return OnChainItem{
+		Index: OnChainItemIndexFromCore(item.Index),
+		Item:  item.Item,
+	}
+}
+
+// Seed contains the data of the x/tokenmanager seed instance
+type Seed struct {
+	Seed string `json:"seed,omitempty" yaml:"seed,omitempty"`
+	Item string `json:"item,omitempty" yaml:"item,omitempty"`
+}
+
+// SeedFromCore allows to build a new Seed instance from tokenmanager.Seed instance
+func SeedFromCore(seed tokenmanagertypes.Seed) Seed {
+	return Seed{
+		Seed: seed.Seed,
+		Item: seed.Item,
+	}
+}

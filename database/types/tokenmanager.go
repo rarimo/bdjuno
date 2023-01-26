@@ -79,3 +79,9 @@ type OnChainItemRow struct {
 	Index *OnChainItemIndex `db:"index"`
 	Item  string            `db:"item"`
 }
+
+// Seed represents a single row of the "seed" table
+type Seed struct {
+	Seed string `db:"seed"`
+	Item string `db:"item"`
+}

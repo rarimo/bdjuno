@@ -21,13 +21,9 @@ func (m *Module) UpdateItems(items []*tokenmanagertypes.Item) (err error) {
 	return nil
 }
 
-func (m *Module) RemoveItems(indexes []*tokenmanagertypes.ItemIndex) (err error) {
+func (m *Module) RemoveItems(indexes []string) (err error) {
 	for _, index := range indexes {
-		if index == nil {
-			continue
-		}
-
-		err = m.db.RemoveItem(tokenmanagertypes.ItemKey(index))
+		err = m.db.RemoveItem(index)
 		if err != nil {
 			return fmt.Errorf("failed to remove item in tokenmanager: %s", err)
 		}

@@ -1647,6 +1647,8 @@ gitlab.com/rarimo/rarimo-core v0.0.0-20230125143813-93e616392593 h1:gN2Rurd7GAKc
 gitlab.com/rarimo/rarimo-core v0.0.0-20230125143813-93e616392593/go.mod h1:0XWNH55wHu8adSu5f4go26ZxDp7uUblS6dZNlDrQ0zM=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230125193548-afd31bfe9ac1 h1:H89ROhWkIGHpvWoWY+A1Er8Ed8LXgZLV6wU7Ja2JyEw=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230125193548-afd31bfe9ac1/go.mod h1:xjlYTjVFX5CZauaRWTEmLYvqpHtOVaNe6KHgf8hbi0E=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230126111921-09287857ec72 h1:8OJzxy5yaqu4IHgvJKPB8THOsbimIpzGdi5HVaMuCzI=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230126111921-09287857ec72/go.mod h1:0XWNH55wHu8adSu5f4go26ZxDp7uUblS6dZNlDrQ0zM=
 gitlab.com/rarimo/savers/saver-grpc-lib v0.0.0-20221212132611-648c3cf06bee h1:rIhT0pxYlHLGMCZwgwlzdYF7PNHTqfvujfIPeLRLh3k=
 gitlab.com/rarimo/savers/saver-grpc-lib v0.0.0-20221212132611-648c3cf06bee/go.mod h1:flcToo1xFUuuVei6wgB1tDsk/2j7lAF3APP/UL6FadI=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=

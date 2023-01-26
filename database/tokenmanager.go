@@ -152,11 +152,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 func (db *Db) UpdateItem(item types.Item) error {
 	query := `UPDATE item SET meta = $1, on_chain = $2 WHERE index = $3`
 
-	_, err := db.Sql.Exec(query,
-		item.Meta,
-		pq.Array(item.OnChain),
-		item.Index,
-	)
+	_, err := db.Sql.Exec(query, item.Meta, pq.Array(item.OnChain), item.Index)
 	if err != nil {
 		return fmt.Errorf("error while updating item: %s", err)
 	}
@@ -189,6 +185,62 @@ func (db *Db) RemoveCollection(indexKey []byte) error {
 	_, err := db.Sql.Exec(stmt, indexKey)
 	if err != nil {
 		return fmt.Errorf("error while deleting collection: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveOnChainItems(items []types.OnChainItem) error {
+	if len(items) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO on_chain_item (index, item) VALUES `
+
+	var params []interface{}
+
+	for i, item := range items {
+		// Prepare the on chain item data query
+		vi := i * 2
+		query += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
+
+		params = append(params, item.Index, item.Item)
+	}
+
+	// Store the on chain items
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing on chain items: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveSeeds(seeds []types.Seed) error {
+	if len(seeds) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO seed (seed, item) VALUES `
+
+	var params []interface{}
+
+	for i, seed := range seeds {
+		// Prepare the seed data query
+		vi := i * 2
+		query += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
+
+		params = append(params, seed.Seed, seed.Item)
+	}
+
+	// Store the on chain seeds
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing on chain seeds: %s", err)
 	}
 
 	return nil

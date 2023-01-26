@@ -38,6 +38,18 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 			return fmt.Errorf("error while storing genesis tokenmanager items: %s", err)
 		}
 
+		// Save the on chain items
+		err = m.saveOnChainItems(genState.OnChainItems)
+		if err != nil {
+			return fmt.Errorf("error while storing genesis tokenmanager on chain items: %s", err)
+		}
+
+		// Save the seeds
+		err = m.saveSeeds(genState.Seeds)
+		if err != nil {
+			return fmt.Errorf("error while storing genesis tokenmanager seeds: %s", err)
+		}
+
 		// Save the params
 		err = m.saveParams(genState.Params, doc.InitialHeight)
 		if err != nil {
