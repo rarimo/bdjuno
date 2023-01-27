@@ -46,7 +46,7 @@ func (m *Module) updateItem(newItem *tokenmanagertypes.Item) error {
 			}
 		}
 
-		err = m.db.UpdateItem(types.ItemFromCore(*newItem))
+		err = m.db.UpsertItem(types.ItemFromCore(*newItem))
 		if err != nil {
 			return fmt.Errorf("failed to update item in tokenmanager: %s", err)
 		}

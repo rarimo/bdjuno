@@ -302,27 +302,6 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 	return nil
 }
 
-//
-//func (db *Db) GetRarimoCoreVotes(opIndex string) ([]types.RarimoCoreVote, error) {
-//	var rows []dbtypes.RarimoCoreVoteRow
-//	err := db.Sqlx.Select(&rows, `SELECT * FROM vote WHERE operation = $1`, opIndex)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	if len(rows) == 0 {
-//		return nil, nil
-//	}
-//
-//	result := make([]types.RarimoCoreVote, len(rows))
-//
-//	for i, row := range rows {
-//		result[i] = types.NewRarimoCoreVote(row.Operation, row.Validator, row.Vote)
-//	}
-//
-//	return result, nil
-//}
-
 func (db *Db) RemoveRarimoCoreVotes(opIndex string) error {
 	stmt := `DELETE FROM vote WHERE operation = $1`
 	_, err := db.Sql.Exec(stmt, opIndex)

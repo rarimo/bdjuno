@@ -35,20 +35,84 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 }
 
 func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error {
-	op, err := m.source.Operation(tx.Height, msg.Operation)
+	rawOp, err := m.source.Operation(tx.Height, msg.Operation)
 	if err != nil {
 		return fmt.Errorf("failed to get change operation: %s", err)
 	}
 
-	return m.db.Transaction(func() error {
-		err = m.db.UpdateOperation(types.OperationFromCore(op))
-		if err != nil {
-			return fmt.Errorf("failed to update operation: %s", err)
-		}
+	op := types.OperationFromCore(rawOp)
 
+	return m.db.Transaction(func() error {
 		err = m.db.SaveRarimoCoreVotes(
 			[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
 		)
+
+		if op.Status != rarimocoretypes.OpStatus_INITIALIZED {
+			return nil
+		}
+
+		if op.OperationType == rarimocoretypes.OpType_TRANSFER && op.Status == rarimocoretypes.OpStatus_APPROVED {
+			err = m.handleApproveTransfer(tx, rawOp)
+		}
+
+		err = m.db.UpdateOperation(op)
+		if err != nil {
+			return fmt.Errorf("failed to update operation: %s", err)
+		}
+		return nil
+	})
+}
+
+func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation) error {
+	transfer, err := getTransfer(op)
+	if err != nil {
+		return fmt.Errorf("failed to get transfer: %s", err)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to get collection data: %s", err)
+	}
+
+	from, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.From)
+	if err != nil {
+		return fmt.Errorf("failed to get on chain item: %s", err)
+	}
+
+	item, err := m.tokenManagerSource.Item(tx.Height, transfer.Origin)
+	if err != nil {
+		return fmt.Errorf("failed to get item: %s", err)
+	}
+
+	return m.db.Transaction(func() error {
+		err = m.db.UpsertItem(types.ItemFromCore(item))
+		if err != nil {
+			return fmt.Errorf("failed to save item: %s", err)
+		}
+
+		if item.Meta.Seed != "" {
+			seed, err := m.tokenManagerSource.Seed(tx.Height, item.Meta.Seed)
+			if err != nil {
+				return fmt.Errorf("failed to get seed: %s", err)
+			}
+
+			err = m.db.UpsertSeed(types.SeedFromCore(seed))
+			if err != nil {
+				return fmt.Errorf("failed to save seed: %s", err)
+			}
+		}
+
+		to, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.To)
+		if err != nil {
+			return fmt.Errorf("failed to get on chain item: %s", err)
+		}
+
+		err = m.db.SaveOnChainItems([]types.OnChainItem{
+			types.OnChainItemFromCore(from),
+			types.OnChainItemFromCore(to),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to save on chain item: %s", err)
+		}
 
 		return nil
 	})

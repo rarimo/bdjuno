@@ -173,3 +173,35 @@ func (s Source) CollectionDataAll(height int64) ([]tokenmanagertypes.CollectionD
 
 	return collectionDatas, nil
 }
+
+// OnChainItem implements tokenmanagersource.Source
+func (s Source) OnChainItem(height int64, index types.OnChainItemIndex) (tokenmanagertypes.OnChainItem, error) {
+	res, err := s.tokenmanagerClient.OnChainItem(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&tokenmanagertypes.QueryGetOnChainItemRequest{
+			Chain:   index.Chain,
+			Address: index.Address,
+			TokenID: index.TokenID,
+		},
+	)
+	if err != nil {
+		return tokenmanagertypes.OnChainItem{}, err
+	}
+
+	return res.Item, err
+}
+
+// Seed implements tokenmanagersource.Source
+func (s Source) Seed(height int64, seed string) (tokenmanagertypes.Seed, error) {
+	res, err := s.tokenmanagerClient.Seed(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&tokenmanagertypes.QueryGetSeedRequest{
+			Seed: seed,
+		},
+	)
+	if err != nil {
+		return tokenmanagertypes.Seed{}, err
+	}
+
+	return res.Seed, err
+}

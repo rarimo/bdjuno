@@ -54,7 +54,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, parseCtx.EncodingConfig.Marshaler, db)
+			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
 			tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
 

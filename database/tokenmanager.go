@@ -127,6 +127,43 @@ func (db *Db) UpdateCollectionData(data types.CollectionData) error {
 	return nil
 }
 
+func (db *Db) GetCollectionData(index types.CollectionDataIndex) (*types.Item, error) {
+	stmt := `SELECT * FROM collection_data WHERE index = $1`
+
+	var items []dbtypes.ItemRow
+	if err := db.Sqlx.Select(&items, stmt, index); err != nil {
+		return nil, err
+	}
+
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	row := items[0]
+	meta := row.Meta
+
+	onChain := make([]*types.OnChainItemIndex, len(row.OnChain))
+	for i, onChainItem := range row.OnChain {
+		onChain[i] = types.NewOnChainItemIndex(onChainItem.Chain, onChainItem.Address, onChainItem.TokenID)
+	}
+
+	item := types.NewItem(
+		row.Index,
+		row.Collection,
+		types.NewItemMetadata(
+			meta.ImageUri,
+			meta.ImageHash,
+			meta.Seed,
+			meta.Name,
+			meta.Symbol,
+			meta.Uri,
+		),
+		onChain,
+	)
+
+	return &item, nil
+}
+
 func (db *Db) SaveItems(items []types.Item) error {
 	if len(items) == 0 {
 		return nil
@@ -161,12 +198,24 @@ func (db *Db) SaveItems(items []types.Item) error {
 	return nil
 }
 
-func (db *Db) UpdateItem(item types.Item) error {
-	query := `UPDATE item SET meta = $1, on_chain = $2 WHERE index = $3`
+func (db *Db) UpsertItem(item types.Item) error {
+	stmt := `
+INSERT INTO item (index, collection, meta, on_chain)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (index) DO UPDATE
+	SET collection = excluded.collection, meta = excluded.meta, on_chain = excluded.on_chain
+`
 
-	_, err := db.Sql.Exec(query, item.Meta, pq.Array(item.OnChain), item.Index)
+	_, err := db.Sql.Exec(
+		stmt,
+		item.Index,
+		item.Collection,
+		item.Meta,
+		pq.Array(item.OnChain),
+	)
+
 	if err != nil {
-		return fmt.Errorf("error while updating item: %s", err)
+		return fmt.Errorf("error while storing item: %s", err)
 	}
 
 	return nil
@@ -310,6 +359,18 @@ func (db *Db) SaveSeeds(seeds []types.Seed) error {
 	_, err := db.Sql.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing on chain seeds: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) UpsertSeed(seed types.Seed) error {
+	stmt := `INSERT INTO seed (seed, item) VALUES ($1, $2) ON CONFLICT (item) DO UPDATE SET seed = excluded.seed`
+
+	_, err := db.Sql.Exec(stmt, seed.Seed, seed.Item)
+
+	if err != nil {
+		return fmt.Errorf("error while storing item: %s", err)
 	}
 
 	return nil
