@@ -28,14 +28,12 @@ select_permissions:
         - origin
         - tx
         - event_id
-        - from_chain
-        - to_chain
+        - from
+        - to
         - receiver
         - amount
         - bundle_data
         - bundle_salt
-        - item_index
-        - item_index_key
         - item_meta
       filter: {}
     role: anonymous
