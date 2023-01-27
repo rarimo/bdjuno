@@ -274,6 +274,14 @@ type Seed struct {
 	Item string `json:"item,omitempty" yaml:"item,omitempty"`
 }
 
+// NewSeed allows to build a new Seed instance
+func NewSeed(seed, item string) Seed {
+	return Seed{
+		Seed: seed,
+		Item: item,
+	}
+}
+
 // SeedFromCore allows to build a new Seed instance from tokenmanager.Seed instance
 func SeedFromCore(seed tokenmanagertypes.Seed) Seed {
 	return Seed{

@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/lib/pq"
+	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 	"gitlab.com/rarimo/bdjuno/types"
 )
 
@@ -57,6 +58,17 @@ func (db *Db) SaveCollections(collections []types.Collection) error {
 	_, err := db.Sql.Exec(collectionsQuery, collectionsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing collections: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) UpdateCollection(collection types.Collection) error {
+	query := `UPDATE collection SET meta = $1, data = $2 WHERE index = $3`
+
+	_, err := db.Sql.Exec(query, collection.Meta, pq.Array(collection.Data), collection.Index)
+	if err != nil {
+		return fmt.Errorf("error while updating collection: %s", err)
 	}
 
 	return nil
@@ -170,9 +182,56 @@ func (db *Db) RemoveItem(index string) error {
 	return nil
 }
 
+func (db *Db) GetItem(index string) (*types.Item, error) {
+	stmt := `SELECT * FROM item WHERE index = $1`
+
+	var items []dbtypes.ItemRow
+	if err := db.Sqlx.Select(&items, stmt, index); err != nil {
+		return nil, err
+	}
+
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	row := items[0]
+	meta := row.Meta
+
+	onChain := make([]*types.OnChainItemIndex, len(row.OnChain))
+	for i, onChainItem := range row.OnChain {
+		onChain[i] = types.NewOnChainItemIndex(onChainItem.Chain, onChainItem.Address, onChainItem.TokenID)
+	}
+
+	item := types.NewItem(
+		row.Index,
+		row.Collection,
+		types.NewItemMetadata(
+			meta.ImageUri,
+			meta.ImageHash,
+			meta.Seed,
+			meta.Name,
+			meta.Symbol,
+			meta.Uri,
+		),
+		onChain,
+	)
+
+	return &item, nil
+}
+
 func (db *Db) RemoveCollectionData(indexKey []byte) error {
 	stmt := `DELETE FROM collection_data WHERE index_key = $1`
 	_, err := db.Sql.Exec(stmt, indexKey)
+	if err != nil {
+		return fmt.Errorf("error while deleting collection data: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) RemoveCollectionDataByCollection(collection string) error {
+	stmt := `DELETE FROM collection_data WHERE collection = $1`
+	_, err := db.Sql.Exec(stmt, collection)
 	if err != nil {
 		return fmt.Errorf("error while deleting collection data: %s", err)
 	}
@@ -218,6 +277,16 @@ func (db *Db) SaveOnChainItems(items []types.OnChainItem) error {
 	return nil
 }
 
+func (db *Db) RemoveOnChainItems(itemIndex string) error {
+	stmt := `DELETE FROM on_chain_item WHERE item = $1`
+	_, err := db.Sql.Exec(stmt, itemIndex)
+	if err != nil {
+		return fmt.Errorf("error while deleting on chain items: %s", err)
+	}
+
+	return nil
+}
+
 func (db *Db) SaveSeeds(seeds []types.Seed) error {
 	if len(seeds) == 0 {
 		return nil
@@ -241,6 +310,16 @@ func (db *Db) SaveSeeds(seeds []types.Seed) error {
 	_, err := db.Sql.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing on chain seeds: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) RemoveSeed(seed string) error {
+	stmt := `DELETE FROM seed WHERE seed = $1`
+	_, err := db.Sql.Exec(stmt, seed)
+	if err != nil {
+		return fmt.Errorf("error while deleting seed: %s", err)
 	}
 
 	return nil

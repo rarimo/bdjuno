@@ -21,7 +21,7 @@ func (m *Module) handleTokenManagerProposal(height int64, rawProposal types.Prop
 	case *tokenmanagertypes.SetNetworkProposal:
 		return m.tokenmanagerModule.UpdateParams(height)
 	case *tokenmanagertypes.UpdateTokenItemProposal:
-		return m.tokenmanagerModule.UpdateItems(height, proposal.Item)
+		return m.tokenmanagerModule.UpdateItems(proposal.Item)
 	case *tokenmanagertypes.RemoveTokenItemProposal:
 		return m.tokenmanagerModule.RemoveItems(proposal.Index)
 	case *tokenmanagertypes.CreateCollectionProposal:
@@ -29,9 +29,9 @@ func (m *Module) handleTokenManagerProposal(height int64, rawProposal types.Prop
 	case *tokenmanagertypes.UpdateCollectionDataProposal:
 		return m.tokenmanagerModule.UpdateCollectionDatas(proposal.Data)
 	case *tokenmanagertypes.AddCollectionDataProposal:
-		return m.tokenmanagerModule.CreateCollectionDatas(proposal.Data)
+		return m.tokenmanagerModule.CreateCollectionDatas(height, proposal.Data)
 	case *tokenmanagertypes.RemoveCollectionDataProposal:
-		return m.tokenmanagerModule.RemoveCollectionDatas(proposal.Index)
+		return m.tokenmanagerModule.RemoveCollectionDatas(height, proposal.Index)
 	case *tokenmanagertypes.RemoveCollectionProposal:
 		return m.tokenmanagerModule.RemoveCollection(proposal.Index)
 	default:

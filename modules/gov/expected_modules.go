@@ -31,12 +31,12 @@ type RarimoCoreModule interface {
 
 type TokenManagerModule interface {
 	UpdateParams(height int64) error
-	UpdateItems(height int64, items []*tokenmanagertypes.Item) error
+	UpdateItems(items []*tokenmanagertypes.Item) error
 	RemoveItems(indexes []string) error
 	CreateCollection(index string, meta *tokenmanagertypes.CollectionMetadata, data []*tokenmanagertypes.CollectionData) error
 	UpdateCollectionDatas(datas []*tokenmanagertypes.CollectionData) error
-	CreateCollectionDatas(datas []*tokenmanagertypes.CollectionData) error
-	RemoveCollectionDatas(indexes []*tokenmanagertypes.CollectionDataIndex) error
+	CreateCollectionDatas(height int64, datas []*tokenmanagertypes.CollectionData) error
+	RemoveCollectionDatas(height int64, indexes []*tokenmanagertypes.CollectionDataIndex) error
 	RemoveCollection(index string) error
 }
 
