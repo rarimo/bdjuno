@@ -6,7 +6,7 @@ import (
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
-func (m *Module) UpdateItems(items []*tokenmanagertypes.Item) (err error) {
+func (m *Module) UpdateItems(height int64, items []*tokenmanagertypes.Item) (err error) {
 	for _, item := range items {
 		if item == nil {
 			continue

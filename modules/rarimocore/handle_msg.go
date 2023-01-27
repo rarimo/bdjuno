@@ -25,8 +25,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
 	case *rarimocoretypes.MsgCreateConfirmation:
 		return m.handleMsgCreateConfirmation(tx, cosmosMsg)
-	case *rarimocoretypes.MsgResignOperation:
-		return m.handleMsgResignOperation(tx, cosmosMsg)
 	case *rarimocoretypes.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
 	case *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
@@ -49,25 +47,11 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error 
 		}
 
 		err = m.db.SaveRarimoCoreVotes(
-			[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, msg.Vote)},
+			[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
 		)
 
 		return nil
 	})
-}
-
-func (m *Module) handleMsgResignOperation(tx *juno.Tx, msg *rarimocoretypes.MsgResignOperation) error {
-	op, err := m.source.Operation(tx.Height, msg.ChangeOpIndex)
-	if err != nil {
-		return fmt.Errorf("failed to get change operation: %s", err)
-	}
-
-	err = m.db.UpdateOperation(types.OperationFromCore(op))
-	if err != nil {
-		return fmt.Errorf("failed to update operation: %s", err)
-	}
-
-	return nil
 }
 
 func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
@@ -77,9 +61,23 @@ func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.Msg
 		big.NewInt(tx.Height).Bytes(),
 	))
 
-	err := m.handleNewOperation(tx.Height, index)
+	op, err := m.source.Operation(tx.Height, index)
 	if err != nil {
-		return fmt.Errorf("failed to handle new create transfer operation: %s", err)
+		return fmt.Errorf("failed to get transfer operation: %s", err)
+	}
+
+	err = m.saveOperations([]rarimocoretypes.Operation{op})
+	if err != nil {
+		return fmt.Errorf("failed to save transfer operation: %s", err)
+	}
+
+	if op.Status == rarimocoretypes.OpStatus_INITIALIZED || op.Status == rarimocoretypes.OpStatus_APPROVED {
+		return nil
+	}
+
+	err = m.db.RemoveRarimoCoreVotes(op.Index)
+	if err != nil {
+		return fmt.Errorf("failed to remove votes: %s", err)
 	}
 
 	return nil
@@ -94,33 +92,17 @@ func (m *Module) handleMsgCreateChangePartiesOp(tx *juno.Tx, msg *rarimocoretype
 
 	content, _ := pkg.GetChangePartiesContent(changeOp)
 
-	err := m.handleNewOperation(tx.Height, hexutil.Encode(content.CalculateHash()))
+	op, err := m.source.Operation(tx.Height, hexutil.Encode(content.CalculateHash()))
 	if err != nil {
-		return fmt.Errorf("failed to handle new create change parties operation: %s", err)
+		return fmt.Errorf("failed to get change parties operation: %s", err)
+	}
+
+	err = m.saveOperations([]rarimocoretypes.Operation{op})
+	if err != nil {
+		return fmt.Errorf("failed to save change parties operation: %s", err)
 	}
 
 	return nil
-}
-
-func (m *Module) handleNewOperation(height int64, index string) error {
-	op, err := m.source.Operation(height, index)
-	if err != nil {
-		return fmt.Errorf("failed to get operation: %s", err)
-	}
-
-	return m.db.Transaction(func() error {
-		err = m.saveOperations([]rarimocoretypes.Operation{op})
-		if err != nil {
-			return fmt.Errorf("failed to save operation: %s", err)
-		}
-
-		err = m.UpdateParams(height)
-		if err != nil {
-			return fmt.Errorf("failed to update last rarimocore params: %s", err)
-		}
-
-		return nil
-	})
 }
 
 func (m *Module) handleMsgCreateConfirmation(tx *juno.Tx, msg *rarimocoretypes.MsgCreateConfirmation) error {

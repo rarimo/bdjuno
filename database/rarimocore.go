@@ -51,16 +51,15 @@ WHERE parties.account = excluded.account
 // SaveRarimoCoreParams saves the given x/rarimocore parameters inside the database
 func (db *Db) SaveRarimoCoreParams(params *types.RarimoCoreParams) (err error) {
 	stmt := `
-INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height, available_resign_block_delta)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height)
+VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET key_ecdsa = excluded.key_ecdsa,
 		threshold = excluded.threshold,
 		is_update_required = excluded.is_update_required,
 		last_signature = excluded.last_signature,
 		parties = excluded.parties,
-		height = excluded.height,
-		available_resign_block_delta = excluded.available_resign_block_delta 
+		height = excluded.height
 WHERE rarimocore_params.height <= excluded.height
 `
 	_, err = db.Sql.Exec(
@@ -71,7 +70,6 @@ WHERE rarimocore_params.height <= excluded.height
 		params.LastSignature,
 		pq.Array(params.Parties),
 		params.Height,
-		params.AvailableResignBlockDelta,
 	)
 	if err != nil {
 		return fmt.Errorf("error while storing rarimocore params: %s", err)
@@ -87,7 +85,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 
 	var accounts []types.Account
 
-	operationsQuery := `INSERT INTO operation (index, operation_type, signed, approved, creator, timestamp) VALUES `
+	operationsQuery := `INSERT INTO operation (index, operation_type, status, creator, timestamp) VALUES `
 
 	var operationsParams []interface{}
 
@@ -96,15 +94,14 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 		accounts = append(accounts, types.NewAccount(operation.Creator))
 
 		// Prepare the operation query
-		vi := i * 6
-		operationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		vi := i * 5
+		operationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 
 		operationsParams = append(
 			operationsParams,
 			operation.Index,
 			operation.OperationType,
-			operation.Signed,
-			operation.Approved,
+			operation.Status,
 			operation.Creator,
 			operation.Timestamp,
 		)
@@ -128,10 +125,9 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 }
 
 func (db *Db) UpdateOperation(operation types.Operation) error {
-	query := `UPDATE operation SET signed = $1, approved = $2 WHERE index = $3`
+	query := `UPDATE operation SET status = $1 WHERE index = $3`
 	_, err := db.Sql.Exec(query,
-		operation.Signed,
-		operation.Approved,
+		operation.Status,
 		operation.Index,
 	)
 	if err != nil {
@@ -157,8 +153,7 @@ func (db *Db) GetOperation(index string) (*types.Operation, error) {
 	operation := types.NewOperation(
 		row.Index,
 		row.OperationType,
-		row.Approved,
-		row.Signed,
+		row.Status,
 		row.Creator,
 		row.Timestamp,
 	)
@@ -302,6 +297,37 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 	_, err = db.Sql.Exec(query, queryParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing confirmations: %s", err)
+	}
+
+	return nil
+}
+
+//
+//func (db *Db) GetRarimoCoreVotes(opIndex string) ([]types.RarimoCoreVote, error) {
+//	var rows []dbtypes.RarimoCoreVoteRow
+//	err := db.Sqlx.Select(&rows, `SELECT * FROM vote WHERE operation = $1`, opIndex)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	if len(rows) == 0 {
+//		return nil, nil
+//	}
+//
+//	result := make([]types.RarimoCoreVote, len(rows))
+//
+//	for i, row := range rows {
+//		result[i] = types.NewRarimoCoreVote(row.Operation, row.Validator, row.Vote)
+//	}
+//
+//	return result, nil
+//}
+
+func (db *Db) RemoveRarimoCoreVotes(opIndex string) error {
+	stmt := `DELETE FROM vote WHERE operation = $1`
+	_, err := db.Sql.Exec(stmt, opIndex)
+	if err != nil {
+		return fmt.Errorf("error while deleting rarimo core votes: %s", err)
 	}
 
 	return nil

@@ -41,14 +41,11 @@ func (s Source) Params(height int64) (tokenmanagertypes.Params, error) {
 }
 
 // Item implements tokenmanagersource.Source
-func (s Source) Item(height int64, index types.ItemIndex) (tokenmanagertypes.Item, error) {
+func (s Source) Item(height int64, index string) (tokenmanagertypes.Item, error) {
 	res, err := s.tokenmanagerClient.Item(
 		remote.GetHeightRequestContext(s.Ctx, height),
 		&tokenmanagertypes.QueryGetItemRequest{
-			Collection: index.Collection,
-			Name:       index.Name,
-			Symbol:     index.Symbol,
-			Uri:        index.Uri,
+			Index: index,
 		},
 	)
 	if err != nil {

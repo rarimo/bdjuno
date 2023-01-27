@@ -24,13 +24,12 @@ func NewParty(p rarimocoretypes.Party) Party {
 
 // RarimoCoreParams contains the data of the x/rarimocore module params instance
 type RarimoCoreParams struct {
-	KeyECDSA                  string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
-	Threshold                 uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
-	IsUpdateRequired          bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
-	LastSignature             string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
-	Parties                   []string `json:"parties,omitempty" yaml:"parties,omitempty"`
-	Height                    int64    `json:"height,omitempty" yaml:"height,omitempty"`
-	AvailableResignBlockDelta uint64   `json:"available_resign_block_delta,omitempty" yaml:"available_resign_block_delta,omitempty"`
+	KeyECDSA         string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
+	Threshold        uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
+	IsUpdateRequired bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
+	LastSignature    string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
+	Parties          []string `json:"parties,omitempty" yaml:"parties,omitempty"`
+	Height           int64    `json:"height,omitempty" yaml:"height,omitempty"`
 }
 
 // NewRarimoCoreParams allows to build a new RarimoCoreParams instance
@@ -40,33 +39,30 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 		parties[i] = party.Account
 	}
 	return &RarimoCoreParams{
-		KeyECDSA:                  p.KeyECDSA,
-		Threshold:                 p.Threshold,
-		IsUpdateRequired:          p.IsUpdateRequired,
-		LastSignature:             p.LastSignature,
-		AvailableResignBlockDelta: p.AvailableResignBlockDelta,
-		Parties:                   parties,
-		Height:                    height,
+		KeyECDSA:         p.KeyECDSA,
+		Threshold:        p.Threshold,
+		IsUpdateRequired: p.IsUpdateRequired,
+		LastSignature:    p.LastSignature,
+		Parties:          parties,
+		Height:           height,
 	}
 }
 
 // Operation represents a single operation instance
 type Operation struct {
-	Index         string                 `json:"index,omitempty" yaml:"index,omitempty"`
-	OperationType rarimocoretypes.OpType `json:"operation_type,omitempty" yaml:"operation_type,omitempty"`
-	Signed        bool                   `json:"signed,omitempty" yaml:"signed,omitempty"`
-	Approved      bool                   `json:"approved,omitempty" yaml:"approved,omitempty"`
-	Creator       string                 `json:"creator,omitempty" yaml:"creator,omitempty"`
-	Timestamp     int64                  `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
+	Index         string                   `json:"index,omitempty" yaml:"index,omitempty"`
+	OperationType rarimocoretypes.OpType   `json:"operation_type,omitempty" yaml:"operation_type,omitempty"`
+	Status        rarimocoretypes.OpStatus `json:"status,omitempty" yaml:"status,omitempty"`
+	Creator       string                   `json:"creator,omitempty" yaml:"creator,omitempty"`
+	Timestamp     int64                    `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
 }
 
 // NewOperation allows to build a new Operation instance
-func NewOperation(index string, opType int32, signed, approved bool, creator string, timestamp uint64) Operation {
+func NewOperation(index string, opType, status int32, creator string, timestamp uint64) Operation {
 	return Operation{
 		Index:         index,
 		OperationType: rarimocoretypes.OpType(opType),
-		Approved:      approved,
-		Signed:        signed,
+		Status:        rarimocoretypes.OpStatus(status),
 		Creator:       creator,
 		Timestamp:     int64(timestamp),
 	}
@@ -77,8 +73,7 @@ func OperationFromCore(operation rarimocoretypes.Operation) Operation {
 	return Operation{
 		Index:         operation.Index,
 		OperationType: operation.OperationType,
-		Approved:      operation.Approved,
-		Signed:        operation.Signed,
+		Status:        operation.Status,
 		Creator:       operation.Creator,
 		Timestamp:     int64(operation.Timestamp),
 	}
@@ -165,10 +160,19 @@ type RarimoCoreVote struct {
 }
 
 // NewRarimoCoreVote allows to build a new RarimoCoreVote instance
-func NewRarimoCoreVote(operation, validator string, vote rarimocoretypes.VoteType) RarimoCoreVote {
+func NewRarimoCoreVote(operation, validator string, vote int32) RarimoCoreVote {
 	return RarimoCoreVote{
 		Operation: operation,
 		Validator: validator,
-		Vote:      vote,
+		Vote:      rarimocoretypes.VoteType(vote),
+	}
+}
+
+// RarimoCoreVoteFromCore allows to build a new RarimoCoreVote instance from a rarimocoretypes.Vote instance
+func RarimoCoreVoteFromCore(vote rarimocoretypes.Vote) RarimoCoreVote {
+	return RarimoCoreVote{
+		Operation: vote.Index.Operation,
+		Validator: vote.Index.Validator,
+		Vote:      vote.Vote,
 	}
 }

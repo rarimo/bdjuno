@@ -16,19 +16,17 @@ CREATE TABLE rarimocore_params
     last_signature               TEXT    NOT NULL,
     parties                      TEXT[]  NOT NULL DEFAULT '[]'::TEXT[],
     height                       BIGINT  NOT NULL,
-    available_resign_block_delta BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 CREATE INDEX rarimocore_params_height_index ON rarimocore_params (height);
 
 CREATE TABLE operation
 (
-    index          TEXT    NOT NULL PRIMARY KEY,
-    operation_type INT     NOT NULL,
-    signed         BOOLEAN NOT NULL,
-    approved       BOOLEAN NOT NULL,
-    creator        TEXT    NOT NULL REFERENCES account (address),
-    timestamp      BIGINT  NOT NULL
+    index          TEXT   NOT NULL PRIMARY KEY,
+    operation_type INT    NOT NULL,
+    status         INT    NOT NULL,
+    creator        TEXT   NOT NULL REFERENCES account (address),
+    timestamp      BIGINT NOT NULL
 );
 
 CREATE TABLE transfer

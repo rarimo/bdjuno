@@ -10,22 +10,20 @@ type PartyRow struct {
 
 // RarimoCoreParamsRow represents a single row of the "rarimocore_params" table
 type RarimoCoreParamsRow struct {
-	OneRowID                  bool     `db:"one_row_id"`
-	KeyECDSA                  string   `db:"key_ecdsa"`
-	Threshold                 uint64   `db:"threshold"`
-	IsUpdateRequired          bool     `db:"is_update_required"`
-	LastSignature             string   `db:"last_signature"`
-	Parties                   []string `db:"parties"`
-	AvailableResignBlockDelta uint64   `db:"available_resign_block_delta"`
-	Height                    int64    `db:"height"`
+	OneRowID         bool     `db:"one_row_id"`
+	KeyECDSA         string   `db:"key_ecdsa"`
+	Threshold        uint64   `db:"threshold"`
+	IsUpdateRequired bool     `db:"is_update_required"`
+	LastSignature    string   `db:"last_signature"`
+	Parties          []string `db:"parties"`
+	Height           int64    `db:"height"`
 }
 
 // OperationRow represents a single row of the "operation" table
 type OperationRow struct {
 	Index         string `db:"index"`
 	OperationType int32  `db:"operation_type"`
-	Signed        bool   `db:"signed"`
-	Approved      bool   `db:"approved"`
+	Status        int32  `db:"status"`
 	Creator       string `db:"creator"`
 	Timestamp     uint64 `db:"timestamp"`
 }

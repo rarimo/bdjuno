@@ -7,7 +7,7 @@ import (
 
 type Source interface {
 	Params(height int64) (tokenmanagertypes.Params, error)
-	Item(height int64, index types.ItemIndex) (tokenmanagertypes.Item, error)
+	Item(height int64, index string) (tokenmanagertypes.Item, error)
 	ItemAll(height int64) ([]tokenmanagertypes.Item, error)
 	Collection(height int64, index string) (tokenmanagertypes.Collection, error)
 	CollectionAll(height int64) ([]tokenmanagertypes.Collection, error)
