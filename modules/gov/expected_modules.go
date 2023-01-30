@@ -33,7 +33,13 @@ type TokenManagerModule interface {
 	UpdateParams(height int64) error
 	UpdateItems(items []*tokenmanagertypes.Item) error
 	RemoveItems(indexes []string) error
-	CreateCollection(index string, meta *tokenmanagertypes.CollectionMetadata, data []*tokenmanagertypes.CollectionData) error
+	CreateCollection(
+		index string,
+		meta *tokenmanagertypes.CollectionMetadata,
+		data []*tokenmanagertypes.CollectionData,
+		items []*tokenmanagertypes.Item,
+		onChainItems []*tokenmanagertypes.OnChainItem,
+	) error
 	UpdateCollectionDatas(datas []*tokenmanagertypes.CollectionData) error
 	CreateCollectionDatas(height int64, datas []*tokenmanagertypes.CollectionData) error
 	RemoveCollectionDatas(height int64, indexes []*tokenmanagertypes.CollectionDataIndex) error

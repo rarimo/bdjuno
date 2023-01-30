@@ -98,6 +98,8 @@ func (m *Module) CreateCollection(
 	index string,
 	meta *tokenmanagertypes.CollectionMetadata,
 	data []*tokenmanagertypes.CollectionData,
+	items []*tokenmanagertypes.Item,
+	onChainItems []*tokenmanagertypes.OnChainItem,
 ) error {
 	coreCollection := tokenmanagertypes.Collection{
 		Index: index,
@@ -111,20 +113,40 @@ func (m *Module) CreateCollection(
 
 	collection := types.CollectionFromCore(coreCollection)
 
+	datas := make([]tokenmanagertypes.CollectionData, 0, len(data))
+	for _, collectionData := range data {
+		datas = append(datas, *collectionData)
+	}
+
+	itemList := make([]tokenmanagertypes.Item, len(items))
+	for i, item := range items {
+		itemList[i] = *item
+	}
+
+	onChainItemsList := make([]tokenmanagertypes.OnChainItem, len(onChainItems))
+	for i, onChainItem := range onChainItems {
+		onChainItemsList[i] = *onChainItem
+	}
+
 	return m.db.Transaction(func() error {
 		err := m.db.SaveCollections([]types.Collection{collection})
 		if err != nil {
 			return fmt.Errorf("failed to create collection: %s", err)
 		}
 
-		datas := make([]tokenmanagertypes.CollectionData, 0, len(data))
-		for _, collectionData := range data {
-			datas = append(datas, *collectionData)
-		}
-
 		err = m.saveCollectionDatas(datas)
 		if err != nil {
 			return fmt.Errorf("failed to create collection datas: %s", err)
+		}
+
+		err = m.saveItems(itemList)
+		if err != nil {
+			return fmt.Errorf("failed to create items: %s", err)
+		}
+
+		err = m.saveOnChainItems(onChainItemsList)
+		if err != nil {
+			return fmt.Errorf("failed to create on chain items: %s", err)
 		}
 
 		return nil
