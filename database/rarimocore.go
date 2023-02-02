@@ -1,10 +1,12 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/lib/pq"
 	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 	"gitlab.com/rarimo/bdjuno/types"
+	"strings"
 )
 
 // SaveParties saves the given x/gov parameters inside the database
@@ -35,7 +37,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 	}
 
 	// Store the proposals
-	partiesQuery = partiesQuery[:len(partiesQuery)-1] // Remove trailing ","
+	partiesQuery = strings.TrimSuffix(partiesQuery, ",") // Remove trailing ","
 	partiesQuery += ` ON CONFLICT (account) DO UPDATE 
 	SET verified = excluded.verified, pub_key = excluded.pub_key 
 WHERE parties.account = excluded.account
@@ -68,7 +70,7 @@ WHERE rarimocore_params.height <= excluded.height
 		params.Threshold,
 		params.IsUpdateRequired,
 		params.LastSignature,
-		pq.Array(params.Parties),
+		pq.StringArray(params.Parties),
 		params.Height,
 	)
 	if err != nil {
@@ -114,7 +116,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 	}
 
 	// Store the operations
-	operationsQuery = operationsQuery[:len(operationsQuery)-1] // Remove trailing ","
+	operationsQuery = strings.TrimSuffix(operationsQuery, ",") // Remove trailing ","
 	operationsQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(operationsQuery, operationsParams...)
 	if err != nil {
@@ -182,22 +184,37 @@ INSERT INTO transfer (
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11,
 		)
 
+		from, err := json.Marshal(transfer.From)
+		if err != nil {
+			return fmt.Errorf("error while unmarshaling transfer.From: %s", err)
+		}
+
+		to, err := json.Marshal(transfer.To)
+		if err != nil {
+			return fmt.Errorf("error while unmarshaling transfer.To: %s", err)
+		}
+
+		meta, err := json.Marshal(transfer.ItemMeta)
+		if err != nil {
+			return fmt.Errorf("error while unmarshaling transfer.ItemMeta: %s", err)
+		}
+
 		transfersParams = append(transfersParams,
 			transfer.OperationIndex,
 			transfer.Origin,
 			transfer.Tx,
 			transfer.EventID,
-			transfer.From,
-			transfer.To,
+			string(from),
+			string(to),
 			transfer.Receiver,
 			transfer.Amount,
 			transfer.BundleData,
 			transfer.BundleSalt,
-			transfer.ItemMeta,
+			string(meta),
 		)
 	}
 
-	transfersQuery = transfersQuery[:len(transfersQuery)-1] // Remove trailing ","
+	transfersQuery = strings.TrimSuffix(transfersQuery, ",") // Remove trailing ","
 	transfersQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(transfersQuery, transfersParams...)
 	if err != nil {
@@ -221,13 +238,13 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 
 		changePartiesParams = append(changePartiesParams,
 			changeParty.OperationIndex,
-			pq.Array(changeParty.Parties),
+			pq.StringArray(changeParty.Parties),
 			changeParty.NewPublicKey,
 			changeParty.Signature,
 		)
 	}
 
-	changePartiesQuery = changePartiesQuery[:len(changePartiesQuery)-1] // Remove trailing ","
+	changePartiesQuery = strings.TrimSuffix(changePartiesQuery, ",") // Remove trailing ","
 	changePartiesQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(changePartiesQuery, changePartiesParams...)
 	if err != nil {
@@ -240,7 +257,7 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 func (db *Db) UpdateChangeParties(changeParties types.ChangeParties) (err error) {
 	query := `UPDATE change_parties SET parties = $1, new_public_key = $2, signature = $3 WHERE operation_index = $4`
 	_, err = db.Sql.Exec(query,
-		pq.Array(changeParties.Parties),
+		pq.StringArray(changeParties.Parties),
 		changeParties.NewPublicKey,
 		changeParties.Signature,
 		changeParties.OperationIndex,
@@ -266,13 +283,13 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 
 		confirmationsParams = append(confirmationsParams,
 			confirmation.Root,
-			pq.Array(confirmation.Indexes),
+			pq.StringArray(confirmation.Indexes),
 			confirmation.SignatureECDSA,
 			confirmation.Creator,
 		)
 	}
 
-	confirmationsQuery = confirmationsQuery[:len(confirmationsQuery)-1] // Remove trailing ","
+	confirmationsQuery = strings.TrimSuffix(confirmationsQuery, ",") // Remove trailing ","
 	confirmationsQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(confirmationsQuery, confirmationsParams...)
 	if err != nil {
@@ -283,7 +300,11 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 }
 
 func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
-	query := `INSERT INTO vote (operation, validator, vote) VALUES`
+	if len(votes) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO vote (operation, validator, vote) VALUES `
 	var queryParams []interface{}
 
 	for i, vote := range votes {
@@ -292,11 +313,12 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote)
 	}
 
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
+
 	_, err = db.Sql.Exec(query, queryParams...)
 	if err != nil {
-		return fmt.Errorf("error while storing confirmations: %s", err)
+		return fmt.Errorf("error while storing votes: %s", err)
 	}
 
 	return nil

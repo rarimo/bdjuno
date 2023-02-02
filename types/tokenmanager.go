@@ -116,19 +116,17 @@ func NewCollectionMetadata(name, symbol, metadataUri string) *CollectionMetadata
 
 // Collection contains the data of the x/tokenmanager collection instance
 type Collection struct {
-	Index    string                 `json:"index,omitempty" yaml:"index,omitempty"`
-	IndexKey []byte                 `json:"index_key" yaml:"index_key"`
-	Meta     *CollectionMetadata    `json:"meta,omitempty" yaml:"data,omitempty"`
-	Data     []*CollectionDataIndex `json:"data,omitempty" yaml:"data,omitempty"`
+	Index string                 `json:"index,omitempty" yaml:"index,omitempty"`
+	Meta  *CollectionMetadata    `json:"meta,omitempty" yaml:"data,omitempty"`
+	Data  []*CollectionDataIndex `json:"data,omitempty" yaml:"data,omitempty"`
 }
 
 // NewCollection allows to build a new Collection instance
 func NewCollection(index string, meta *CollectionMetadata, data []*CollectionDataIndex) Collection {
 	return Collection{
-		Index:    index,
-		IndexKey: tokenmanagertypes.CollectionKey(index),
-		Meta:     meta,
-		Data:     data,
+		Index: index,
+		Meta:  meta,
+		Data:  data,
 	}
 }
 
@@ -185,33 +183,31 @@ type ItemMetadata struct {
 	ImageUri  string `json:"image_uri,omitempty" yaml:"image_uri,omitempty"`
 	ImageHash string `json:"image_hash,omitempty" yaml:"image_hash,omitempty"`
 	Seed      string `json:"seed,omitempty" yaml:"seed,omitempty"`
-	Name      string `json:"name,omitempty" yaml:"name,omitempty"`
-	Symbol    string `json:"symbol,omitempty" yaml:"symbol,omitempty"`
 	Uri       string `json:"uri,omitempty" yaml:"uri,omitempty"`
 }
 
 // NewItemMetadata allows to build a new ItemMetadata instance
-func NewItemMetadata(imageUri, imageHash, seed, name, symbol, uri string) *ItemMetadata {
+func NewItemMetadata(imageUri, imageHash, seed, uri string) *ItemMetadata {
 	return &ItemMetadata{
 		ImageUri:  imageUri,
 		ImageHash: imageHash,
 		Seed:      seed,
-		Name:      name,
-		Symbol:    symbol,
 		Uri:       uri,
 	}
 }
 
 // ItemMetadataFromCore allows to build a new ItemMetadata instance from tokenmanager.ItemMetadata instance
 func ItemMetadataFromCore(meta *tokenmanagertypes.ItemMetadata) *ItemMetadata {
-	return &ItemMetadata{
-		ImageUri:  meta.ImageUri,
-		ImageHash: meta.ImageHash,
-		Seed:      meta.Seed,
-		Name:      meta.Name,
-		Symbol:    meta.Symbol,
-		Uri:       meta.Uri,
+	if meta != nil {
+		return &ItemMetadata{
+			ImageUri:  meta.ImageUri,
+			ImageHash: meta.ImageHash,
+			Seed:      meta.Seed,
+			Uri:       meta.Uri,
+		}
 	}
+
+	return nil
 }
 
 // Item contains the data of the x/tokenmanager item instance

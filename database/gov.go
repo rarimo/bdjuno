@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -153,7 +154,7 @@ INSERT INTO proposal(
 	}
 
 	// Store the proposals
-	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
+	proposalsQuery = strings.TrimSuffix(proposalsQuery, ",") // Remove trailing ","
 	proposalsQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
@@ -258,7 +259,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 			deposit.Height,
 		)
 	}
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 	SET amount = excluded.amount,
@@ -319,7 +320,7 @@ func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
 		)
 	}
 
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE 
 	SET yes = excluded.yes, 

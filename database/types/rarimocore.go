@@ -30,17 +30,17 @@ type OperationRow struct {
 
 // TransferRow represents a single row of the "transfer" table
 type TransferRow struct {
-	OperationIndex string            `db:"operation_index"`
-	Origin         string            `db:"origin"`
-	Tx             string            `db:"tx"`
-	EventId        string            `db:"event_id"`
-	Receiver       string            `db:"receiver"`
-	Amount         string            `db:"amount"`
-	BundleData     string            `db:"bundle_data"`
-	BundleSalt     string            `db:"bundle_salt"`
-	From           *OnChainItemIndex `db:"from"`
-	To             *OnChainItemIndex `db:"to"`
-	ItemMeta       *ItemMetadata     `db:"item_meta"`
+	OperationIndex string `db:"operation_index"`
+	Origin         string `db:"origin"`
+	Tx             string `db:"tx"`
+	EventId        string `db:"event_id"`
+	Receiver       string `db:"receiver"`
+	Amount         string `db:"amount"`
+	BundleData     string `db:"bundle_data"`
+	BundleSalt     string `db:"bundle_salt"`
+	From           string `db:"from"`
+	To             string `db:"to"`
+	ItemMeta       string `db:"item_meta"`
 }
 
 // ChangePartiesRow represents a single row of the "change_parties" table

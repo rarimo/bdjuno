@@ -19,43 +19,42 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while reading tokenmanager genesis data: %s", err)
 	}
 
-	return m.db.Transaction(func() error {
-		// Save the collection datas
-		err = m.saveCollectionDatas(genState.Datas)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager collection datas: %s", err)
-		}
+	// Save the collections
+	err = m.saveCollections(genState.Collections)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager collections: %s", err)
+	}
 
-		// Save the collections
-		err = m.saveCollections(genState.Collections)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager collections: %s", err)
-		}
+	// Save the collection datas
+	err = m.saveCollectionDatas(genState.Datas)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager collection datas: %s", err)
+	}
 
-		// Save the items
-		err = m.saveItems(genState.Items)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager items: %s", err)
-		}
+	// Save the items
+	err = m.saveItems(genState.Items)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager items: %s", err)
+	}
 
-		// Save the on chain items
-		err = m.saveOnChainItems(genState.OnChainItems)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager on chain items: %s", err)
-		}
+	// Save the on chain items
+	err = m.saveOnChainItems(genState.OnChainItems)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager on chain items: %s", err)
+	}
 
-		// Save the seeds
-		err = m.saveSeeds(genState.Seeds)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager seeds: %s", err)
-		}
+	// Save the seeds
+	err = m.saveSeeds(genState.Seeds)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager seeds: %s", err)
+	}
 
-		// Save the params
-		err = m.saveParams(genState.Params, doc.InitialHeight)
-		if err != nil {
-			return fmt.Errorf("error while storing genesis tokenmanager params: %s", err)
-		}
+	// Save the params
+	err = m.saveParams(genState.Params, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis tokenmanager params: %s", err)
+	}
 
-		return nil
-	})
+	return nil
+
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
-
 	"gitlab.com/rarimo/bdjuno/types"
+	"strings"
 
 	"github.com/lib/pq"
 )
@@ -50,7 +50,7 @@ func (db *Db) SaveToken(token types.Token) error {
 			dbtypes.ToNullString(unit.PriceID))
 	}
 
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(query, params...)
 	if err != nil {
@@ -77,7 +77,7 @@ func (db *Db) SaveTokensPrices(prices []types.TokenPrice) error {
 		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
 	}
 
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += `
 ON CONFLICT (unit_name) DO UPDATE 
 	SET price = excluded.price,
@@ -108,7 +108,7 @@ func (db *Db) SaveTokenPricesHistory(prices []types.TokenPrice) error {
 		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
 	}
 
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE 
 	SET price = excluded.price,

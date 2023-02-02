@@ -1,14 +1,20 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/lib/pq"
 	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
 	"gitlab.com/rarimo/bdjuno/types"
+	"strings"
 )
 
 // SaveTokenManagerParams saves the given x/tokenmanager parameters inside the database
 func (db *Db) SaveTokenManagerParams(params *types.TokenManagerParams) (err error) {
+	paramsBz, err := json.Marshal(params.Params)
+	if err != nil {
+		return fmt.Errorf("error while marshaling tokenmanager params: %s", err)
+	}
+
 	stmt := `
 INSERT INTO tokenmanager_params(params, height)
 VALUES ($1, $2)
@@ -19,7 +25,7 @@ WHERE tokenmanager_params.height <= excluded.height
 `
 	_, err = db.Sql.Exec(
 		stmt,
-		params.Params,
+		string(paramsBz),
 		params.Height,
 	)
 	if err != nil {
@@ -34,26 +40,35 @@ func (db *Db) SaveCollections(collections []types.Collection) error {
 		return nil
 	}
 
-	collectionsQuery := `INSERT INTO collection (index, item_key, meta, data) VALUES `
+	collectionsQuery := `INSERT INTO collection (index, meta, data) VALUES `
 
 	var collectionsParams []interface{}
 
 	for i, collection := range collections {
 		// Prepare the collection query
-		vi := i * 4
-		collectionsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
+		vi := i * 3
+		collectionsQuery += fmt.Sprintf("($%d, $%d, $%d),", vi+1, vi+2, vi+3)
+
+		meta, err := json.Marshal(collection.Meta)
+		if err != nil {
+			return fmt.Errorf("error while marshaling meta: %s", err)
+		}
+
+		data, err := json.Marshal(collection.Data)
+		if err != nil {
+			return fmt.Errorf("error while marshaling data: %s", err)
+		}
 
 		collectionsParams = append(
 			collectionsParams,
 			collection.Index,
-			collection.IndexKey,
-			collection.Meta,
-			pq.Array(collection.Data),
+			string(meta),
+			string(data),
 		)
 	}
 
 	// Store the collections
-	collectionsQuery = collectionsQuery[:len(collectionsQuery)-1] // Remove trailing ","
+	collectionsQuery = strings.TrimSuffix(collectionsQuery, ",") // Remove trailing ","
 	collectionsQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(collectionsQuery, collectionsParams...)
 	if err != nil {
@@ -66,7 +81,22 @@ func (db *Db) SaveCollections(collections []types.Collection) error {
 func (db *Db) UpdateCollection(collection types.Collection) error {
 	query := `UPDATE collection SET meta = $1, data = $2 WHERE index = $3`
 
-	_, err := db.Sql.Exec(query, collection.Meta, pq.Array(collection.Data), collection.Index)
+	meta, err := json.Marshal(collection.Meta)
+	if err != nil {
+		return fmt.Errorf("error while marshaling meta: %s", err)
+	}
+
+	data, err := json.Marshal(collection.Data)
+	if err != nil {
+		return fmt.Errorf("error while marshaling data: %s", err)
+	}
+
+	index, err := json.Marshal(collection.Index)
+	if err != nil {
+		return fmt.Errorf("error while marshaling index: %s", err)
+	}
+
+	_, err = db.Sql.Exec(query, meta, data, index)
 	if err != nil {
 		return fmt.Errorf("error while updating collection: %s", err)
 	}
@@ -88,9 +118,14 @@ func (db *Db) SaveCollectionDatas(collectionDatas []types.CollectionData) error 
 		vi := i * 6
 		collectionDatasQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 
+		index, err := json.Marshal(collectionData.Index)
+		if err != nil {
+			return fmt.Errorf("error while marshaling index: %s", err)
+		}
+
 		collectionDatasParams = append(
 			collectionDatasParams,
-			collectionData.Index,
+			string(index),
 			collectionData.IndexKey,
 			collectionData.Collection,
 			collectionData.TokenType,
@@ -100,7 +135,7 @@ func (db *Db) SaveCollectionDatas(collectionDatas []types.CollectionData) error 
 	}
 
 	// Store the collection datas
-	collectionDatasQuery = collectionDatasQuery[:len(collectionDatasQuery)-1] // Remove trailing ","
+	collectionDatasQuery = strings.TrimSuffix(collectionDatasQuery, ",") // Remove trailing ","
 	collectionDatasQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(collectionDatasQuery, collectionDatasParams...)
 	if err != nil {
@@ -127,43 +162,6 @@ func (db *Db) UpdateCollectionData(data types.CollectionData) error {
 	return nil
 }
 
-func (db *Db) GetCollectionData(index types.CollectionDataIndex) (*types.Item, error) {
-	stmt := `SELECT * FROM collection_data WHERE index = $1`
-
-	var items []dbtypes.ItemRow
-	if err := db.Sqlx.Select(&items, stmt, index); err != nil {
-		return nil, err
-	}
-
-	if len(items) == 0 {
-		return nil, nil
-	}
-
-	row := items[0]
-	meta := row.Meta
-
-	onChain := make([]*types.OnChainItemIndex, len(row.OnChain))
-	for i, onChainItem := range row.OnChain {
-		onChain[i] = types.NewOnChainItemIndex(onChainItem.Chain, onChainItem.Address, onChainItem.TokenID)
-	}
-
-	item := types.NewItem(
-		row.Index,
-		row.Collection,
-		types.NewItemMetadata(
-			meta.ImageUri,
-			meta.ImageHash,
-			meta.Seed,
-			meta.Name,
-			meta.Symbol,
-			meta.Uri,
-		),
-		onChain,
-	)
-
-	return &item, nil
-}
-
 func (db *Db) SaveItems(items []types.Item) error {
 	if len(items) == 0 {
 		return nil
@@ -178,17 +176,27 @@ func (db *Db) SaveItems(items []types.Item) error {
 		vi := i * 4
 		itemQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
 
+		meta, err := json.Marshal(item.Meta)
+		if err != nil {
+			return fmt.Errorf("error while marshaling meta: %s", err)
+		}
+
+		onChain, err := json.Marshal(item.OnChain)
+		if err != nil {
+			return fmt.Errorf("error while marshaling on chain items: %s", err)
+		}
+
 		itemParams = append(
 			itemParams,
 			item.Index,
 			item.Collection,
-			item.Meta,
-			pq.Array(item.OnChain),
+			string(meta),
+			string(onChain),
 		)
 	}
 
 	// Store the items
-	itemQuery = itemQuery[:len(itemQuery)-1] // Remove trailing ","
+	itemQuery = strings.TrimSuffix(itemQuery, ",") // Remove trailing ","
 	itemQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(itemQuery, itemParams...)
 	if err != nil {
@@ -199,6 +207,16 @@ func (db *Db) SaveItems(items []types.Item) error {
 }
 
 func (db *Db) UpsertItem(item types.Item) error {
+	meta, err := json.Marshal(item.Meta)
+	if err != nil {
+		return fmt.Errorf("error while marshaling meta: %s", err)
+	}
+
+	onChain, err := json.Marshal(item.OnChain)
+	if err != nil {
+		return fmt.Errorf("error while marshaling on chain items: %s", err)
+	}
+
 	stmt := `
 INSERT INTO item (index, collection, meta, on_chain)
 VALUES ($1, $2, $3, $4)
@@ -206,12 +224,12 @@ ON CONFLICT (index) DO UPDATE
 	SET collection = excluded.collection, meta = excluded.meta, on_chain = excluded.on_chain
 `
 
-	_, err := db.Sql.Exec(
+	_, err = db.Sql.Exec(
 		stmt,
 		item.Index,
 		item.Collection,
-		item.Meta,
-		pq.Array(item.OnChain),
+		string(meta),
+		string(onChain),
 	)
 
 	if err != nil {
@@ -244,11 +262,15 @@ func (db *Db) GetItem(index string) (*types.Item, error) {
 	}
 
 	row := items[0]
-	meta := row.Meta
 
-	onChain := make([]*types.OnChainItemIndex, len(row.OnChain))
-	for i, onChainItem := range row.OnChain {
-		onChain[i] = types.NewOnChainItemIndex(onChainItem.Chain, onChainItem.Address, onChainItem.TokenID)
+	var onChain []*types.OnChainItemIndex
+	if err := json.Unmarshal([]byte(row.OnChain), &onChain); err != nil {
+		return nil, fmt.Errorf("error while unmarshaling on chain items: %s", err)
+	}
+
+	var meta types.ItemMetadata
+	if err := json.Unmarshal([]byte(row.Meta), &meta); err != nil {
+		return nil, fmt.Errorf("error while unmarshaling meta: %s", err)
 	}
 
 	item := types.NewItem(
@@ -258,8 +280,6 @@ func (db *Db) GetItem(index string) (*types.Item, error) {
 			meta.ImageUri,
 			meta.ImageHash,
 			meta.Seed,
-			meta.Name,
-			meta.Symbol,
 			meta.Uri,
 		),
 		onChain,
@@ -312,11 +332,16 @@ func (db *Db) SaveOnChainItems(items []types.OnChainItem) error {
 		vi := i * 2
 		query += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
 
-		params = append(params, item.Index, item.Item)
+		index, err := json.Marshal(item.Index)
+		if err != nil {
+			return fmt.Errorf("error while marshaling index: %s", err)
+		}
+
+		params = append(params, string(index), item.Item)
 	}
 
 	// Store the on chain items
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, params...)
 	if err != nil {
@@ -354,7 +379,7 @@ func (db *Db) SaveSeeds(seeds []types.Seed) error {
 	}
 
 	// Store the on chain seeds
-	query = query[:len(query)-1] // Remove trailing ","
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, params...)
 	if err != nil {

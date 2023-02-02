@@ -22,37 +22,35 @@ func (m *Module) UpdateItems(items []*tokenmanagertypes.Item) (err error) {
 }
 
 func (m *Module) updateItem(newItem *tokenmanagertypes.Item) error {
-	return m.db.Transaction(func() error {
-		oldItem, err := m.db.GetItem(newItem.Index)
+	oldItem, err := m.db.GetItem(newItem.Index)
+	if err != nil {
+		return fmt.Errorf("failed to get item in tokenmanager: %s", err)
+	}
+
+	if oldItem == nil {
+		return fmt.Errorf("item not found in tokenmanager")
+	}
+
+	if oldItem.Meta.Seed != newItem.Meta.Seed {
+		err = m.db.RemoveSeed(oldItem.Meta.Seed)
 		if err != nil {
-			return fmt.Errorf("failed to get item in tokenmanager: %s", err)
+			return fmt.Errorf("failed to remove seed in tokenmanager: %s", err)
 		}
 
-		if oldItem == nil {
-			return fmt.Errorf("item not found in tokenmanager")
-		}
-
-		if oldItem.Meta.Seed != newItem.Meta.Seed {
-			err = m.db.RemoveSeed(oldItem.Meta.Seed)
+		if newItem.Meta.Seed != "" {
+			err = m.db.SaveSeeds([]types.Seed{types.NewSeed(newItem.Meta.Seed, newItem.Index)})
 			if err != nil {
-				return fmt.Errorf("failed to remove seed in tokenmanager: %s", err)
-			}
-
-			if newItem.Meta.Seed != "" {
-				err = m.db.SaveSeeds([]types.Seed{types.NewSeed(newItem.Meta.Seed, newItem.Index)})
-				if err != nil {
-					return fmt.Errorf("failed to save seed in tokenmanager: %s", err)
-				}
+				return fmt.Errorf("failed to save seed in tokenmanager: %s", err)
 			}
 		}
+	}
 
-		err = m.db.UpsertItem(types.ItemFromCore(*newItem))
-		if err != nil {
-			return fmt.Errorf("failed to update item in tokenmanager: %s", err)
-		}
+	err = m.db.UpsertItem(types.ItemFromCore(*newItem))
+	if err != nil {
+		return fmt.Errorf("failed to update item in tokenmanager: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }
 
 func (m *Module) RemoveItems(indexes []string) (err error) {
@@ -67,31 +65,29 @@ func (m *Module) RemoveItems(indexes []string) (err error) {
 }
 
 func (m *Module) removeItem(index string) error {
-	return m.db.Transaction(func() error {
-		item, err := m.db.GetItem(index)
+	item, err := m.db.GetItem(index)
+	if err != nil {
+		return fmt.Errorf("failed to get item in tokenmanager: %s", err)
+	}
+
+	err = m.db.RemoveOnChainItems(index)
+	if err != nil {
+		return fmt.Errorf("failed to remove item in tokenmanager: %s", err)
+	}
+
+	if item.Meta.Seed != "" {
+		err = m.db.RemoveSeed(item.Meta.Seed)
 		if err != nil {
-			return fmt.Errorf("failed to get item in tokenmanager: %s", err)
+			return fmt.Errorf("failed to remove seed in tokenmanager: %s", err)
 		}
+	}
 
-		err = m.db.RemoveOnChainItems(index)
-		if err != nil {
-			return fmt.Errorf("failed to remove item in tokenmanager: %s", err)
-		}
+	err = m.db.RemoveItem(index)
+	if err != nil {
+		return fmt.Errorf("failed to remove item in tokenmanager: %s", err)
+	}
 
-		if item.Meta.Seed != "" {
-			err = m.db.RemoveSeed(item.Meta.Seed)
-			if err != nil {
-				return fmt.Errorf("failed to remove seed in tokenmanager: %s", err)
-			}
-		}
-
-		err = m.db.RemoveItem(index)
-		if err != nil {
-			return fmt.Errorf("failed to remove item in tokenmanager: %s", err)
-		}
-
-		return nil
-	})
+	return nil
 }
 
 func (m *Module) CreateCollection(
@@ -128,29 +124,27 @@ func (m *Module) CreateCollection(
 		onChainItemsList[i] = *onChainItem
 	}
 
-	return m.db.Transaction(func() error {
-		err := m.db.SaveCollections([]types.Collection{collection})
-		if err != nil {
-			return fmt.Errorf("failed to create collection: %s", err)
-		}
+	err := m.db.SaveCollections([]types.Collection{collection})
+	if err != nil {
+		return fmt.Errorf("failed to create collection: %s", err)
+	}
 
-		err = m.saveCollectionDatas(datas)
-		if err != nil {
-			return fmt.Errorf("failed to create collection datas: %s", err)
-		}
+	err = m.saveCollectionDatas(datas)
+	if err != nil {
+		return fmt.Errorf("failed to create collection datas: %s", err)
+	}
 
-		err = m.saveItems(itemList)
-		if err != nil {
-			return fmt.Errorf("failed to create items: %s", err)
-		}
+	err = m.saveItems(itemList)
+	if err != nil {
+		return fmt.Errorf("failed to create items: %s", err)
+	}
 
-		err = m.saveOnChainItems(onChainItemsList)
-		if err != nil {
-			return fmt.Errorf("failed to create on chain items: %s", err)
-		}
+	err = m.saveOnChainItems(onChainItemsList)
+	if err != nil {
+		return fmt.Errorf("failed to create on chain items: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }
 
 func (m *Module) UpdateCollectionDatas(datas []*tokenmanagertypes.CollectionData) (err error) {
@@ -177,48 +171,42 @@ func (m *Module) CreateCollectionDatas(height int64, datas []*tokenmanagertypes.
 }
 
 func (m *Module) createCollectionData(height int64, data *tokenmanagertypes.CollectionData) error {
-	return m.db.Transaction(func() error {
-		err := m.db.SaveCollectionDatas([]types.CollectionData{types.CollectionDataFromCore(*data)})
-		if err != nil {
-			return fmt.Errorf("failed to create collection datas: %s", err)
-		}
+	err := m.db.SaveCollectionDatas([]types.CollectionData{types.CollectionDataFromCore(*data)})
+	if err != nil {
+		return fmt.Errorf("failed to create collection datas: %s", err)
+	}
 
-		col, err := m.source.Collection(height, data.Collection)
-		if err != nil {
-			return fmt.Errorf("failed to get collection from source: %s", err)
-		}
+	col, err := m.source.Collection(height, data.Collection)
+	if err != nil {
+		return fmt.Errorf("failed to get collection from source: %s", err)
+	}
 
-		err = m.db.UpdateCollection(types.CollectionFromCore(col))
-		if err != nil {
-			return fmt.Errorf("failed to update collection: %s", err)
-		}
+	err = m.db.UpdateCollection(types.CollectionFromCore(col))
+	if err != nil {
+		return fmt.Errorf("failed to update collection: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }
 
 func (m *Module) RemoveCollectionDatas(height int64, datas []*tokenmanagertypes.CollectionDataIndex) (err error) {
 	for _, data := range datas {
-		err = m.db.Transaction(func() error {
-			err = m.db.RemoveCollectionData(tokenmanagertypes.CollectionDataKey(data))
-			if err != nil {
-				return fmt.Errorf("failed to remove collection data")
-			}
+		err = m.db.RemoveCollectionData(tokenmanagertypes.CollectionDataKey(data))
+		if err != nil {
+			return fmt.Errorf("failed to remove collection data")
+		}
 
-			idx := types.NewCollectionDataIndex(data.Chain, data.Address)
+		idx := types.NewCollectionDataIndex(data.Chain, data.Address)
 
-			colData, err := m.source.CollectionData(height, *idx)
-			if err != nil {
-				return fmt.Errorf("failed to get collection data from source: %s", err)
-			}
+		colData, err := m.source.CollectionData(height, *idx)
+		if err != nil {
+			return fmt.Errorf("failed to get collection data from source: %s", err)
+		}
 
-			err = m.updateCollection(colData.Collection)
-			if err != nil {
-				return fmt.Errorf("failed to update collection: %s", err)
-			}
-
-			return nil
-		})
+		err = m.updateCollection(colData.Collection)
+		if err != nil {
+			return fmt.Errorf("failed to update collection: %s", err)
+		}
 	}
 
 	return nil
@@ -239,17 +227,15 @@ func (m *Module) updateCollection(index string) error {
 }
 
 func (m *Module) RemoveCollection(index string) (err error) {
-	return m.db.Transaction(func() error {
-		err = m.db.RemoveCollectionDataByCollection(index)
-		if err != nil {
-			return fmt.Errorf("failed to remove collection data: %s", err)
-		}
+	err = m.db.RemoveCollectionDataByCollection(index)
+	if err != nil {
+		return fmt.Errorf("failed to remove collection data: %s", err)
+	}
 
-		err = m.db.RemoveCollection(tokenmanagertypes.CollectionKey(index))
-		if err != nil {
-			return fmt.Errorf("failed to remove collection: %s", err)
-		}
+	err = m.db.RemoveCollection(tokenmanagertypes.CollectionKey(index))
+	if err != nil {
+		return fmt.Errorf("failed to remove collection: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }

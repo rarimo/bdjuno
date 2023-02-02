@@ -1,15 +1,16 @@
 package rarimocore
 
 import (
+	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	juno "github.com/forbole/juno/v3/types"
+	"github.com/rs/zerolog/log"
 	"gitlab.com/rarimo/bdjuno/types"
 	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
-	"math/big"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -42,25 +43,24 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error 
 
 	op := types.OperationFromCore(rawOp)
 
-	return m.db.Transaction(func() error {
-		err = m.db.SaveRarimoCoreVotes(
-			[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
-		)
+	err = m.db.SaveRarimoCoreVotes(
+		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
+	)
 
-		if op.Status != rarimocoretypes.OpStatus_INITIALIZED {
-			return nil
-		}
-
-		if op.OperationType == rarimocoretypes.OpType_TRANSFER && op.Status == rarimocoretypes.OpStatus_APPROVED {
-			err = m.handleApproveTransfer(tx, rawOp)
-		}
-
-		err = m.db.UpdateOperation(op)
-		if err != nil {
-			return fmt.Errorf("failed to update operation: %s", err)
-		}
+	if op.Status != rarimocoretypes.OpStatus_INITIALIZED {
 		return nil
-	})
+	}
+
+	if op.OperationType == rarimocoretypes.OpType_TRANSFER && op.Status == rarimocoretypes.OpStatus_APPROVED {
+		err = m.handleApproveTransfer(tx, rawOp)
+	}
+
+	err = m.db.UpdateOperation(op)
+	if err != nil {
+		return fmt.Errorf("failed to update operation: %s", err)
+	}
+	return nil
+
 }
 
 func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation) error {
@@ -83,46 +83,51 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 		return fmt.Errorf("failed to get item: %s", err)
 	}
 
-	return m.db.Transaction(func() error {
-		err = m.db.UpsertItem(types.ItemFromCore(item))
+	err = m.db.UpsertItem(types.ItemFromCore(item))
+	if err != nil {
+		return fmt.Errorf("failed to save item: %s", err)
+	}
+
+	if item.Meta.Seed != "" {
+		seed, err := m.tokenManagerSource.Seed(tx.Height, item.Meta.Seed)
 		if err != nil {
-			return fmt.Errorf("failed to save item: %s", err)
+			return fmt.Errorf("failed to get seed: %s", err)
 		}
 
-		if item.Meta.Seed != "" {
-			seed, err := m.tokenManagerSource.Seed(tx.Height, item.Meta.Seed)
-			if err != nil {
-				return fmt.Errorf("failed to get seed: %s", err)
-			}
-
-			err = m.db.UpsertSeed(types.SeedFromCore(seed))
-			if err != nil {
-				return fmt.Errorf("failed to save seed: %s", err)
-			}
-		}
-
-		to, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.To)
+		err = m.db.UpsertSeed(types.SeedFromCore(seed))
 		if err != nil {
-			return fmt.Errorf("failed to get on chain item: %s", err)
+			return fmt.Errorf("failed to save seed: %s", err)
 		}
+	}
 
-		err = m.db.SaveOnChainItems([]types.OnChainItem{
-			types.OnChainItemFromCore(from),
-			types.OnChainItemFromCore(to),
-		})
-		if err != nil {
-			return fmt.Errorf("failed to save on chain item: %s", err)
-		}
+	to, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.To)
+	if err != nil {
+		return fmt.Errorf("failed to get on chain item: %s", err)
+	}
 
-		return nil
+	err = m.db.SaveOnChainItems([]types.OnChainItem{
+		types.OnChainItemFromCore(from),
+		types.OnChainItemFromCore(to),
 	})
+	if err != nil {
+		return fmt.Errorf("failed to save on chain item: %s", err)
+	}
+
+	return nil
+
 }
 
 func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
-	index := hexutil.Encode(crypto.Keccak256([]byte(msg.Tx),
+	s, _ := json.Marshal(msg)
+	fmt.Println(string(s))
+	if msg.From == nil {
+		log.Debug().Str("tx_hash", tx.TxHash).Msg("skipping create transfer operation, from is nil")
+		return nil
+	}
+	index := hexutil.Encode(crypto.Keccak256(
+		[]byte(msg.Tx),
 		[]byte(msg.EventId),
 		[]byte(msg.From.Chain),
-		big.NewInt(tx.Height).Bytes(),
 	))
 
 	op, err := m.source.Operation(tx.Height, index)
@@ -188,22 +193,20 @@ func (m *Module) handleMsgCreateConfirmation(tx *juno.Tx, msg *rarimocoretypes.M
 		ops[i] = op
 	}
 
-	return m.db.Transaction(func() error {
-		err := m.updateOperations(ops)
-		if err != nil {
-			return fmt.Errorf("failed to update operations: %s", err)
-		}
+	err := m.updateOperations(ops)
+	if err != nil {
+		return fmt.Errorf("failed to update operations: %s", err)
+	}
 
-		err = m.saveConfirmations([]rarimocoretypes.Confirmation{confirmation})
-		if err != nil {
-			return fmt.Errorf("failed to save confirmation: %s", err)
-		}
+	err = m.saveConfirmations([]rarimocoretypes.Confirmation{confirmation})
+	if err != nil {
+		return fmt.Errorf("failed to save confirmation: %s", err)
+	}
 
-		err = m.UpdateParams(tx.Height)
-		if err != nil {
-			return fmt.Errorf("failed to update last rarimocore params: %s", err)
-		}
+	err = m.UpdateParams(tx.Height)
+	if err != nil {
+		return fmt.Errorf("failed to update last rarimocore params: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }

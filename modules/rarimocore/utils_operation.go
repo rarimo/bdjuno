@@ -11,32 +11,31 @@ import (
 func (m *Module) saveOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 
-	return m.db.Transaction(func() error {
-		// Save the operations
-		err := m.db.SaveOperations(operations)
-		if err != nil {
-			return err
-		}
+	// Save the operations
+	err := m.db.SaveOperations(operations)
+	if err != nil {
+		return err
+	}
 
-		transfers, changeParties, err := getOperationDetails(slice)
-		if err != nil {
-			return nil
-		}
-
-		// Save the transfers
-		err = m.db.SaveTransfers(transfers)
-		if err != nil {
-			return err
-		}
-
-		// Save the change parties
-		err = m.db.SaveChangeParties(changeParties)
-		if err != nil {
-			return err
-		}
-
+	transfers, changeParties, err := getOperationDetails(slice)
+	if err != nil {
 		return nil
-	})
+	}
+
+	// Save the transfers
+	err = m.db.SaveTransfers(transfers)
+	if err != nil {
+		return err
+	}
+
+	// Save the change parties
+	err = m.db.SaveChangeParties(changeParties)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
@@ -58,30 +57,29 @@ func (m *Module) saveVotes(slice []rarimocoretypes.Vote) error {
 func (m *Module) updateOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 
-	return m.db.Transaction(func() error {
-		// Update the operations
-		for _, operation := range operations {
-			err := m.db.UpdateOperation(operation)
-			if err != nil {
-				return err
-			}
-		}
-
-		_, changeParties, err := getOperationDetails(slice)
+	// Update the operations
+	for _, operation := range operations {
+		err := m.db.UpdateOperation(operation)
 		if err != nil {
 			return err
 		}
+	}
 
-		// Update the change parties
-		for _, changeParty := range changeParties {
-			err = m.db.UpdateChangeParties(changeParty)
-			if err != nil {
-				return err
-			}
+	_, changeParties, err := getOperationDetails(slice)
+	if err != nil {
+		return err
+	}
+
+	// Update the change parties
+	for _, changeParty := range changeParties {
+		err = m.db.UpdateChangeParties(changeParty)
+		if err != nil {
+			return err
 		}
+	}
 
-		return nil
-	})
+	return nil
+
 }
 
 func coreOperationsToInternal(slice []rarimocoretypes.Operation) []types.Operation {
