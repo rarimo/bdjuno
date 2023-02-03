@@ -51,8 +51,8 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 // Operation represents a single operation instance
 type Operation struct {
 	Index         string                   `json:"index,omitempty" yaml:"index,omitempty"`
-	OperationType rarimocoretypes.OpType   `json:"operation_type,omitempty" yaml:"operation_type,omitempty"`
-	Status        rarimocoretypes.OpStatus `json:"status,omitempty" yaml:"status,omitempty"`
+	OperationType rarimocoretypes.OpType   `json:"operation_type" yaml:"operation_type"`
+	Status        rarimocoretypes.OpStatus `json:"status" yaml:"status"`
 	Creator       string                   `json:"creator,omitempty" yaml:"creator,omitempty"`
 	Timestamp     int64                    `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
 }
@@ -156,7 +156,7 @@ func NewConfirmation(c rarimocoretypes.Confirmation) Confirmation {
 type RarimoCoreVote struct {
 	Operation string                   `json:"operation,omitempty" yaml:"operation,omitempty"`
 	Validator string                   `json:"validator,omitempty" yaml:"validator,omitempty"`
-	Vote      rarimocoretypes.VoteType `json:"vote,omitempty" yaml:"vote,omitempty"`
+	Vote      rarimocoretypes.VoteType `json:"vote" yaml:"vote"`
 }
 
 // NewRarimoCoreVote allows to build a new RarimoCoreVote instance

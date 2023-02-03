@@ -18,7 +18,7 @@ CREATE TABLE collection
 
 CREATE TABLE collection_data
 (
-    index_key  BYTEA   NOT NULL PRIMARY KEY,
+    index_key  TEXT   NOT NULL PRIMARY KEY,
     index      JSONB   NOT NULL,
     collection TEXT REFERENCES collection (index),
     token_type INT     NOT NULL,

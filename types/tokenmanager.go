@@ -8,7 +8,7 @@ import (
 type NetworkParams struct {
 	Name     string                        `json:"name,omitempty" yaml:"name,omitempty"`
 	Contract string                        `json:"contract,omitempty" yaml:"contract,omitempty"`
-	Type     tokenmanagertypes.NetworkType `json:"type,omitempty" yaml:"type,omitempty"`
+	Type     tokenmanagertypes.NetworkType `json:"type" yaml:"type"`
 }
 
 type TokenManagerParamsInner struct {
@@ -57,9 +57,9 @@ func NewCollectionDataIndex(chain, address string) *CollectionDataIndex {
 // CollectionData contains the data of the x/tokenmanager collection data instance
 type CollectionData struct {
 	Index      *CollectionDataIndex   `json:"index,omitempty" yaml:"index,omitempty"`
-	IndexKey   []byte                 `json:"index_key" yaml:"index_key"`
+	IndexKey   string                 `json:"index_key" yaml:"index_key"`
 	Collection string                 `json:"collection,omitempty" yaml:"collection,omitempty"`
-	TokenType  tokenmanagertypes.Type `json:"token_type,omitempty" yaml:"tokenType,omitempty"`
+	TokenType  tokenmanagertypes.Type `json:"token_type" yaml:"tokenType"`
 	Wrapped    bool                   `json:"wrapped,omitempty" yaml:"wrapped,omitempty"`
 	Decimals   uint32                 `json:"decimals,omitempty" yaml:"decimals,omitempty"`
 }
@@ -79,7 +79,7 @@ func NewCollectionData(
 
 	return CollectionData{
 		Index:      index,
-		IndexKey:   indexKey,
+		IndexKey:   string(indexKey),
 		Collection: collection,
 		TokenType:  tokenType,
 		Wrapped:    wrapped,

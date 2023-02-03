@@ -17,7 +17,7 @@ type CollectionMetadata struct {
 // CollectionDataRow represents a single row of the "collection_data" table
 type CollectionDataRow struct {
 	Index      *string `db:"index"`
-	IndexKey   []byte  `db:"index_key"`
+	IndexKey   string  `db:"index_key"`
 	Collection string  `db:"collection"`
 	TokenType  int32   `db:"tokenType"`
 	Wrapped    bool    `db:"wrapped"`

@@ -63,7 +63,7 @@ CREATE TABLE confirmation
 CREATE TABLE vote
 (
     operation TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
-    validator TEXT NOT NULL REFERENCES validator_info (operator_address),
+    validator TEXT NOT NULL REFERENCES account (address),
     vote      INT  NOT NULL
 );
 

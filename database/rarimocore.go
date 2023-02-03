@@ -127,7 +127,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 }
 
 func (db *Db) UpdateOperation(operation types.Operation) error {
-	query := `UPDATE operation SET status = $1 WHERE index = $3`
+	query := `UPDATE operation SET status = $1 WHERE index = $2`
 	_, err := db.Sql.Exec(query,
 		operation.Status,
 		operation.Index,

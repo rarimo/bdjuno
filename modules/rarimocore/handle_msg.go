@@ -1,13 +1,11 @@
 package rarimocore
 
 import (
-	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	juno "github.com/forbole/juno/v3/types"
-	"github.com/rs/zerolog/log"
 	"gitlab.com/rarimo/bdjuno/types"
 	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
@@ -46,9 +44,8 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error 
 	err = m.db.SaveRarimoCoreVotes(
 		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
 	)
-
-	if op.Status != rarimocoretypes.OpStatus_INITIALIZED {
-		return nil
+	if err != nil {
+		return fmt.Errorf("failed to save vote: %s", err)
 	}
 
 	if op.OperationType == rarimocoretypes.OpType_TRANSFER && op.Status == rarimocoretypes.OpStatus_APPROVED {
@@ -118,12 +115,6 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 }
 
 func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
-	s, _ := json.Marshal(msg)
-	fmt.Println(string(s))
-	if msg.From == nil {
-		log.Debug().Str("tx_hash", tx.TxHash).Msg("skipping create transfer operation, from is nil")
-		return nil
-	}
 	index := hexutil.Encode(crypto.Keccak256(
 		[]byte(msg.Tx),
 		[]byte(msg.EventId),
