@@ -11,32 +11,31 @@ import (
 func (m *Module) saveOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)
 
-	return m.db.Transaction(func() error {
-		// Save the operations
-		err := m.db.SaveOperations(operations)
-		if err != nil {
-			return err
-		}
+	// Save the operations
+	err := m.db.SaveOperations(operations)
+	if err != nil {
+		return err
+	}
 
-		transfers, changeParties, err := getOperationDetails(slice)
-		if err != nil {
-			return nil
-		}
-
-		// Save the transfers
-		err = m.db.SaveTransfers(transfers)
-		if err != nil {
-			return err
-		}
-
-		// Save the change parties
-		err = m.db.SaveChangeParties(changeParties)
-		if err != nil {
-			return err
-		}
-
+	transfers, changeParties, err := getOperationDetails(slice)
+	if err != nil {
 		return nil
-	})
+	}
+
+	// Save the transfers
+	err = m.db.SaveTransfers(transfers)
+	if err != nil {
+		return err
+	}
+
+	// Save the change parties
+	err = m.db.SaveChangeParties(changeParties)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
@@ -45,6 +44,14 @@ func (m *Module) saveConfirmations(slice []rarimocoretypes.Confirmation) error {
 		confirmations[index] = types.NewConfirmation(confirmation)
 	}
 	return m.db.SaveConfirmations(confirmations)
+}
+
+func (m *Module) saveVotes(slice []rarimocoretypes.Vote) error {
+	votes := make([]types.RarimoCoreVote, len(slice))
+	for index, vote := range slice {
+		votes[index] = types.RarimoCoreVoteFromCore(vote)
+	}
+	return m.db.SaveRarimoCoreVotes(votes)
 }
 
 func (m *Module) updateOperations(slice []rarimocoretypes.Operation) error {
@@ -72,18 +79,13 @@ func (m *Module) updateOperations(slice []rarimocoretypes.Operation) error {
 	}
 
 	return nil
+
 }
 
 func coreOperationsToInternal(slice []rarimocoretypes.Operation) []types.Operation {
 	operations := make([]types.Operation, len(slice))
 	for i, operation := range slice {
-		operations[i] = types.NewOperation(
-			operation.Index,
-			int32(operation.OperationType),
-			operation.Signed,
-			operation.Creator,
-			operation.Timestamp,
-		)
+		operations[i] = types.OperationFromCore(operation)
 	}
 
 	return operations

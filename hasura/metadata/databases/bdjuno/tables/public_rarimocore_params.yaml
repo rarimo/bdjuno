@@ -10,7 +10,7 @@ select_permissions:
     - threshold
     - is_update_required
     - last_signature
-    - available_resign_block_delta
+    - parties
     - height
     filter: {}
   role: anonymous

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	juno "github.com/forbole/juno/v3/types"
-	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/operation/origin"
+	"gitlab.com/rarimo/bdjuno/types"
 	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
@@ -23,6 +24,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
 	case *rarimocoretypes.MsgCreateConfirmation:
 		return m.handleMsgCreateConfirmation(tx, cosmosMsg)
+	case *rarimocoretypes.MsgVote:
+		return m.handleMsgVote(tx, cosmosMsg)
 	case *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
 		return m.UpdateParams(tx.Height)
 	}
@@ -30,17 +33,111 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
-	or := origin.NewDefaultOriginBuilder().
-		SetTxHash(msg.Tx).
-		SetOpId(msg.EventId).
-		SetCurrentNetwork(msg.FromChain).
-		Build().
-		GetOrigin()
-
-	err := m.handleNewOperation(tx.Height, hexutil.Encode(or[:]))
+func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error {
+	rawOp, err := m.source.Operation(tx.Height, msg.Operation)
 	if err != nil {
-		return fmt.Errorf("failed to handle new create transfer operation: %s", err)
+		return fmt.Errorf("failed to get change operation: %s", err)
+	}
+
+	op := types.OperationFromCore(rawOp)
+
+	err = m.db.SaveRarimoCoreVotes(
+		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to save vote: %s", err)
+	}
+
+	if op.OperationType == rarimocoretypes.OpType_TRANSFER && op.Status == rarimocoretypes.OpStatus_APPROVED {
+		err = m.handleApproveTransfer(tx, rawOp)
+	}
+
+	err = m.db.UpdateOperation(op)
+	if err != nil {
+		return fmt.Errorf("failed to update operation: %s", err)
+	}
+	return nil
+
+}
+
+func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation) error {
+	transfer, err := getTransfer(op)
+	if err != nil {
+		return fmt.Errorf("failed to get transfer: %s", err)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to get collection data: %s", err)
+	}
+
+	from, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.From)
+	if err != nil {
+		return fmt.Errorf("failed to get on chain item: %s", err)
+	}
+
+	item, err := m.tokenManagerSource.Item(tx.Height, transfer.Origin)
+	if err != nil {
+		return fmt.Errorf("failed to get item: %s", err)
+	}
+
+	err = m.db.UpsertItem(types.ItemFromCore(item))
+	if err != nil {
+		return fmt.Errorf("failed to save item: %s", err)
+	}
+
+	if item.Meta.Seed != "" {
+		seed, err := m.tokenManagerSource.Seed(tx.Height, item.Meta.Seed)
+		if err != nil {
+			return fmt.Errorf("failed to get seed: %s", err)
+		}
+
+		err = m.db.UpsertSeed(types.SeedFromCore(seed))
+		if err != nil {
+			return fmt.Errorf("failed to save seed: %s", err)
+		}
+	}
+
+	to, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.To)
+	if err != nil {
+		return fmt.Errorf("failed to get on chain item: %s", err)
+	}
+
+	err = m.db.SaveOnChainItems([]types.OnChainItem{
+		types.OnChainItemFromCore(from),
+		types.OnChainItemFromCore(to),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to save on chain item: %s", err)
+	}
+
+	return nil
+
+}
+
+func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
+	index := hexutil.Encode(crypto.Keccak256(
+		[]byte(msg.Tx),
+		[]byte(msg.EventId),
+		[]byte(msg.From.Chain),
+	))
+
+	op, err := m.source.Operation(tx.Height, index)
+	if err != nil {
+		return fmt.Errorf("failed to get transfer operation: %s", err)
+	}
+
+	err = m.saveOperations([]rarimocoretypes.Operation{op})
+	if err != nil {
+		return fmt.Errorf("failed to save transfer operation: %s", err)
+	}
+
+	if op.Status == rarimocoretypes.OpStatus_INITIALIZED || op.Status == rarimocoretypes.OpStatus_APPROVED {
+		return nil
+	}
+
+	err = m.db.RemoveRarimoCoreVotes(op.Index)
+	if err != nil {
+		return fmt.Errorf("failed to remove votes: %s", err)
 	}
 
 	return nil
@@ -55,28 +152,14 @@ func (m *Module) handleMsgCreateChangePartiesOp(tx *juno.Tx, msg *rarimocoretype
 
 	content, _ := pkg.GetChangePartiesContent(changeOp)
 
-	err := m.handleNewOperation(tx.Height, hexutil.Encode(content.CalculateHash()))
+	op, err := m.source.Operation(tx.Height, hexutil.Encode(content.CalculateHash()))
 	if err != nil {
-		return fmt.Errorf("failed to handle new create change parties operation: %s", err)
-	}
-
-	return nil
-}
-
-func (m *Module) handleNewOperation(height int64, index string) error {
-	op, err := m.source.Operation(height, index)
-	if err != nil {
-		return fmt.Errorf("failed to get operation: %s", err)
+		return fmt.Errorf("failed to get change parties operation: %s", err)
 	}
 
 	err = m.saveOperations([]rarimocoretypes.Operation{op})
 	if err != nil {
-		return fmt.Errorf("failed to save operation: %s", err)
-	}
-
-	err = m.UpdateParams(height)
-	if err != nil {
-		return fmt.Errorf("failed to update last rarimocore params: %s", err)
+		return fmt.Errorf("failed to save change parties operation: %s", err)
 	}
 
 	return nil

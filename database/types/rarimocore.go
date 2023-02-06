@@ -10,21 +10,20 @@ type PartyRow struct {
 
 // RarimoCoreParamsRow represents a single row of the "rarimocore_params" table
 type RarimoCoreParamsRow struct {
-	OneRowID                  bool     `db:"one_row_id"`
-	KeyECDSA                  string   `db:"key_ecdsa"`
-	Threshold                 uint64   `db:"threshold"`
-	IsUpdateRequired          bool     `db:"is_update_required"`
-	LastSignature             string   `db:"last_signature"`
-	Parties                   []string `db:"parties"`
-	AvailableResignBlockDelta uint64   `db:"available_resign_block_delta"`
-	Height                    int64    `db:"height"`
+	OneRowID         bool     `db:"one_row_id"`
+	KeyECDSA         string   `db:"key_ecdsa"`
+	Threshold        uint64   `db:"threshold"`
+	IsUpdateRequired bool     `db:"is_update_required"`
+	LastSignature    string   `db:"last_signature"`
+	Parties          []string `db:"parties"`
+	Height           int64    `db:"height"`
 }
 
 // OperationRow represents a single row of the "operation" table
 type OperationRow struct {
 	Index         string `db:"index"`
 	OperationType int32  `db:"operation_type"`
-	Signed        bool   `db:"signed"`
+	Status        int32  `db:"status"`
 	Creator       string `db:"creator"`
 	Timestamp     uint64 `db:"timestamp"`
 }
@@ -32,16 +31,16 @@ type OperationRow struct {
 // TransferRow represents a single row of the "transfer" table
 type TransferRow struct {
 	OperationIndex string `db:"operation_index"`
-	Origin         string `db:"origin,omitempty"`
-	Tx             string `db:"tx,omitempty"`
-	EventId        string `db:"event_id,omitempty"`
-	FromChain      string `db:"from_chain,omitempty"`
-	ToChain        string `db:"to_chain,omitempty"`
-	Receiver       string `db:"receiver,omitempty"`
-	Amount         string `db:"amount,omitempty"`
-	BundleData     string `db:"bundle_data,omitempty"`
-	BundleSalt     string `db:"bundle_salt,omitempty"`
-	TokenIndex     string `db:"token_index,omitempty"`
+	Origin         string `db:"origin"`
+	Tx             string `db:"tx"`
+	EventId        string `db:"event_id"`
+	Receiver       string `db:"receiver"`
+	Amount         string `db:"amount"`
+	BundleData     string `db:"bundle_data"`
+	BundleSalt     string `db:"bundle_salt"`
+	From           string `db:"from"`
+	To             string `db:"to"`
+	ItemMeta       string `db:"item_meta"`
 }
 
 // ChangePartiesRow represents a single row of the "change_parties" table
@@ -58,4 +57,11 @@ type ConfirmationRow struct {
 	Indexes        []string `db:"indexes"`
 	SignatureECDSA string   `db:"signature_ecdsa"`
 	Creator        string   `db:"creator"`
+}
+
+// RarimoCoreVoteRow represents a single row of the "vote" table
+type RarimoCoreVoteRow struct {
+	Operation string `db:"operation"`
+	Validator string `db:"validator"`
+	Vote      int32  `db:"vote"`
 }

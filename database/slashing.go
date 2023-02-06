@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"gitlab.com/rarimo/bdjuno/types"
 )
@@ -34,7 +35,7 @@ VALUES `
 		counter++
 	}
 
-	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt = strings.TrimSuffix(stmt, ",") // Remove trailing ","
 	stmt += `
 ON CONFLICT (validator_address) DO UPDATE 
 	SET validator_address = excluded.validator_address,

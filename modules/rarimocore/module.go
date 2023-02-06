@@ -3,6 +3,7 @@ package rarimocore
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	rarimocore "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
+	tokenmanager "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
 
 	"gitlab.com/rarimo/bdjuno/database"
 
@@ -17,17 +18,19 @@ var (
 
 // Module represents the x/auth module
 type Module struct {
-	cdc    codec.Codec
-	db     *database.Db
-	source rarimocore.Source
+	cdc                codec.Codec
+	db                 *database.Db
+	source             rarimocore.Source
+	tokenManagerSource tokenmanager.Source
 }
 
 // NewModule builds a new Module instance
-func NewModule(source rarimocore.Source, cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source rarimocore.Source, tokenManagerSource tokenmanager.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		source: source,
-		cdc:    cdc,
-		db:     db,
+		source:             source,
+		tokenManagerSource: tokenManagerSource,
+		cdc:                cdc,
+		db:                 db,
 	}
 }
 

@@ -17,10 +17,6 @@ type Db struct {
 	Sqlx *sqlx.DB
 }
 
-func (db *Db) Transaction(fn func() error) error {
-	return db.Transaction(fn)
-}
-
 // Builder allows to create a new Db instance implementing the db.Builder type
 func Builder(ctx *db.Context) (db.Database, error) {
 	database, err := postgresql.Builder(ctx)

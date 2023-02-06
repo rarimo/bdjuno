@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"strings"
 
 	"gitlab.com/rarimo/bdjuno/types"
 
@@ -54,7 +55,7 @@ VALUES `
 		)
 	}
 
-	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
+	selfDelegationAccQuery = strings.TrimSuffix(selfDelegationAccQuery, ",") // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {

@@ -41,7 +41,7 @@ type GovParams struct {
 	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
 	VotingParams  VotingParams  `json:"voting_params" yaml:"voting_params"`
 	TallyParams   TallyParams   `json:"tally_params" yaml:"tally_params"`
-	Height        int64         `json:"height" ymal:"height"`
+	Height        int64         `json:"height" yaml:"height"`
 }
 
 // TallyParams contains the tally parameters of the x/gov module
