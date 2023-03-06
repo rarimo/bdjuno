@@ -20,8 +20,8 @@ require (
 	github.com/spf13/cobra v1.6.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.23
-	gitlab.com/rarimo/rarimo-core v0.0.0-20230201182240-b2b174c1751c
-	google.golang.org/grpc v1.51.0
+	gitlab.com/rarimo/rarimo-core v0.0.0-20230303182842-d6e756f65926
+	google.golang.org/grpc v1.53.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -177,14 +177,14 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/mod v0.6.0 // indirect
-	golang.org/x/net v0.3.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/term v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
-	google.golang.org/genproto v0.0.0-20221207170731-23e4bf6bdc37 // indirect
+	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923 // indirect
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
@@ -193,7 +193,7 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => gitlab.com/rarimo/cosmos-sdk v0.45.5-dev.5
+	github.com/cosmos/cosmos-sdk => gitlab.com/rarimo/cosmos-sdk v0.45.5-dev.6-testnet
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.19-forbole
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2

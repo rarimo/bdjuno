@@ -28,6 +28,8 @@ type RarimoCoreParams struct {
 	Threshold        uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
 	IsUpdateRequired bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
 	LastSignature    string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
+	VoteQuorum       string   `json:"vote_quorum,omitempty" yaml:"vote_quorum,omitempty"`
+	VoteThreshold    string   `json:"vote_threshold,omitempty" yaml:"vote_threshold,omitempty"`
 	Parties          []string `json:"parties,omitempty" yaml:"parties,omitempty"`
 	Height           int64    `json:"height,omitempty" yaml:"height,omitempty"`
 }
@@ -43,6 +45,8 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 		Threshold:        p.Threshold,
 		IsUpdateRequired: p.IsUpdateRequired,
 		LastSignature:    p.LastSignature,
+		VoteQuorum:       p.VoteQuorum,
+		VoteThreshold:    p.VoteThreshold,
 		Parties:          parties,
 		Height:           height,
 	}
