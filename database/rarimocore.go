@@ -54,7 +54,7 @@ WHERE parties.account = excluded.account
 func (db *Db) SaveRarimoCoreParams(params *types.RarimoCoreParams) (err error) {
 	stmt := `
 INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, vote_quorum, vote_threshold, parties, height)
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET key_ecdsa = excluded.key_ecdsa,
 		threshold = excluded.threshold,
