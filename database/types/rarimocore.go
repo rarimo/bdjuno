@@ -15,6 +15,8 @@ type RarimoCoreParamsRow struct {
 	Threshold        uint64   `db:"threshold"`
 	IsUpdateRequired bool     `db:"is_update_required"`
 	LastSignature    string   `db:"last_signature"`
+	VoteQuorum       string   `db:"vote_quorum"`
+	VoteThreshold    string   `db:"vote_threshold"`
 	Parties          []string `db:"parties"`
 	Height           int64    `db:"height"`
 }
