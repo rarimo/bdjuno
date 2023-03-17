@@ -10,8 +10,6 @@ select_permissions:
     - threshold
     - is_update_required
     - last_signature
-    - vote_quorum
-    - vote_threshold
     - parties
     - height
     filter: {}
