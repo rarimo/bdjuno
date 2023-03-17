@@ -53,15 +53,13 @@ WHERE parties.account = excluded.account
 // SaveRarimoCoreParams saves the given x/rarimocore parameters inside the database
 func (db *Db) SaveRarimoCoreParams(params *types.RarimoCoreParams) (err error) {
 	stmt := `
-INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, vote_quorum, vote_threshold, parties, height)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height)
+VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET key_ecdsa = excluded.key_ecdsa,
 		threshold = excluded.threshold,
 		is_update_required = excluded.is_update_required,
 		last_signature = excluded.last_signature,
-		vote_quorum = excluded.vote_quorum,
-		vote_threshold = excluded.vote_threshold,
 		parties = excluded.parties,
 		height = excluded.height
 WHERE rarimocore_params.height <= excluded.height
@@ -72,8 +70,6 @@ WHERE rarimocore_params.height <= excluded.height
 		params.Threshold,
 		params.IsUpdateRequired,
 		params.LastSignature,
-		params.VoteQuorum,
-		params.VoteThreshold,
 		pq.StringArray(params.Parties),
 		params.Height,
 	)
