@@ -6,30 +6,40 @@ import (
 
 // Party contains the data of the x/rarimocore module signer instance
 type Party struct {
-	Account  string `json:"account,omitempty" yaml:"account,omitempty"`
-	PubKey   string `json:"pub_key,omitempty" yaml:"pub_key,omitempty"`
-	Address  string `json:"address,omitempty" yaml:"address,omitempty"`
-	Verified bool   `json:"verified,omitempty" yaml:"verified,omitempty"`
+	Account         string                      `json:"account,omitempty" yaml:"account,omitempty"`
+	PubKey          string                      `json:"pub_key,omitempty" yaml:"pub_key,omitempty"`
+	Address         string                      `json:"address,omitempty" yaml:"address,omitempty"`
+	Status          rarimocoretypes.PartyStatus `json:"status,omitempty" yaml:"status,omitempty"`
+	ViolationsCount uint64                      `json:"violations_count,omitempty" yaml:"violations_count,omitempty"`
+	FreezeEndBlock  uint64                      `json:"freeze_end_block,omitempty" yaml:"freeze_end_block,omitempty"`
+	Delegator       string                      `json:"delegator,omitempty" yaml:"delegator,omitempty"`
 }
 
 // NewParty allows to build a new Party
 func NewParty(p rarimocoretypes.Party) Party {
 	return Party{
-		Account:  p.Account,
-		PubKey:   p.PubKey,
-		Address:  p.Address,
-		Verified: p.Verified,
+		Account:         p.Account,
+		PubKey:          p.PubKey,
+		Address:         p.Address,
+		Status:          p.Status,
+		ViolationsCount: p.ViolationsCount,
+		FreezeEndBlock:  p.FreezeEndBlock,
+		Delegator:       p.Delegator,
 	}
 }
 
 // RarimoCoreParams contains the data of the x/rarimocore module params instance
 type RarimoCoreParams struct {
-	KeyECDSA         string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
-	Threshold        uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
-	IsUpdateRequired bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
-	LastSignature    string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
-	Parties          []string `json:"parties,omitempty" yaml:"parties,omitempty"`
-	Height           int64    `json:"height,omitempty" yaml:"height,omitempty"`
+	KeyECDSA           string   `json:"key_ecdsa,omitempty" yaml:"key_ecdsa,omitempty"`
+	Threshold          uint64   `json:"threshold,omitempty" yaml:"threshold,omitempty"`
+	IsUpdateRequired   bool     `json:"is_update_required,omitempty" yaml:"is_update_required,omitempty"`
+	LastSignature      string   `json:"last_signature,omitempty" yaml:"last_signature,omitempty"`
+	StakeAmount        string   `json:"stake_amount,omitempty" yaml:"stake_amount,omitempty"`
+	StakeDenom         string   `json:"stake_denom,omitempty" yaml:"stake_denom,omitempty"`
+	MaxViolationsCount uint64   `json:"max_violations_count,omitempty" yaml:"max_violations_count,omitempty"`
+	FreezeBlocksPeriod uint64   `json:"freeze_blocks_period,omitempty" yaml:"freeze_blocks_period,omitempty"`
+	Parties            []string `json:"parties,omitempty" yaml:"parties,omitempty"`
+	Height             int64    `json:"height,omitempty" yaml:"height,omitempty"`
 }
 
 // NewRarimoCoreParams allows to build a new RarimoCoreParams instance
@@ -39,12 +49,16 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 		parties[i] = party.Account
 	}
 	return &RarimoCoreParams{
-		KeyECDSA:         p.KeyECDSA,
-		Threshold:        p.Threshold,
-		IsUpdateRequired: p.IsUpdateRequired,
-		LastSignature:    p.LastSignature,
-		Parties:          parties,
-		Height:           height,
+		KeyECDSA:           p.KeyECDSA,
+		Threshold:          p.Threshold,
+		IsUpdateRequired:   p.IsUpdateRequired,
+		LastSignature:      p.LastSignature,
+		StakeAmount:        p.StakeAmount,
+		StakeDenom:         p.StakeDenom,
+		MaxViolationsCount: p.MaxViolationsCount,
+		FreezeBlocksPeriod: p.FreezeBlocksPeriod,
+		Parties:            parties,
+		Height:             height,
 	}
 }
 
@@ -174,5 +188,27 @@ func RarimoCoreVoteFromCore(vote rarimocoretypes.Vote) RarimoCoreVote {
 		Operation: vote.Index.Operation,
 		Validator: vote.Index.Validator,
 		Vote:      vote.Vote,
+	}
+}
+
+// ViolationReport represents a single vote instance
+type ViolationReport struct {
+	Index         string                        `json:"index,omitempty" yaml:"index,omitempty"`
+	SessionId     string                        `json:"session_id,omitempty" yaml:"session_id,omitempty"`
+	Offender      string                        `json:"offender,omitempty" yaml:"offender,omitempty"`
+	ViolationType rarimocoretypes.ViolationType `json:"violation_type,omitempty" yaml:"violation_type,omitempty"`
+	Sender        string                        `json:"sender,omitempty" yaml:"sender,omitempty"`
+	Msg           string                        `json:"msg,omitempty" yaml:"msg,omitempty"`
+}
+
+// ViolationReportFromCore allows to build a new ViolationReport instance from a rarimocoretypes.ViolationReport instance
+func ViolationReportFromCore(report rarimocoretypes.ViolationReport) ViolationReport {
+	return ViolationReport{
+		Index:         string(rarimocoretypes.ViolationReportKey(report.Index)),
+		SessionId:     report.Index.SessionId,
+		Offender:      report.Index.Offender,
+		ViolationType: report.Index.ViolationType,
+		Sender:        report.Index.Sender,
+		Msg:           report.Msg,
 	}
 }

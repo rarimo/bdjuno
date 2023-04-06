@@ -19,6 +19,12 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while reading rarimocore genesis data: %s", err)
 	}
 
+	// Save the violation reports
+	err = m.saveViolationReports(genState.ViolationReportList)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis rarimocore violation reports: %s", err)
+	}
+
 	// Save the operations
 	err = m.saveOperations(genState.OperationList)
 	if err != nil {

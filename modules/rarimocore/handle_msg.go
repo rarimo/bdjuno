@@ -21,14 +21,37 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *oracletypes.MsgCreateTransferOp:
 		return m.handleMsgCreateTransferOp(tx, cosmosMsg)
-	case *rarimocoretypes.MsgCreateChangePartiesOp:
-		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
+	case *rarimocoretypes.MsgCreateViolationReport:
+		return m.handleMsgCreateViolationReport(tx, cosmosMsg)
 	case *rarimocoretypes.MsgCreateConfirmation:
 		return m.handleMsgCreateConfirmation(tx, cosmosMsg)
+	case *rarimocoretypes.MsgCreateChangePartiesOp:
+		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
 	case *oracletypes.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
-	case *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
+	case *rarimocoretypes.MsgStake, *rarimocoretypes.MsgUnstake, *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
 		return m.UpdateParams(tx.Height)
+	}
+
+	return nil
+}
+
+func (m *Module) handleMsgCreateViolationReport(tx *juno.Tx, msg *rarimocoretypes.MsgCreateViolationReport) error {
+	rawReport, err := m.source.ViolationReport(tx.Height, msg.SessionId, msg.Offender, msg.SessionId, msg.ViolationType)
+	if err != nil {
+		return fmt.Errorf("failed to get violation report: %s", err)
+	}
+
+	report := types.ViolationReportFromCore(rawReport)
+
+	err = m.db.SaveViolationReports([]types.ViolationReport{report})
+	if err != nil {
+		return fmt.Errorf("failed to save violation report: %s", err)
+	}
+
+	err = m.UpdateParams(tx.Height)
+	if err != nil {
+		return fmt.Errorf("failed to update last rarimocore params: %s", err)
 	}
 
 	return nil

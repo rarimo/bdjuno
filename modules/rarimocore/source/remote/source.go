@@ -1,8 +1,6 @@
 package remote
 
 import (
-	"fmt"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/remote"
 	rarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
@@ -52,36 +50,6 @@ func (s Source) Operation(height int64, index string) (rarimocoretypes.Operation
 	return res.Operation, err
 }
 
-// OperationAll implements rarimocoresource.Source
-func (s Source) OperationAll(height int64) ([]rarimocoretypes.Operation, error) {
-	ctx := remote.GetHeightRequestContext(s.Ctx, height)
-
-	var operations []rarimocoretypes.Operation
-	var nextKey []byte
-	var stop = false
-
-	for !stop {
-		res, err := s.rarimocoreClient.OperationAll(
-			ctx,
-			&rarimocoretypes.QueryAllOperationRequest{
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 supplies at time
-				},
-			},
-		)
-		if err != nil {
-			return nil, fmt.Errorf("error while getting operation all: %s", err)
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		operations = append(operations, res.Operation...)
-	}
-
-	return operations, nil
-}
-
 // Confirmation implements rarimocoresource.Source
 func (s Source) Confirmation(height int64, root string) (rarimocoretypes.Confirmation, error) {
 	res, err := s.rarimocoreClient.Confirmation(
@@ -95,32 +63,20 @@ func (s Source) Confirmation(height int64, root string) (rarimocoretypes.Confirm
 	return res.Confirmation, err
 }
 
-// ConfirmationAll implements rarimocoresource.Source
-func (s Source) ConfirmationAll(height int64) ([]rarimocoretypes.Confirmation, error) {
-	ctx := remote.GetHeightRequestContext(s.Ctx, height)
-
-	var confirmations []rarimocoretypes.Confirmation
-	var nextKey []byte
-	var stop = false
-
-	for !stop {
-		res, err := s.rarimocoreClient.ConfirmationAll(
-			ctx,
-			&rarimocoretypes.QueryAllConfirmationRequest{
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 supplies at time
-				},
-			},
-		)
-		if err != nil {
-			return nil, fmt.Errorf("error while getting confirmation all: %s", err)
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		confirmations = append(confirmations, res.Confirmation...)
+// ViolationReport implements rarimocoresource.Source
+func (s Source) ViolationReport(height int64, sessionId, offender, sender string, violationType rarimocoretypes.ViolationType) (rarimocoretypes.ViolationReport, error) {
+	res, err := s.rarimocoreClient.ViolationReport(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&rarimocoretypes.QueryGetViolationReportRequest{
+			SessionId:     sessionId,
+			Offender:      offender,
+			ViolationType: violationType,
+			Sender:        sender,
+		},
+	)
+	if err != nil {
+		return rarimocoretypes.ViolationReport{}, err
 	}
 
-	return confirmations, nil
+	return res.ViolationReport, err
 }

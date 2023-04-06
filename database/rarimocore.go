@@ -17,17 +17,17 @@ func (db *Db) SaveParties(parties []types.Party) error {
 
 	var accounts []types.Account
 
-	partiesQuery := `INSERT INTO parties (address, account, pub_key, verified) VALUES `
+	partiesQuery := `INSERT INTO parties (address, account, pub_key, status, violations_count, freeze_end_block, delegator) VALUES `
 
 	var partiesParams []interface{}
 
 	for i, party := range parties {
 		accounts = append(accounts, types.NewAccount(party.Account))
 
-		vi := i * 4
-		partiesQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
+		vi := i * 7
+		partiesQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
 
-		partiesParams = append(partiesParams, party.Address, party.Account, party.PubKey, party.Verified)
+		partiesParams = append(partiesParams, party.Address, party.Account, party.PubKey, party.Status, party.ViolationsCount, party.FreezeEndBlock, party.Delegator)
 	}
 
 	// Store the accounts
@@ -39,7 +39,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 	// Store the proposals
 	partiesQuery = strings.TrimSuffix(partiesQuery, ",") // Remove trailing ","
 	partiesQuery += ` ON CONFLICT (account) DO UPDATE 
-	SET verified = excluded.verified, pub_key = excluded.pub_key 
+	SET status = excluded.status, pub_key = excluded.pub_key, violations_count = excluded.violations_count, freeze_end_block = excluded.freeze_end_block, delegator = excluded.delegator
 WHERE parties.account = excluded.account
 `
 	_, err = db.Sql.Exec(partiesQuery, partiesParams...)
@@ -53,13 +53,17 @@ WHERE parties.account = excluded.account
 // SaveRarimoCoreParams saves the given x/rarimocore parameters inside the database
 func (db *Db) SaveRarimoCoreParams(params *types.RarimoCoreParams) (err error) {
 	stmt := `
-INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, parties, height)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO rarimocore_params(key_ecdsa, threshold, is_update_required, last_signature, stake_amount, stake_denom, max_violations_count, freeze_blocks_period, parties, height)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET key_ecdsa = excluded.key_ecdsa,
 		threshold = excluded.threshold,
 		is_update_required = excluded.is_update_required,
 		last_signature = excluded.last_signature,
+		stake_amount = excluded.stake_amount,
+		stake_denom = excluded.stake_denom,
+		max_violations_count = excluded.max_violations_count,
+		freeze_blocks_period = excluded.freeze_blocks_period,
 		parties = excluded.parties,
 		height = excluded.height
 WHERE rarimocore_params.height <= excluded.height
@@ -70,6 +74,10 @@ WHERE rarimocore_params.height <= excluded.height
 		params.Threshold,
 		params.IsUpdateRequired,
 		params.LastSignature,
+		params.StakeAmount,
+		params.StakeDenom,
+		params.MaxViolationsCount,
+		params.FreezeBlocksPeriod,
 		pq.StringArray(params.Parties),
 		params.Height,
 	)
@@ -329,6 +337,31 @@ func (db *Db) RemoveRarimoCoreVotes(opIndex string) error {
 	_, err := db.Sql.Exec(stmt, opIndex)
 	if err != nil {
 		return fmt.Errorf("error while deleting rarimo core votes: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveViolationReports(reports []types.ViolationReport) (err error) {
+	if len(reports) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO violation_report (index, session_id, offender, sender, violation_type, msg) VALUES `
+	var queryParams []interface{}
+
+	for i, report := range reports {
+		vi := i * 6
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		queryParams = append(queryParams, report.Index, report.SessionId, report.Offender, report.Sender, report.ViolationType, report.Msg)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+
+	_, err = db.Sql.Exec(query, queryParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing reports: %s", err)
 	}
 
 	return nil
