@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+	"gitlab.com/rarimo/bdjuno/types"
 	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 )
 
@@ -22,6 +23,16 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	err = m.saveParams(genState.Params, doc.InitialHeight)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis oraclemanager params: %s", err)
+	}
+
+	oracles := make([]types.Oracle, len(genState.Oracles))
+	for i, oracle := range genState.Oracles {
+		oracles[i] = types.OracleFromCore(oracle)
+	}
+
+	err = m.db.SaveOracles(oracles)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis oracles: %s", err)
 	}
 
 	return nil

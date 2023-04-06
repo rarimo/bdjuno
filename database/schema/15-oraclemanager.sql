@@ -14,9 +14,9 @@ CREATE TABLE oraclemanager_params
     height                BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
-CREATE INDEX rarimocore_params_height_index ON oraclemanager_params (height);
+CREATE INDEX oraclemanager_params_height_index ON oraclemanager_params (height);
 
-CREATE TABLE oracles
+CREATE TABLE oracle
 (
     index                   TEXT UNIQUE NOT NULL PRIMARY KEY,
     chain                   TEXT        NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE oracles
 );
 
 -- +migrate Down
-DROP TABLE oracles;
+DROP TABLE oracle;
 DROP TABLE oraclemanager_params;
 
 

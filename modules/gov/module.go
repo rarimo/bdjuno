@@ -30,6 +30,7 @@ type Module struct {
 	rarimocoreModule    RarimoCoreModule
 	tokenmanagerModule  TokenManagerModule
 	oracleManagerModule OracleManagerModule
+	bridgeModule        BridgeModule
 }
 
 // NewModule returns a new Module instance
@@ -42,7 +43,8 @@ func NewModule(
 	stakingModule StakingModule,
 	rarimocoreModule RarimoCoreModule,
 	tokenmanagerModule TokenManagerModule,
-	oracleManager OracleManagerModule,
+	oracleManagerModule OracleManagerModule,
+	bridgeModule BridgeModule,
 	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
@@ -56,7 +58,8 @@ func NewModule(
 		stakingModule:       stakingModule,
 		rarimocoreModule:    rarimocoreModule,
 		tokenmanagerModule:  tokenmanagerModule,
-		oracleManagerModule: oracleManager,
+		oracleManagerModule: oracleManagerModule,
+		bridgeModule:        bridgeModule,
 		db:                  db,
 	}
 }

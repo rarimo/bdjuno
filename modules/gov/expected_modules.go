@@ -8,34 +8,32 @@ import (
 	"gitlab.com/rarimo/bdjuno/types"
 )
 
+type ParamsUpdater interface {
+	UpdateParams(height int64) error
+}
+
 type AuthModule interface {
 	RefreshAccounts(height int64, addresses []string) error
 }
 
-type DistrModule interface {
-	UpdateParams(height int64) error
-}
+type DistrModule = ParamsUpdater
 
 type MintModule interface {
-	UpdateParams(height int64) error
+	ParamsUpdater
 	UpdateInflation() error
 }
 
-type SlashingModule interface {
-	UpdateParams(height int64) error
-}
-
-type RarimoCoreModule interface {
-	UpdateParams(height int64) error
-}
+type SlashingModule = ParamsUpdater
+type RarimoCoreModule = ParamsUpdater
+type BridgeModule = ParamsUpdater
 
 type OracleManagerModule interface {
-	UpdateParams(height int64) error
+	ParamsUpdater
 	HandleOracle(height int64, chain, account string) error
 }
 
 type TokenManagerModule interface {
-	UpdateParams(height int64) error
+	ParamsUpdater
 	UpdateItems(items []*tokenmanagertypes.Item) error
 	RemoveItems(indexes []string) error
 	CreateCollection(
@@ -52,9 +50,9 @@ type TokenManagerModule interface {
 }
 
 type StakingModule interface {
+	ParamsUpdater
 	GetStakingPool(height int64) (*types.Pool, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)
 	GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error)
 	GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error)
-	UpdateParams(height int64) error
 }

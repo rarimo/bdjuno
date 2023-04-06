@@ -60,7 +60,7 @@ func (db *Db) SaveOracles(oracles []types.Oracle) error {
 		accounts = append(accounts, types.NewAccount(oracle.Account))
 
 		// Prepare the oracle query
-		vi := i * 5
+		vi := i * 10
 		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10)
 
 		params = append(

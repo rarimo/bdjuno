@@ -31,6 +31,16 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
+	err = m.handleBridgeProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while handling bridge proposal: %s", err)
+	}
+
+	err = m.handleOracleManagerProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while handling oraclemanger proposal: %s", err)
+	}
+
 	err = m.handleTokenManagerProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while handling tokenmanager proposal: %s", err)
@@ -60,7 +70,7 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
-	
+
 	return nil
 }
 

@@ -56,3 +56,5 @@
 - "!include public_violation_report.yaml"
 - "!include public_oraclemanager_params.yaml"
 - "!include public_oracle.yaml"
+- "!include public_bridge_params.yaml"
+- "!include public_hashes.yaml"

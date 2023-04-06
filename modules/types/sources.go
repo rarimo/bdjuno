@@ -2,9 +2,11 @@ package types
 
 import (
 	"fmt"
+	bridgesource "gitlab.com/rarimo/bdjuno/modules/bridge/source"
 	oraclemanagersource "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
 	rarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
 	tokenmanagersource "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
+	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
 	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
@@ -30,6 +32,7 @@ import (
 	banksource "gitlab.com/rarimo/bdjuno/modules/bank/source"
 	localbanksource "gitlab.com/rarimo/bdjuno/modules/bank/source/local"
 	remotebanksource "gitlab.com/rarimo/bdjuno/modules/bank/source/remote"
+	remotebridgesource "gitlab.com/rarimo/bdjuno/modules/bridge/source/remote"
 	distrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source"
 	localdistrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source/local"
 	remotedistrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source/remote"
@@ -60,6 +63,7 @@ type Sources struct {
 	RarimoCoreSource    rarimocoresource.Source
 	TokenManagerSource  tokenmanagersource.Source
 	OracleManagerSource oraclemanagersource.Source
+	BridgeSource        bridgesource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -134,5 +138,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		RarimoCoreSource:    remoterarimocoresource.NewSource(source, rarimocoretypes.NewQueryClient(source.GrpcConn)),
 		TokenManagerSource:  remotetokenmanagersource.NewSource(source, tokenmanagertypes.NewQueryClient(source.GrpcConn)),
 		OracleManagerSource: remoteoraclemanagersource.NewSource(source, oraclemanagertypes.NewQueryClient(source.GrpcConn)),
+		BridgeSource:        remotebridgesource.NewSource(source, bridgetypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

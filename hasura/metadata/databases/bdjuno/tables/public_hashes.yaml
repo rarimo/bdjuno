@@ -1,0 +1,29 @@
+table:
+  name: hash
+  schema: public
+object_relationships:
+  - name: operation
+    using:
+      manual_configuration:
+        column_mapping:
+          operation_index: index
+        insertion_order: null
+        remote_table:
+          name: index
+          schema: public
+  - name: transfer
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: index
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - index
+      filter: {}
+    role: anonymous
