@@ -1,5 +1,5 @@
 table:
-  name: parties
+  name: oracle
   schema: public
 object_relationships:
   - name: user
@@ -11,25 +11,19 @@ object_relationships:
         remote_table:
           name: account
           schema: public
-  - name: delegator_user
-    using:
-      manual_configuration:
-        column_mapping:
-          account: address
-        insertion_order: null
-        remote_table:
-          name: delegator
-          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
       columns:
+        - index
+        - chain
         - account
-        - pub_key
-        - address
         - status
+        - stake
+        - missed_count
         - violations_count
         - freeze_end_block
-        - delegator
+        - votes_count
+        - create_operations_count
       filter: {}
     role: anonymous

@@ -29,6 +29,11 @@ type RarimoCoreModule interface {
 	UpdateParams(height int64) error
 }
 
+type OracleManagerModule interface {
+	UpdateParams(height int64) error
+	HandleOracle(height int64, chain, account string) error
+}
+
 type TokenManagerModule interface {
 	UpdateParams(height int64) error
 	UpdateItems(items []*tokenmanagertypes.Item) error

@@ -1,35 +1,34 @@
 table:
-  name: parties
+  name: violation_report
   schema: public
 object_relationships:
-  - name: user
+  - name: sender_user
     using:
       manual_configuration:
         column_mapping:
           account: address
         insertion_order: null
         remote_table:
-          name: account
+          name: sender
           schema: public
-  - name: delegator_user
+  - name: offender_user
     using:
       manual_configuration:
         column_mapping:
           account: address
         insertion_order: null
         remote_table:
-          name: delegator
+          name: offender
           schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
       columns:
-        - account
-        - pub_key
-        - address
-        - status
-        - violations_count
-        - freeze_end_block
-        - delegator
+        - index
+        - session_id
+        - offender
+        - sender
+        - violation_type
+        - msg
       filter: {}
     role: anonymous

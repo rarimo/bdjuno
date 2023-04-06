@@ -2,6 +2,7 @@ package modules
 
 import (
 	"gitlab.com/rarimo/bdjuno/modules/actions"
+	"gitlab.com/rarimo/bdjuno/modules/oraclemanager"
 	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
 	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
 	"gitlab.com/rarimo/bdjuno/modules/types"
@@ -84,6 +85,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, cdc, db)
 	tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, cdc, db)
+	oraclemanagerModule := oraclemanager.NewModule(sources.OracleManagerSource, cdc, db)
 	govModule := gov.NewModule(
 		sources.GovSource,
 		authModule,
@@ -93,6 +95,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		stakingModule,
 		rarimocoreModule,
 		tokenmanagerModule,
+		oraclemanagerModule,
 		cdc,
 		db,
 	)
@@ -116,5 +119,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		stakingModule,
 		rarimocoreModule,
 		tokenmanagerModule,
+		oraclemanagerModule,
 	}
 }

@@ -53,3 +53,6 @@
 - "!include public_seed.yaml"
 - "!include public_tokenmanager_params.yaml"
 - "!include public_vote.yaml"
+- "!include public_violation_report.yaml"
+- "!include public_oraclemanager_params.yaml"
+- "!include public_oracle.yaml"

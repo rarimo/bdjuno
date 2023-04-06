@@ -4,6 +4,8 @@ import (
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
+//--------------------------------------------------------
+
 // NetworkParams contains the data of the x/tokenmanager network params
 type NetworkParams struct {
 	Name     string                        `json:"name,omitempty" yaml:"name,omitempty"`
@@ -39,6 +41,8 @@ func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) *Token
 		Height: height,
 	}
 }
+
+//--------------------------------------------------------
 
 // CollectionDataIndex contains the data of the x/tokenmanager collection data index
 type CollectionDataIndex struct {
@@ -98,6 +102,8 @@ func CollectionDataFromCore(data tokenmanagertypes.CollectionData) CollectionDat
 	)
 }
 
+//--------------------------------------------------------
+
 // CollectionMetadata contains the data of the x/tokenmanager collection metadata related to collection instance
 type CollectionMetadata struct {
 	Name        string `json:"name,omitempty" yaml:"name,omitempty"`
@@ -113,6 +119,8 @@ func NewCollectionMetadata(name, symbol, metadataUri string) *CollectionMetadata
 		MetadataURI: metadataUri,
 	}
 }
+
+//--------------------------------------------------------
 
 // Collection contains the data of the x/tokenmanager collection instance
 type Collection struct {
@@ -153,20 +161,13 @@ func CollectionFromCore(collection tokenmanagertypes.Collection) Collection {
 	)
 }
 
+//--------------------------------------------------------
+
 // OnChainItemIndex contains the data of the x/tokenmanager on chain item index
 type OnChainItemIndex struct {
 	Chain   string `json:"chain,omitempty" yaml:"chain,omitempty"`
 	Address string `json:"address,omitempty" yaml:"address,omitempty"`
 	TokenID string `json:"token_id,omitempty" yaml:"token_id,omitempty"`
-}
-
-// NewOnChainItemIndex allows to build a new OnChainItemIndex instance
-func NewOnChainItemIndex(chain, address, tokenID string) *OnChainItemIndex {
-	return &OnChainItemIndex{
-		Chain:   chain,
-		Address: address,
-		TokenID: tokenID,
-	}
 }
 
 // OnChainItemIndexFromCore allows to build a new OnChainItemIndex instance from tokenmanager.OnChainItemIndex instance
@@ -177,6 +178,8 @@ func OnChainItemIndexFromCore(index *tokenmanagertypes.OnChainItemIndex) *OnChai
 		TokenID: index.TokenID,
 	}
 }
+
+//--------------------------------------------------------
 
 // ItemMetadata contains the data of the x/tokenmanager item metadata
 type ItemMetadata struct {
@@ -209,6 +212,8 @@ func ItemMetadataFromCore(meta *tokenmanagertypes.ItemMetadata) *ItemMetadata {
 
 	return nil
 }
+
+//--------------------------------------------------------
 
 // Item contains the data of the x/tokenmanager item instance
 type Item struct {
@@ -250,6 +255,8 @@ func ItemFromCore(item tokenmanagertypes.Item) Item {
 	)
 }
 
+//--------------------------------------------------------
+
 // OnChainItem contains the data of the x/tokenmanager on chain item instance
 type OnChainItem struct {
 	Index *OnChainItemIndex `json:"index,omitempty" yaml:"index,omitempty"`
@@ -263,6 +270,8 @@ func OnChainItemFromCore(item tokenmanagertypes.OnChainItem) OnChainItem {
 		Item:  item.Item,
 	}
 }
+
+//--------------------------------------------------------
 
 // Seed contains the data of the x/tokenmanager seed instance
 type Seed struct {
@@ -285,3 +294,5 @@ func SeedFromCore(seed tokenmanagertypes.Seed) Seed {
 		Item: seed.Item,
 	}
 }
+
+//--------------------------------------------------------

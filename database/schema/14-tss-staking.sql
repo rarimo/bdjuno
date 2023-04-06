@@ -1,12 +1,12 @@
 -- +migrate Up
 ALTER TABLE rarimocore_params
-    ADD COLUMN IF NOT EXISTS stakeAmount TEXT;
+    ADD COLUMN IF NOT EXISTS stake_amount TEXT;
 ALTER TABLE rarimocore_params
-    ADD COLUMN IF NOT EXISTS stakeDenom TEXT;
+    ADD COLUMN IF NOT EXISTS stake_denom TEXT;
 ALTER TABLE rarimocore_params
-    ADD COLUMN IF NOT EXISTS maxViolationsCount INT;
+    ADD COLUMN IF NOT EXISTS max_violations_count INT;
 ALTER TABLE rarimocore_params
-    ADD COLUMN IF NOT EXISTS freezeBlocksPeriod INT;
+    ADD COLUMN IF NOT EXISTS freeze_blocks_period INT;
 
 ALTER TABLE parties
     DROP COLUMN IF EXISTS verified;

@@ -4,6 +4,8 @@ import (
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
+//--------------------------------------------------------
+
 // Party contains the data of the x/rarimocore module signer instance
 type Party struct {
 	Account         string                      `json:"account,omitempty" yaml:"account,omitempty"`
@@ -27,6 +29,8 @@ func NewParty(p rarimocoretypes.Party) Party {
 		Delegator:       p.Delegator,
 	}
 }
+
+//--------------------------------------------------------
 
 // RarimoCoreParams contains the data of the x/rarimocore module params instance
 type RarimoCoreParams struct {
@@ -62,6 +66,8 @@ func NewRarimoCoreParams(p rarimocoretypes.Params, height int64) *RarimoCorePara
 	}
 }
 
+//--------------------------------------------------------
+
 // Operation represents a single operation instance
 type Operation struct {
 	Index         string                   `json:"index,omitempty" yaml:"index,omitempty"`
@@ -92,6 +98,8 @@ func OperationFromCore(operation rarimocoretypes.Operation) Operation {
 		Timestamp:     int64(operation.Timestamp),
 	}
 }
+
+//--------------------------------------------------------
 
 // Transfer represents a single transfer instance
 type Transfer struct {
@@ -125,6 +133,8 @@ func NewTransfer(operationIndex string, t rarimocoretypes.Transfer) Transfer {
 	}
 }
 
+//--------------------------------------------------------
+
 // ChangeParties represents a single change parties instance
 type ChangeParties struct {
 	OperationIndex string   `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
@@ -148,6 +158,8 @@ func NewChangeParties(operationIndex string, c rarimocoretypes.ChangeParties) Ch
 	}
 }
 
+//--------------------------------------------------------
+
 // Confirmation represents a single confirmation instance
 type Confirmation struct {
 	Root           string   `json:"root,omitempty" yaml:"root,omitempty"`
@@ -165,6 +177,8 @@ func NewConfirmation(c rarimocoretypes.Confirmation) Confirmation {
 		Creator:        c.Creator,
 	}
 }
+
+//--------------------------------------------------------
 
 // RarimoCoreVote represents a single vote instance
 type RarimoCoreVote struct {
@@ -191,7 +205,9 @@ func RarimoCoreVoteFromCore(vote rarimocoretypes.Vote) RarimoCoreVote {
 	}
 }
 
-// ViolationReport represents a single vote instance
+//--------------------------------------------------------
+
+// ViolationReport represents a single violation report instance
 type ViolationReport struct {
 	Index         string                        `json:"index,omitempty" yaml:"index,omitempty"`
 	SessionId     string                        `json:"session_id,omitempty" yaml:"session_id,omitempty"`
@@ -212,3 +228,5 @@ func ViolationReportFromCore(report rarimocoretypes.ViolationReport) ViolationRe
 		Msg:           report.Msg,
 	}
 }
+
+//--------------------------------------------------------
