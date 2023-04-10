@@ -1,0 +1,15 @@
+table:
+  name: multisig_params
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - one_row_id
+    - group_sequence
+    - proposal_sequence
+    - prune_period
+    - voting_period
+    - height
+    filter: {}
+  role: anonymous

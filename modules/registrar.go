@@ -3,6 +3,7 @@ package modules
 import (
 	"gitlab.com/rarimo/bdjuno/modules/actions"
 	"gitlab.com/rarimo/bdjuno/modules/bridge"
+	"gitlab.com/rarimo/bdjuno/modules/multisig"
 	"gitlab.com/rarimo/bdjuno/modules/oraclemanager"
 	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
 	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
@@ -124,5 +125,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		tokenmanagerModule,
 		oraclemanagerModule,
 		bridgeModule,
+		multisig.NewModule(sources.MultisigSource, cdc, db),
 	}
 }

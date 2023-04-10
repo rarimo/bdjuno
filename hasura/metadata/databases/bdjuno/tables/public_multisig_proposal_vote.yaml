@@ -1,0 +1,33 @@
+table:
+  name: multisig_proposal_vote
+  schema: public
+object_relationships:
+  - name: proposal
+    using:
+      manual_configuration:
+        column_mapping:
+          id: proposal_id
+        insertion_order: null
+        remote_table:
+          name: multisig_proposal
+          schema: public
+  - name: proposer_account
+    using:
+      manual_configuration:
+        column_mapping:
+          account: voter
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - index
+        - voter
+        - submit_block
+        - option
+        - proposal_id
+      filter: {}
+    role: anonymous

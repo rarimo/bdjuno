@@ -10,7 +10,7 @@ CREATE INDEX bridge_params_height_index ON bridge_params (height);
 
 CREATE TABLE hash
 (
-    index                   TEXT UNIQUE NOT NULL PRIMARY KEY REFERENCES operation(index)
+    index                   TEXT UNIQUE NOT NULL PRIMARY KEY REFERENCES operation (index)
 );
 
 -- +migrate Down

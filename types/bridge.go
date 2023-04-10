@@ -10,7 +10,7 @@ type BridgeParams struct {
 	Height        int64  `json:"height,omitempty" yaml:"height,omitempty"`
 }
 
-// BridgeParamsFromCore allows to build a new BridgeParams instance from an oraclemanagertypes.Params instance
+// BridgeParamsFromCore allows to build a new BridgeParams instance from a bridgetypes.Params instance
 func BridgeParamsFromCore(p bridgetypes.Params, height int64) *BridgeParams {
 	return &BridgeParams{
 		WithdrawDenom: p.WithdrawDenom,
@@ -23,7 +23,7 @@ type Hash struct {
 	Index string `json:"index,omitempty" yaml:"index,omitempty"`
 }
 
-// HashFromCore allows to build a new Hash instance from an bridgetypes.Hash instance
+// HashFromCore allows to build a new Hash instance from a bridgetypes.Hash instance
 func HashFromCore(hash bridgetypes.Hash) Hash {
 	return Hash{
 		Index: hash.Index,
