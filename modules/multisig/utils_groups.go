@@ -15,7 +15,7 @@ func (m *Module) saveGroups(slice []multisigtypes.Group) error {
 
 	err := m.db.SaveGroups(groups)
 	if err != nil {
-		return fmt.Errorf("error while storing genesis multisig groups: %s", err)
+		return fmt.Errorf("error while storing multisig groups: %s", err)
 	}
 
 	return nil

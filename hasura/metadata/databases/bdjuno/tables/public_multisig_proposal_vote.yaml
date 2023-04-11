@@ -6,7 +6,7 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          id: proposal_id
+          proposal_id: id
         insertion_order: null
         remote_table:
           name: multisig_proposal
@@ -15,7 +15,7 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          account: voter
+          voter: address
         insertion_order: null
         remote_table:
           name: account

@@ -6,10 +6,10 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          operation_index: index
+          index: index
         insertion_order: null
         remote_table:
-          name: index
+          name: operation
           schema: public
   - name: transfer
     using:
@@ -18,7 +18,7 @@ object_relationships:
           index: operation_index
         insertion_order: null
         remote_table:
-          name: index
+          name: transfer
           schema: public
 select_permissions:
   - permission:

@@ -6,7 +6,7 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          account: "group"
+          "group": address
         insertion_order: null
         remote_table:
           name: account
@@ -15,7 +15,7 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          account: proposer
+          proposer: address
         insertion_order: null
         remote_table:
           name: account

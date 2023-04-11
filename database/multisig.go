@@ -42,6 +42,8 @@ func (db *Db) SaveGroups(groups []*types.Group) (err error) {
 		return nil
 	}
 
+	var accounts []types.Account
+
 	query := `
 INSERT INTO "group"(
 	account, members, threshold
@@ -50,6 +52,8 @@ INSERT INTO "group"(
 	var params []interface{}
 
 	for i, group := range groups {
+		accounts = append(accounts, types.NewAccount(group.Account))
+
 		vi := i * 3
 		query += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
 		params = append(params, group.Account, pq.StringArray(group.Members), group.Threshold)
@@ -57,10 +61,16 @@ INSERT INTO "group"(
 
 	// Store the groups
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
-	query += ` ON CONFLICT (index) DO UPDATE
+	query += ` ON CONFLICT (account) DO UPDATE
  	SET members = excluded.members, threshold = excluded.threshold
 WHERE "group".account = excluded.account
  `
+
+	err = db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing group accounts: %s", err)
+	}
+
 	_, err = db.Sql.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing multisig groups: %s", err)

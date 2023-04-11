@@ -15,10 +15,10 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          account: address
+          delegator: address
         insertion_order: null
         remote_table:
-          name: delegator
+          name: account
           schema: public
 select_permissions:
   - permission:

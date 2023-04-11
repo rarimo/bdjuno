@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
 )
 
@@ -106,7 +107,7 @@ type MultisigProposalVote struct {
 // MultisigProposalVoteFromCore allows to build a new MultisigProposalVote instance from a multisigtypes.Vote instance
 func MultisigProposalVoteFromCore(p multisigtypes.Vote) *MultisigProposalVote {
 	return &MultisigProposalVote{
-		Index:      string(multisigtypes.VoteKey(p.ProposalId, p.Voter)),
+		Index:      hexutil.Encode(multisigtypes.VoteKey(p.ProposalId, p.Voter)),
 		ProposalId: p.ProposalId,
 		Voter:      p.Voter,
 		Option:     p.Option,

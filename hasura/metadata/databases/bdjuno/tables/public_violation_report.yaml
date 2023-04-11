@@ -6,19 +6,19 @@ object_relationships:
     using:
       manual_configuration:
         column_mapping:
-          account: address
+          sender: address
         insertion_order: null
         remote_table:
-          name: sender
+          name: account
           schema: public
   - name: offender_user
     using:
       manual_configuration:
         column_mapping:
-          account: address
+          offender: address
         insertion_order: null
         remote_table:
-          name: offender
+          name: account
           schema: public
 select_permissions:
   - permission:
