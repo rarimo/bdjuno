@@ -37,7 +37,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 			party.FreezeEndBlock,
 			party.Delegator,
 			party.CommittedGlobalPublicKey,
-			party.ReportedSessions,
+			pq.StringArray(party.ReportedSessions),
 		)
 	}
 
