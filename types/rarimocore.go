@@ -8,25 +8,29 @@ import (
 
 // Party contains the data of the x/rarimocore module signer instance
 type Party struct {
-	Account         string                      `json:"account,omitempty" yaml:"account,omitempty"`
-	PubKey          string                      `json:"pub_key,omitempty" yaml:"pub_key,omitempty"`
-	Address         string                      `json:"address,omitempty" yaml:"address,omitempty"`
-	Status          rarimocoretypes.PartyStatus `json:"status,omitempty" yaml:"status,omitempty"`
-	ViolationsCount uint64                      `json:"violations_count,omitempty" yaml:"violations_count,omitempty"`
-	FreezeEndBlock  uint64                      `json:"freeze_end_block,omitempty" yaml:"freeze_end_block,omitempty"`
-	Delegator       string                      `json:"delegator,omitempty" yaml:"delegator,omitempty"`
+	Account                  string                      `json:"account,omitempty" yaml:"account,omitempty"`
+	PubKey                   string                      `json:"pub_key,omitempty" yaml:"pub_key,omitempty"`
+	Address                  string                      `json:"address,omitempty" yaml:"address,omitempty"`
+	Status                   rarimocoretypes.PartyStatus `json:"status,omitempty" yaml:"status,omitempty"`
+	ViolationsCount          uint64                      `json:"violations_count,omitempty" yaml:"violations_count,omitempty"`
+	FreezeEndBlock           uint64                      `json:"freeze_end_block,omitempty" yaml:"freeze_end_block,omitempty"`
+	Delegator                string                      `json:"delegator,omitempty" yaml:"delegator,omitempty"`
+	CommittedGlobalPublicKey string                      `json:"committed_global_public_key,omitempty"`
+	ReportedSessions         []string                    `json:"reported_sessions,omitempty"`
 }
 
 // NewParty allows to build a new Party
 func NewParty(p rarimocoretypes.Party) Party {
 	return Party{
-		Account:         p.Account,
-		PubKey:          p.PubKey,
-		Address:         p.Address,
-		Status:          p.Status,
-		ViolationsCount: p.ViolationsCount,
-		FreezeEndBlock:  p.FreezeEndBlock,
-		Delegator:       p.Delegator,
+		Account:                  p.Account,
+		PubKey:                   p.PubKey,
+		Address:                  p.Address,
+		Status:                   p.Status,
+		ViolationsCount:          p.ViolationsCount,
+		FreezeEndBlock:           p.FreezeEndBlock,
+		Delegator:                p.Delegator,
+		CommittedGlobalPublicKey: p.CommittedGlobalPublicKey,
+		ReportedSessions:         p.ReportedSessions,
 	}
 }
 

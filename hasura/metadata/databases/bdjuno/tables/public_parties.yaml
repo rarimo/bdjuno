@@ -31,5 +31,7 @@ select_permissions:
         - violations_count
         - freeze_end_block
         - delegator
+        - committed_global_public_key
+        - reported_sessions
       filter: {}
     role: anonymous

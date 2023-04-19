@@ -17,17 +17,28 @@ func (db *Db) SaveParties(parties []types.Party) error {
 
 	var accounts []types.Account
 
-	partiesQuery := `INSERT INTO parties (address, account, pub_key, status, violations_count, freeze_end_block, delegator) VALUES `
+	partiesQuery := `INSERT INTO parties (address, account, pub_key, status, violations_count, freeze_end_block, delegator, committed_global_public_key, reported_sessions) VALUES `
 
 	var partiesParams []interface{}
 
 	for i, party := range parties {
 		accounts = append(accounts, types.NewAccount(party.Account))
 
-		vi := i * 7
-		partiesQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+		vi := i * 9
+		partiesQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9)
 
-		partiesParams = append(partiesParams, party.Address, party.Account, party.PubKey, party.Status, party.ViolationsCount, party.FreezeEndBlock, party.Delegator)
+		partiesParams = append(
+			partiesParams,
+			party.Address,
+			party.Account,
+			party.PubKey,
+			party.Status,
+			party.ViolationsCount,
+			party.FreezeEndBlock,
+			party.Delegator,
+			party.CommittedGlobalPublicKey,
+			party.ReportedSessions,
+		)
 	}
 
 	// Store the accounts
@@ -39,7 +50,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 	// Store the proposals
 	partiesQuery = strings.TrimSuffix(partiesQuery, ",") // Remove trailing ","
 	partiesQuery += ` ON CONFLICT (account) DO UPDATE 
-	SET status = excluded.status, pub_key = excluded.pub_key, violations_count = excluded.violations_count, freeze_end_block = excluded.freeze_end_block, delegator = excluded.delegator
+	SET status = excluded.status, pub_key = excluded.pub_key, violations_count = excluded.violations_count, freeze_end_block = excluded.freeze_end_block, delegator = excluded.delegator, committed_global_public_key = excluded.committed_global_public_key , reported_sessions = excluded.reported_sessions 
 WHERE parties.account = excluded.account
 `
 	_, err = db.Sql.Exec(partiesQuery, partiesParams...)

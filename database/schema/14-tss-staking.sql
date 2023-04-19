@@ -18,6 +18,10 @@ ALTER TABLE parties
     ADD COLUMN IF NOT EXISTS freeze_end_block INT;
 ALTER TABLE parties
     ADD COLUMN IF NOT EXISTS delegator TEXT;
+ALTER TABLE parties
+    ADD COLUMN IF NOT EXISTS committed_global_public_key TEXT;
+ALTER TABLE parties
+    ADD COLUMN IF NOT EXISTS reported_sessions TEXT[];
 
 CREATE TABLE violation_report
 (
@@ -32,6 +36,10 @@ CREATE TABLE violation_report
 -- +migrate Down
 DROP TABLE IF EXISTS violation_report;
 
+ALTER TABLE parties
+    DROP COLUMN IF EXISTS committed_global_public_key;
+ALTER TABLE parties
+    DROP COLUMN IF EXISTS reported_sessions;
 ALTER TABLE parties
     DROP COLUMN IF EXISTS delegator;
 ALTER TABLE parties
