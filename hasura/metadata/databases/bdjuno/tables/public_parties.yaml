@@ -11,6 +11,15 @@ object_relationships:
         remote_table:
           name: account
           schema: public
+  - name: delegator_user
+    using:
+      manual_configuration:
+        column_mapping:
+          delegator: address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
@@ -18,6 +27,11 @@ select_permissions:
         - account
         - pub_key
         - address
-        - verified
+        - status
+        - violations_count
+        - freeze_end_block
+        - delegator
+        - committed_global_public_key
+        - reported_sessions
       filter: {}
     role: anonymous

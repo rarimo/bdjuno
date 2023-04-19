@@ -3,6 +3,8 @@ package gov
 import (
 	"encoding/hex"
 	"fmt"
+	"gitlab.com/rarimo/bdjuno/modules/bridge"
+	"gitlab.com/rarimo/bdjuno/modules/oraclemanager"
 	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
 	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
 	"strconv"
@@ -55,7 +57,9 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
 			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
+			oracleManager := oraclemanager.NewModule(sources.OracleManagerSource, parseCtx.EncodingConfig.Marshaler, db)
 			tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
+			bridgeModule := bridge.NewModule(sources.BridgeSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
@@ -68,6 +72,8 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				stakingModule,
 				rarimocoreModule,
 				tokenmanagerModule,
+				oracleManager,
+				bridgeModule,
 				parseCtx.EncodingConfig.Marshaler,
 				db,
 			)

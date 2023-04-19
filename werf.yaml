@@ -9,6 +9,9 @@ git:
   - add: /
     to: /go/src/gitlab.com/rarimo/bdjuno
     stageDependencies:
+      install:
+        - go.mod
+        - go.sum
       setup:
         - "**/*"
 shell:

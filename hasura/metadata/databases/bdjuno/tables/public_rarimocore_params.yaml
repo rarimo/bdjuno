@@ -10,8 +10,10 @@ select_permissions:
     - threshold
     - is_update_required
     - last_signature
-    - vote_quorum
-    - vote_threshold
+    - stake_amount
+    - stake_denom
+    - max_violations_count
+    - freeze_blocks_period
     - parties
     - height
     filter: {}

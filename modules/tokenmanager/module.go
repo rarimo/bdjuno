@@ -14,7 +14,7 @@ var (
 	_ modules.GenesisModule = &Module{}
 )
 
-// Module represents the x/auth module
+// Module represents the x/tokenmanager module
 type Module struct {
 	cdc    codec.Codec
 	db     *database.Db

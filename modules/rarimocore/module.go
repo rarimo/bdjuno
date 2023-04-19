@@ -16,7 +16,7 @@ var (
 	_ modules.MessageModule = &Module{}
 )
 
-// Module represents the x/auth module
+// Module represents the x/rarimocore module
 type Module struct {
 	cdc                codec.Codec
 	db                 *database.Db

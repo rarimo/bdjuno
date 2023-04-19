@@ -2,8 +2,14 @@ package types
 
 import (
 	"fmt"
+	bridgesource "gitlab.com/rarimo/bdjuno/modules/bridge/source"
+	multisigsource "gitlab.com/rarimo/bdjuno/modules/multisig/source"
+	oraclemanagersource "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
 	rarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
 	tokenmanagersource "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
+	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
+	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
+	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 	"os"
@@ -28,6 +34,7 @@ import (
 	banksource "gitlab.com/rarimo/bdjuno/modules/bank/source"
 	localbanksource "gitlab.com/rarimo/bdjuno/modules/bank/source/local"
 	remotebanksource "gitlab.com/rarimo/bdjuno/modules/bank/source/remote"
+	remotebridgesource "gitlab.com/rarimo/bdjuno/modules/bridge/source/remote"
 	distrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source"
 	localdistrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source/local"
 	remotedistrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source/remote"
@@ -37,6 +44,8 @@ import (
 	mintsource "gitlab.com/rarimo/bdjuno/modules/mint/source"
 	localmintsource "gitlab.com/rarimo/bdjuno/modules/mint/source/local"
 	remotemintsource "gitlab.com/rarimo/bdjuno/modules/mint/source/remote"
+	remotemultisigsource "gitlab.com/rarimo/bdjuno/modules/multisig/source/remote"
+	remoteoraclemanagersource "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source/remote"
 	remoterarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source/remote"
 	slashingsource "gitlab.com/rarimo/bdjuno/modules/slashing/source"
 	localslashingsource "gitlab.com/rarimo/bdjuno/modules/slashing/source/local"
@@ -48,14 +57,17 @@ import (
 )
 
 type Sources struct {
-	BankSource         banksource.Source
-	DistrSource        distrsource.Source
-	GovSource          govsource.Source
-	MintSource         mintsource.Source
-	SlashingSource     slashingsource.Source
-	StakingSource      stakingsource.Source
-	RarimoCoreSource   rarimocoresource.Source
-	TokenManagerSource tokenmanagersource.Source
+	BankSource          banksource.Source
+	DistrSource         distrsource.Source
+	GovSource           govsource.Source
+	MintSource          mintsource.Source
+	SlashingSource      slashingsource.Source
+	StakingSource       stakingsource.Source
+	RarimoCoreSource    rarimocoresource.Source
+	TokenManagerSource  tokenmanagersource.Source
+	OracleManagerSource oraclemanagersource.Source
+	BridgeSource        bridgesource.Source
+	MultisigSource      multisigsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -121,13 +133,16 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:         remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:        remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:          remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:         remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource:     remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:      remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
-		RarimoCoreSource:   remoterarimocoresource.NewSource(source, rarimocoretypes.NewQueryClient(source.GrpcConn)),
-		TokenManagerSource: remotetokenmanagersource.NewSource(source, tokenmanagertypes.NewQueryClient(source.GrpcConn)),
+		BankSource:          remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:         remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:           remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:          remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:      remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:       remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		RarimoCoreSource:    remoterarimocoresource.NewSource(source, rarimocoretypes.NewQueryClient(source.GrpcConn)),
+		TokenManagerSource:  remotetokenmanagersource.NewSource(source, tokenmanagertypes.NewQueryClient(source.GrpcConn)),
+		OracleManagerSource: remoteoraclemanagersource.NewSource(source, oraclemanagertypes.NewQueryClient(source.GrpcConn)),
+		BridgeSource:        remotebridgesource.NewSource(source, bridgetypes.NewQueryClient(source.GrpcConn)),
+		MultisigSource:      remotemultisigsource.NewSource(source, multisigtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

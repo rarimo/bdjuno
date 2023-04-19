@@ -18,10 +18,10 @@ func (m *Module) handleRarimoCoreProposal(height int64, proposal types.Proposal)
 	}
 
 	switch content.(type) {
-	case *rarimocoretypes.AddSignerPartyProposal,
-		*rarimocoretypes.RemoveSignerPartyProposal,
+	case *rarimocoretypes.UnfreezeSignerPartyProposal,
 		*rarimocoretypes.ReshareKeysProposal,
-		*rarimocoretypes.ChangeThresholdProposal:
+		*rarimocoretypes.SlashProposal,
+		*rarimocoretypes.DropPartiesProposal:
 		return m.rarimocoreModule.UpdateParams(height)
 	default:
 		return nil

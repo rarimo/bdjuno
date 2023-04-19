@@ -19,16 +19,18 @@ var (
 
 // Module represent x/gov module
 type Module struct {
-	cdc                codec.Codec
-	db                 *database.Db
-	source             govsource.Source
-	authModule         AuthModule
-	distrModule        DistrModule
-	mintModule         MintModule
-	slashingModule     SlashingModule
-	stakingModule      StakingModule
-	rarimocoreModule   RarimoCoreModule
-	tokenmanagerModule TokenManagerModule
+	cdc                 codec.Codec
+	db                  *database.Db
+	source              govsource.Source
+	authModule          AuthModule
+	distrModule         DistrModule
+	mintModule          MintModule
+	slashingModule      SlashingModule
+	stakingModule       StakingModule
+	rarimocoreModule    RarimoCoreModule
+	tokenmanagerModule  TokenManagerModule
+	oracleManagerModule OracleManagerModule
+	bridgeModule        BridgeModule
 }
 
 // NewModule returns a new Module instance
@@ -41,20 +43,24 @@ func NewModule(
 	stakingModule StakingModule,
 	rarimocoreModule RarimoCoreModule,
 	tokenmanagerModule TokenManagerModule,
+	oracleManagerModule OracleManagerModule,
+	bridgeModule BridgeModule,
 	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:                cdc,
-		source:             source,
-		authModule:         authModule,
-		distrModule:        distrModule,
-		mintModule:         mintModule,
-		slashingModule:     slashingModule,
-		stakingModule:      stakingModule,
-		rarimocoreModule:   rarimocoreModule,
-		tokenmanagerModule: tokenmanagerModule,
-		db:                 db,
+		cdc:                 cdc,
+		source:              source,
+		authModule:          authModule,
+		distrModule:         distrModule,
+		mintModule:          mintModule,
+		slashingModule:      slashingModule,
+		stakingModule:       stakingModule,
+		rarimocoreModule:    rarimocoreModule,
+		tokenmanagerModule:  tokenmanagerModule,
+		oracleManagerModule: oracleManagerModule,
+		bridgeModule:        bridgeModule,
+		db:                  db,
 	}
 }
 

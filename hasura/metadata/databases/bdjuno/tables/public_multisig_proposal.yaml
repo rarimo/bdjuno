@@ -1,0 +1,36 @@
+table:
+  name: multisig_proposal
+  schema: public
+object_relationships:
+  - name: group_account
+    using:
+      manual_configuration:
+        column_mapping:
+          "group": address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+  - name: proposer_account
+    using:
+      manual_configuration:
+        column_mapping:
+          proposer: address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - id
+        - proposer
+        - "group"
+        - submit_block
+        - voting_end_block
+        - status
+        - final_tally_result
+        - messages
+      filter: {}
+    role: anonymous

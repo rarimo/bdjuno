@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	juno "github.com/forbole/juno/v3/types"
 	"gitlab.com/rarimo/bdjuno/types"
+	oracletypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
@@ -18,22 +19,45 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *rarimocoretypes.MsgCreateTransferOp:
+	case *oracletypes.MsgCreateTransferOp:
 		return m.handleMsgCreateTransferOp(tx, cosmosMsg)
-	case *rarimocoretypes.MsgCreateChangePartiesOp:
-		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
+	case *rarimocoretypes.MsgCreateViolationReport:
+		return m.handleMsgCreateViolationReport(tx, cosmosMsg)
 	case *rarimocoretypes.MsgCreateConfirmation:
 		return m.handleMsgCreateConfirmation(tx, cosmosMsg)
-	case *rarimocoretypes.MsgVote:
+	case *rarimocoretypes.MsgCreateChangePartiesOp:
+		return m.handleMsgCreateChangePartiesOp(tx, cosmosMsg)
+	case *oracletypes.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
-	case *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
+	case *rarimocoretypes.MsgStake, *rarimocoretypes.MsgUnstake, *rarimocoretypes.MsgSetupInitial, *rarimocoretypes.MsgChangePartyAddress:
 		return m.UpdateParams(tx.Height)
 	}
 
 	return nil
 }
 
-func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error {
+func (m *Module) handleMsgCreateViolationReport(tx *juno.Tx, msg *rarimocoretypes.MsgCreateViolationReport) error {
+	rawReport, err := m.source.ViolationReport(tx.Height, msg.SessionId, msg.Offender, msg.SessionId, msg.ViolationType)
+	if err != nil {
+		return fmt.Errorf("failed to get violation report: %s", err)
+	}
+
+	report := types.ViolationReportFromCore(rawReport)
+
+	err = m.db.SaveViolationReports([]types.ViolationReport{report})
+	if err != nil {
+		return fmt.Errorf("failed to save violation report: %s", err)
+	}
+
+	err = m.UpdateParams(tx.Height)
+	if err != nil {
+		return fmt.Errorf("failed to update last rarimocore params: %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) handleMsgVote(tx *juno.Tx, msg *oracletypes.MsgVote) error {
 	rawOp, err := m.source.Operation(tx.Height, msg.Operation)
 	if err != nil {
 		return fmt.Errorf("failed to get change operation: %s", err)
@@ -42,7 +66,7 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *rarimocoretypes.MsgVote) error 
 	op := types.OperationFromCore(rawOp)
 
 	err = m.db.SaveRarimoCoreVotes(
-		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Creator, int32(msg.Vote))},
+		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Index.Account, int32(msg.Vote))},
 	)
 	if err != nil {
 		return fmt.Errorf("failed to save vote: %s", err)
@@ -114,7 +138,7 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 
 }
 
-func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *rarimocoretypes.MsgCreateTransferOp) error {
+func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *oracletypes.MsgCreateTransferOp) error {
 	index := hexutil.Encode(crypto.Keccak256(
 		[]byte(msg.Tx),
 		[]byte(msg.EventId),

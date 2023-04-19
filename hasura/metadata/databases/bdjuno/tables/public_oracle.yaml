@@ -1,0 +1,29 @@
+table:
+  name: oracle
+  schema: public
+object_relationships:
+  - name: user
+    using:
+      manual_configuration:
+        column_mapping:
+          account: address
+        insertion_order: null
+        remote_table:
+          name: account
+          schema: public
+select_permissions:
+  - permission:
+      allow_aggregations: true
+      columns:
+        - index
+        - chain
+        - account
+        - status
+        - stake
+        - missed_count
+        - violations_count
+        - freeze_end_block
+        - votes_count
+        - create_operations_count
+      filter: {}
+    role: anonymous
