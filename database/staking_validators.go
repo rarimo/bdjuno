@@ -408,7 +408,7 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
 	var valParams []interface{}
 
-	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, tombstoned, height) VALUES `
+	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, height) VALUES `
 	var statusParams []interface{}
 
 	for i, status := range statuses {
@@ -416,8 +416,8 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 		validatorStmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
 		valParams = append(valParams, status.ConsensusAddress, status.ConsensusPubKey)
 
-		si := i * 5
-		statusStmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4, si+5)
+		si := i * 4
+		statusStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4)
 		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Height)
 	}
 
@@ -433,7 +433,6 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 ON CONFLICT (validator_address) DO UPDATE 
 	SET status = excluded.status,
 	    jailed = excluded.jailed,
-	    tombstoned = excluded.tombstoned,
 	    height = excluded.height
 WHERE validator_status.height <= excluded.height`
 	_, err = db.SQL.Exec(statusStmt, statusParams...)

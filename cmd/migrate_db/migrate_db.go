@@ -7,6 +7,7 @@ import (
 	"github.com/forbole/juno/v4/logging"
 	"github.com/forbole/juno/v4/types/config"
 	migrate "github.com/rubenv/sql-migrate"
+	"github.com/spf13/cobra"
 	"gitlab.com/rarimo/bdjuno/database"
 )
 
