@@ -3,7 +3,7 @@ package consensus
 import (
 	"gitlab.com/rarimo/bdjuno/database"
 
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 )
 
 var (

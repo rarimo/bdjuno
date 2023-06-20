@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v3/cmd"
-	initcmd "github.com/forbole/juno/v3/cmd/init"
-	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-	"github.com/forbole/juno/v3/modules/messages"
+	"github.com/forbole/juno/v4/cmd"
+	initcmd "github.com/forbole/juno/v4/cmd/init"
+	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v4/cmd/start"
+	"github.com/forbole/juno/v4/modules/messages"
 	migratecmd "gitlab.com/rarimo/bdjuno/cmd/migrate"
 	parsecmd "gitlab.com/rarimo/bdjuno/cmd/parse"
 
@@ -15,7 +15,6 @@ import (
 	"gitlab.com/rarimo/bdjuno/database"
 	"gitlab.com/rarimo/bdjuno/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
 	migratedbcmd "gitlab.com/rarimo/bdjuno/cmd/migrate_db"
 	rarimoapp "gitlab.com/rarimo/rarimo-core/app"
 )
@@ -57,7 +56,6 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		gaiaapp.ModuleBasics,
 		rarimoapp.ModuleBasics,
 	}
 }

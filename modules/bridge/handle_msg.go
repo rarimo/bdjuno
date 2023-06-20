@@ -2,7 +2,7 @@ package bridge
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 	"gitlab.com/rarimo/bdjuno/types"
 	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
 )

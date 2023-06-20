@@ -17,6 +17,7 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 func (m *Module) UpdateProposal(height int64, id uint64) error {
@@ -107,14 +108,14 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 }
 
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
-func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
-	if proposal.Status != govtypes.StatusPassed {
+func (m *Module) handleParamChangeProposal(height int64, proposal govtypesv1beta.Proposal) error {
+	if proposal.Status != govtypesv1beta.StatusPassed {
 		// If the status of ParamChangeProposal is not passed, do nothing
 		return nil
 	}
 
-	var content govtypes.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	var content govtypesv1beta.Content
+	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}
@@ -142,12 +143,6 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 			}
-
-			// Update the inflation
-			err = m.mintModule.UpdateInflation()
-			if err != nil {
-				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
-			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {
@@ -164,7 +159,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 }
 
 // updateProposalStatus updates the given proposal status
-func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
+func (m *Module) updateProposalStatus(proposal govtypesv1beta.Proposal) error {
 	return m.db.UpdateProposal(
 		types.NewProposalUpdate(
 			proposal.ProposalId,
@@ -176,7 +171,7 @@ func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
 }
 
 // updateProposalTallyResult updates the tally result associated with the given proposal
-func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
+func (m *Module) updateProposalTallyResult(proposal govtypesv1beta.Proposal) error {
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return err
@@ -190,17 +185,17 @@ func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
 	return m.db.SaveTallyResults([]types.TallyResult{
 		types.NewTallyResult(
 			proposal.ProposalId,
-			result.Yes.String(),
-			result.Abstain.String(),
-			result.No.String(),
-			result.NoWithVeto.String(),
+			result.YesCount,
+			result.AbstainCount,
+			result.NoCount,
+			result.NoWithVetoCount,
 			height,
 		),
 	})
 }
 
 // updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
-func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
+func (m *Module) updateAccounts(proposal govtypesv1beta.Proposal) error {
 	content, ok := proposal.Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
 	if ok {
 		height, err := m.db.GetLastBlockHeight()
@@ -223,7 +218,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 // updateProposalStakingPoolSnapshot updates the staking pool snapshot associated with the gov
 // proposal having the provided id
 func (m *Module) updateProposalStakingPoolSnapshot(height int64, proposalID uint64) error {
-	pool, err := m.stakingModule.GetStakingPool(height)
+	pool, err := m.stakingModule.GetStakingPoolSnapshot(height)
 	if err != nil {
 		return fmt.Errorf("error while getting staking pool: %s", err)
 	}

@@ -2,17 +2,17 @@ package gov
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
-func (m *Module) handleRarimoCoreProposal(height int64, proposal types.Proposal) error {
-	if proposal.Status != types.StatusPassed {
+func (m *Module) handleRarimoCoreProposal(height int64, proposal govtypesv1beta.Proposal) error {
+	if proposal.Status != govtypesv1beta.StatusPassed {
 		return nil
 	}
 
-	var content types.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	var content govtypesv1beta.Content
+	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling rarimo core proposal: %s", err)
 	}

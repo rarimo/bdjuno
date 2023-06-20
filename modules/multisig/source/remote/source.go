@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 	multisigsource "gitlab.com/rarimo/bdjuno/modules/multisig/source"
 	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
 )
