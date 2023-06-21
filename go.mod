@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.3
 	github.com/tendermint/tendermint v0.34.27
-	gitlab.com/rarimo/rarimo-core v0.0.0-20230619173054-b5b0b97b0a72
+	gitlab.com/rarimo/rarimo-core v0.0.0-20230621113332-c70c7e194a9d
 	google.golang.org/grpc v1.55.0
 	gopkg.in/yaml.v3 v3.0.1
 )
