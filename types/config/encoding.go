@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	enccodec "gitlab.com/rarimo/rarimo-core/ethermint/encoding/codec"
 )
@@ -11,8 +10,6 @@ import (
 func MakeEncodingConfig(managers []module.BasicManager) func() params.EncodingConfig {
 	return func() params.EncodingConfig {
 		encodingConfig := params.MakeTestEncodingConfig()
-		std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-		std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 		enccodec.RegisterLegacyAminoCodec(encodingConfig.Amino)
 		enccodec.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 
