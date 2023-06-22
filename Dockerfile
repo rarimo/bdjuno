@@ -1,10 +1,11 @@
-FROM golang:1.18-alpine as buildbase
+FROM golang:1.20-alpine as buildbase
 
 WORKDIR /go/src/gitlab.com/rarimo/bdjuno
+RUN apk add build-base
 COPY vendor .
 COPY . .
 ENV GO111MODULE="on"
-ENV CGO_ENABLED=0
+ENV CGO_ENABLED=1
 ENV GOOS="linux"
 RUN go build -o /usr/local/bin/bdjuno gitlab.com/rarimo/bdjuno/cmd/bdjuno
 

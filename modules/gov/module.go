@@ -7,7 +7,7 @@ import (
 
 	govsource "gitlab.com/rarimo/bdjuno/modules/gov/source"
 
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 )
 
 var (

@@ -23,7 +23,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE tokenmanager_params.height <= excluded.height
 `
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		string(paramsBz),
 		params.Height,
@@ -70,7 +70,7 @@ func (db *Db) SaveCollections(collections []types.Collection) error {
 	// Store the collections
 	collectionsQuery = strings.TrimSuffix(collectionsQuery, ",") // Remove trailing ","
 	collectionsQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(collectionsQuery, collectionsParams...)
+	_, err := db.SQL.Exec(collectionsQuery, collectionsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing collections: %s", err)
 	}
@@ -96,7 +96,7 @@ func (db *Db) UpdateCollection(collection types.Collection) error {
 		return fmt.Errorf("error while marshaling index: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, meta, data, index)
+	_, err = db.SQL.Exec(query, meta, data, index)
 	if err != nil {
 		return fmt.Errorf("error while updating collection: %s", err)
 	}
@@ -137,7 +137,7 @@ func (db *Db) SaveCollectionDatas(collectionDatas []types.CollectionData) error 
 	// Store the collection datas
 	collectionDatasQuery = strings.TrimSuffix(collectionDatasQuery, ",") // Remove trailing ","
 	collectionDatasQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(collectionDatasQuery, collectionDatasParams...)
+	_, err := db.SQL.Exec(collectionDatasQuery, collectionDatasParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing collection datas: %s", err)
 	}
@@ -148,7 +148,7 @@ func (db *Db) SaveCollectionDatas(collectionDatas []types.CollectionData) error 
 func (db *Db) UpdateCollectionData(data types.CollectionData) error {
 	query := `UPDATE collection_data SET collection = $1, token_type = $2, wrapped = $3, decimals = $4 WHERE index_key = $5`
 
-	_, err := db.Sql.Exec(query,
+	_, err := db.SQL.Exec(query,
 		data.Collection,
 		data.TokenType,
 		data.Wrapped,
@@ -198,7 +198,7 @@ func (db *Db) SaveItems(items []types.Item) error {
 	// Store the items
 	itemQuery = strings.TrimSuffix(itemQuery, ",") // Remove trailing ","
 	itemQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(itemQuery, itemParams...)
+	_, err := db.SQL.Exec(itemQuery, itemParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing items: %s", err)
 	}
@@ -224,7 +224,7 @@ ON CONFLICT (index) DO UPDATE
 	SET collection = excluded.collection, meta = excluded.meta, on_chain = excluded.on_chain
 `
 
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		item.Index,
 		item.Collection,
@@ -241,7 +241,7 @@ ON CONFLICT (index) DO UPDATE
 
 func (db *Db) RemoveItem(index string) error {
 	stmt := `DELETE FROM item WHERE index = $1`
-	_, err := db.Sql.Exec(stmt, index)
+	_, err := db.SQL.Exec(stmt, index)
 	if err != nil {
 		return fmt.Errorf("error while deleting item: %s", err)
 	}
@@ -290,7 +290,7 @@ func (db *Db) GetItem(index string) (*types.Item, error) {
 
 func (db *Db) RemoveCollectionData(indexKey []byte) error {
 	stmt := `DELETE FROM collection_data WHERE index_key = $1`
-	_, err := db.Sql.Exec(stmt, indexKey)
+	_, err := db.SQL.Exec(stmt, indexKey)
 	if err != nil {
 		return fmt.Errorf("error while deleting collection data: %s", err)
 	}
@@ -300,7 +300,7 @@ func (db *Db) RemoveCollectionData(indexKey []byte) error {
 
 func (db *Db) RemoveCollectionDataByCollection(collection string) error {
 	stmt := `DELETE FROM collection_data WHERE collection = $1`
-	_, err := db.Sql.Exec(stmt, collection)
+	_, err := db.SQL.Exec(stmt, collection)
 	if err != nil {
 		return fmt.Errorf("error while deleting collection data: %s", err)
 	}
@@ -310,7 +310,7 @@ func (db *Db) RemoveCollectionDataByCollection(collection string) error {
 
 func (db *Db) RemoveCollection(indexKey []byte) error {
 	stmt := `DELETE FROM collection WHERE index_key = $1`
-	_, err := db.Sql.Exec(stmt, indexKey)
+	_, err := db.SQL.Exec(stmt, indexKey)
 	if err != nil {
 		return fmt.Errorf("error while deleting collection: %s", err)
 	}
@@ -343,7 +343,7 @@ func (db *Db) SaveOnChainItems(items []types.OnChainItem) error {
 	// Store the on chain items
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(query, params...)
+	_, err := db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing on chain items: %s", err)
 	}
@@ -353,7 +353,7 @@ func (db *Db) SaveOnChainItems(items []types.OnChainItem) error {
 
 func (db *Db) RemoveOnChainItems(itemIndex string) error {
 	stmt := `DELETE FROM on_chain_item WHERE item = $1`
-	_, err := db.Sql.Exec(stmt, itemIndex)
+	_, err := db.SQL.Exec(stmt, itemIndex)
 	if err != nil {
 		return fmt.Errorf("error while deleting on chain items: %s", err)
 	}
@@ -381,7 +381,7 @@ func (db *Db) SaveSeeds(seeds []types.Seed) error {
 	// Store the on chain seeds
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(query, params...)
+	_, err := db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing on chain seeds: %s", err)
 	}
@@ -392,7 +392,7 @@ func (db *Db) SaveSeeds(seeds []types.Seed) error {
 func (db *Db) UpsertSeed(seed types.Seed) error {
 	stmt := `INSERT INTO seed (seed, item) VALUES ($1, $2) ON CONFLICT (item) DO UPDATE SET seed = excluded.seed`
 
-	_, err := db.Sql.Exec(stmt, seed.Seed, seed.Item)
+	_, err := db.SQL.Exec(stmt, seed.Seed, seed.Item)
 
 	if err != nil {
 		return fmt.Errorf("error while storing item: %s", err)
@@ -403,7 +403,7 @@ func (db *Db) UpsertSeed(seed types.Seed) error {
 
 func (db *Db) RemoveSeed(seed string) error {
 	stmt := `DELETE FROM seed WHERE seed = $1`
-	_, err := db.Sql.Exec(stmt, seed)
+	_, err := db.SQL.Exec(stmt, seed)
 	if err != nil {
 		return fmt.Errorf("error while deleting seed: %s", err)
 	}

@@ -24,7 +24,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE oraclemanager_params.height <= excluded.height
 `
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		params.MinOracleStake,
 		params.CheckOperationDelta,
@@ -90,7 +90,7 @@ func (db *Db) SaveOracles(oracles []types.Oracle) error {
 	SET status = excluded.status, stake = excluded.stake, violations_count = excluded.violations_count, freeze_end_block = excluded.freeze_end_block, votes_count = excluded.votes_count, create_operations_count = excluded.create_operations_count
 WHERE oracle.index = excluded.index
 `
-	_, err = db.Sql.Exec(query, params...)
+	_, err = db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing oracles: %s", err)
 	}

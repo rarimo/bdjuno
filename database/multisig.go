@@ -21,7 +21,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE multisig_params.height <= excluded.height
 `
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		params.GroupSequence,
 		params.ProposalSequence,
@@ -71,7 +71,7 @@ WHERE "group".account = excluded.account
 		return fmt.Errorf("error while storing group accounts: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, params...)
+	_, err = db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing multisig groups: %s", err)
 	}
@@ -102,7 +102,7 @@ INSERT INTO multisig_proposal(
 
 		messages := "["
 		for j, message := range proposal.Messages {
-			msg, err := db.EncodingConfig.Marshaler.MarshalJSON(message)
+			msg, err := db.EncodingConfig.Codec.MarshalJSON(message)
 			if err != nil {
 				return fmt.Errorf("error while marshaling message: %s", err)
 			}
@@ -138,7 +138,7 @@ INSERT INTO multisig_proposal(
  	SET final_tally_result = excluded.final_tally_result, status = excluded.status
 WHERE multisig_proposal.id = excluded.id
  `
-	_, err = db.Sql.Exec(query, params...)
+	_, err = db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing multisig proposals: %s", err)
 	}
@@ -171,7 +171,7 @@ INSERT INTO multisig_proposal_vote(
  	SET option = excluded.option, submit_block = excluded.submit_block
 WHERE multisig_proposal_vote.index = excluded.index
  `
-	_, err = db.Sql.Exec(query, params...)
+	_, err = db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing multisig votes: %s", err)
 	}

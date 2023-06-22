@@ -53,7 +53,7 @@ func (db *Db) SaveParties(parties []types.Party) error {
 	SET status = excluded.status, pub_key = excluded.pub_key, violations_count = excluded.violations_count, freeze_end_block = excluded.freeze_end_block, delegator = excluded.delegator, committed_global_public_key = excluded.committed_global_public_key , reported_sessions = excluded.reported_sessions 
 WHERE parties.account = excluded.account
 `
-	_, err = db.Sql.Exec(partiesQuery, partiesParams...)
+	_, err = db.SQL.Exec(partiesQuery, partiesParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing parties: %s", err)
 	}
@@ -79,7 +79,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE rarimocore_params.height <= excluded.height
 `
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		params.KeyECDSA,
 		params.Threshold,
@@ -137,7 +137,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 	// Store the operations
 	operationsQuery = strings.TrimSuffix(operationsQuery, ",") // Remove trailing ","
 	operationsQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(operationsQuery, operationsParams...)
+	_, err = db.SQL.Exec(operationsQuery, operationsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing operations: %s", err)
 	}
@@ -147,7 +147,7 @@ func (db *Db) SaveOperations(operations []types.Operation) error {
 
 func (db *Db) UpdateOperation(operation types.Operation) error {
 	query := `UPDATE operation SET status = $1 WHERE index = $2`
-	_, err := db.Sql.Exec(query,
+	_, err := db.SQL.Exec(query,
 		operation.Status,
 		operation.Index,
 	)
@@ -235,7 +235,7 @@ INSERT INTO transfer (
 
 	transfersQuery = strings.TrimSuffix(transfersQuery, ",") // Remove trailing ","
 	transfersQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(transfersQuery, transfersParams...)
+	_, err = db.SQL.Exec(transfersQuery, transfersParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing transfers: %s", err)
 	}
@@ -265,7 +265,7 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 
 	changePartiesQuery = strings.TrimSuffix(changePartiesQuery, ",") // Remove trailing ","
 	changePartiesQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(changePartiesQuery, changePartiesParams...)
+	_, err = db.SQL.Exec(changePartiesQuery, changePartiesParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing change parties: %s", err)
 	}
@@ -275,7 +275,7 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 
 func (db *Db) UpdateChangeParties(changeParties types.ChangeParties) (err error) {
 	query := `UPDATE change_parties SET parties = $1, new_public_key = $2, signature = $3 WHERE operation_index = $4`
-	_, err = db.Sql.Exec(query,
+	_, err = db.SQL.Exec(query,
 		pq.StringArray(changeParties.Parties),
 		changeParties.NewPublicKey,
 		changeParties.Signature,
@@ -310,7 +310,7 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 
 	confirmationsQuery = strings.TrimSuffix(confirmationsQuery, ",") // Remove trailing ","
 	confirmationsQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(confirmationsQuery, confirmationsParams...)
+	_, err = db.SQL.Exec(confirmationsQuery, confirmationsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing confirmations: %s", err)
 	}
@@ -335,7 +335,7 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 
-	_, err = db.Sql.Exec(query, queryParams...)
+	_, err = db.SQL.Exec(query, queryParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing votes: %s", err)
 	}
@@ -345,7 +345,7 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 
 func (db *Db) RemoveRarimoCoreVotes(opIndex string) error {
 	stmt := `DELETE FROM vote WHERE operation = $1`
-	_, err := db.Sql.Exec(stmt, opIndex)
+	_, err := db.SQL.Exec(stmt, opIndex)
 	if err != nil {
 		return fmt.Errorf("error while deleting rarimo core votes: %s", err)
 	}
@@ -370,7 +370,7 @@ func (db *Db) SaveViolationReports(reports []types.ViolationReport) (err error) 
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 
-	_, err = db.Sql.Exec(query, queryParams...)
+	_, err = db.SQL.Exec(query, queryParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing reports: %s", err)
 	}

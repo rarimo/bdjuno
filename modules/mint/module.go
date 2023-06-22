@@ -2,16 +2,15 @@ package mint
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
 	"gitlab.com/rarimo/bdjuno/database"
 	mintsource "gitlab.com/rarimo/bdjuno/modules/mint/source"
 )
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
 )
 
 // Module represent database/mint module

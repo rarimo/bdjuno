@@ -1,7 +1,7 @@
 package remote
 
 import (
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 	oraclemanagersource "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
 	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 )

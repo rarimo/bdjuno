@@ -6,9 +6,9 @@ import (
 	"gitlab.com/rarimo/bdjuno/database"
 	"gitlab.com/rarimo/bdjuno/modules/bank/source"
 
-	junomessages "github.com/forbole/juno/v3/modules/messages"
+	junomessages "github.com/forbole/juno/v4/modules/messages"
 
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 )
 
 var (
