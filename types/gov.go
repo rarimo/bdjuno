@@ -229,7 +229,7 @@ func NewDeposit(
 type Vote struct {
 	ProposalID uint64
 	Voter      string
-	Option     govtypesv1.VoteOption
+	Option     govtypesv1beta1.VoteOption
 	Height     int64
 }
 
@@ -237,7 +237,7 @@ type Vote struct {
 func NewVote(
 	proposalID uint64,
 	voter string,
-	option govtypesv1.VoteOption,
+	option govtypesv1beta1.VoteOption,
 	height int64,
 ) Vote {
 	return Vote{
