@@ -2,8 +2,6 @@ package gov
 
 import (
 	"fmt"
-	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-
 	"strconv"
 
 	"gitlab.com/rarimo/bdjuno/types"
@@ -24,10 +22,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *govtypesv1beta1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
-	case *govtypesv1.MsgDeposit:
+	case *govtypesv1beta1.MsgDeposit:
 		return m.handleMsgDeposit(tx, cosmosMsg)
 
-	case *govtypesv1.MsgVote:
+	case *govtypesv1beta1.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
 	}
 
@@ -89,7 +87,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error {
+func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1beta1.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
@@ -101,7 +99,7 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
+func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1beta1.MsgVote) error {
 	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
 	return m.db.SaveVote(vote)
 }
