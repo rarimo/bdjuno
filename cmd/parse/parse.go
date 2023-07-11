@@ -1,14 +1,14 @@
 package parse
 
 import (
-	parse "github.com/forbole/juno/v3/cmd/parse/types"
+	parse "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/spf13/cobra"
 
-	parseblocks "github.com/forbole/juno/v3/cmd/parse/blocks"
+	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
 
-	parsegenesis "github.com/forbole/juno/v3/cmd/parse/genesis"
+	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
 
-	parsetransaction "github.com/forbole/juno/v3/cmd/parse/transactions"
+	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 	parseauth "gitlab.com/rarimo/bdjuno/cmd/parse/auth"
 	parsefeegrant "gitlab.com/rarimo/bdjuno/cmd/parse/feegrant"
 	parsegov "gitlab.com/rarimo/bdjuno/cmd/parse/gov"

@@ -16,7 +16,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE bridge_params.height <= excluded.height
 `
-	_, err = db.Sql.Exec(
+	_, err = db.SQL.Exec(
 		stmt,
 		params.WithdrawDenom,
 		params.Height,
@@ -47,7 +47,7 @@ func (db *Db) SaveHashes(hashes []types.Hash) error {
 	// Store the hashes
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(query, params...)
+	_, err := db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing hashes: %s", err)
 	}

@@ -5,7 +5,7 @@ import (
 	"gitlab.com/rarimo/bdjuno/database"
 	oraclemanager "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
 
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 )
 
 var (

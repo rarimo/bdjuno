@@ -3,7 +3,7 @@ package multisig
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"

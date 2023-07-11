@@ -2,17 +2,17 @@ package gov
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
-func (m *Module) handleTokenManagerProposal(height int64, rawProposal types.Proposal) error {
-	if rawProposal.Status != types.StatusPassed {
+func (m *Module) handleTokenManagerProposal(height int64, rawProposal govtypesv1beta.Proposal) error {
+	if rawProposal.Status != govtypesv1beta.StatusPassed {
 		return nil
 	}
 
-	var content types.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(rawProposal.Content, &content)
+	var content govtypesv1beta.Content
+	err := m.db.EncodingConfig.Codec.UnpackAny(rawProposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling tokenmanager proposal: %s", err)
 	}

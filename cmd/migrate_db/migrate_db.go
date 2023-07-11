@@ -2,10 +2,10 @@ package migrate_db
 
 import (
 	"database/sql"
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/logging"
-	"github.com/forbole/juno/v3/types/config"
-	"github.com/pkg/errors"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/logging"
+	"github.com/forbole/juno/v4/types/config"
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/spf13/cobra"
 	"gitlab.com/rarimo/bdjuno/database"
@@ -33,7 +33,7 @@ func NewMigrateDBCmd(parseCfg *parsecmdtypes.Config) *cobra.Command {
 					return err
 				}
 				db := database.Cast(context.Database)
-				return migrateUp(db.Sql, context.Logger)
+				return migrateUp(db.SQL.DB, context.Logger)
 			},
 		},
 	)
@@ -48,7 +48,7 @@ func NewMigrateDBCmd(parseCfg *parsecmdtypes.Config) *cobra.Command {
 					return err
 				}
 				db := database.Cast(context.Database)
-				return migrateDown(db.Sql, context.Logger)
+				return migrateDown(db.SQL.DB, context.Logger)
 			},
 		},
 	)

@@ -2,7 +2,7 @@ package slashing
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
 	"gitlab.com/rarimo/bdjuno/database"
 	slashingsource "gitlab.com/rarimo/bdjuno/modules/slashing/source"

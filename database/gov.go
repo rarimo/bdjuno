@@ -3,10 +3,11 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/gogo/protobuf/proto"
 
 	"gitlab.com/rarimo/bdjuno/types"
@@ -43,9 +44,44 @@ ON CONFLICT (one_row_id) DO UPDATE
 		tally_params = excluded.tally_params,
 		height = excluded.height
 WHERE gov_params.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing gov params: %s", err)
+	}
+
+	return nil
+}
+
+// SaveGenesisGovParams saves the genesis x/gov parameters inside the database
+func (db *Db) SaveGenesisGovParams(params *types.GenesisGovParams) error {
+
+	depositParamsBz, err := json.Marshal(&params.DepositParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis deposit params: %s", err)
+	}
+
+	votingParamsBz, err := json.Marshal(&params.VotingParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis voting params: %s", err)
+	}
+
+	tallyingParams, err := json.Marshal(&params.TallyParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis tally params: %s", err)
+	}
+
+	stmt := `
+INSERT INTO gov_params(deposit_params, voting_params, tally_params, height)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (one_row_id) DO UPDATE
+	SET deposit_params = excluded.deposit_params,
+  		voting_params = excluded.voting_params,
+		tally_params = excluded.tally_params,
+		height = excluded.height
+WHERE gov_params.height <= excluded.height`
+	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis gov params: %s", err)
 	}
 
 	return nil
@@ -126,7 +162,7 @@ INSERT INTO proposal(
 			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
 		}
 
-		contentBz, err := db.EncodingConfig.Marshaler.MarshalJSON(anyContent)
+		contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
 		if err != nil {
 			return fmt.Errorf("error while marshaling proposal content: %s", err)
 		}
@@ -156,7 +192,7 @@ INSERT INTO proposal(
 	// Store the proposals
 	proposalsQuery = strings.TrimSuffix(proposalsQuery, ",") // Remove trailing ","
 	proposalsQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(proposalsQuery, proposalsParams...)
+	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposals: %s", err)
 	}
@@ -179,13 +215,13 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 	row := rows[0]
 
 	var contentAny codectypes.Any
-	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
+	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
 	if err != nil {
 		return nil, err
 	}
 
-	var content govtypes.Content
-	err = db.EncodingConfig.Marshaler.UnpackAny(&contentAny, &content)
+	var content govtypesv1beta1.Content
+	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +245,7 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 func (db *Db) GetOpenProposalsIds(blockHeight uint64) ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
-	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	err := db.Sqlx.Select(&ids, stmt, govtypesv1.StatusDepositPeriod.String(), govtypesv1.StatusVotingPeriod.String())
 	if err != nil {
 		return ids, err
 	}
@@ -228,7 +264,7 @@ func (db *Db) GetOpenProposalsIds(blockHeight uint64) ([]uint64, error) {
 // UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_block = $2, voting_end_block = $3 where id = $4`
-	_, err := db.Sql.Exec(query,
+	_, err := db.SQL.Exec(query,
 		update.Status,
 		update.VotingStartBlock,
 		update.VotingEndBlock,
@@ -265,7 +301,7 @@ ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 	SET amount = excluded.amount,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing deposits: %s", err)
 	}
@@ -291,7 +327,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}
@@ -329,7 +365,7 @@ ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE
 	    no_with_veto = excluded.no_with_veto,
 	    height = excluded.height
 WHERE proposal_tally_result.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing tally result: %s", err)
 	}
@@ -351,7 +387,7 @@ ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE SET
 	height = excluded.height
 WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(), snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal staking pool snapshot: %s", err)
@@ -390,7 +426,7 @@ ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
 		jailed = excluded.jailed,
 		height = excluded.height
 WHERE proposal_validator_status_snapshot.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
 	}

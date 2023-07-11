@@ -1,7 +1,7 @@
 package remote
 
 import (
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 	rarimocoresource "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )

@@ -20,7 +20,6 @@ type DistrModule = ParamsUpdater
 
 type MintModule interface {
 	ParamsUpdater
-	UpdateInflation() error
 }
 
 type SlashingModule = ParamsUpdater
@@ -52,6 +51,7 @@ type TokenManagerModule interface {
 type StakingModule interface {
 	ParamsUpdater
 	GetStakingPool(height int64) (*types.Pool, error)
+	GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)
 	GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error)
 	GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error)

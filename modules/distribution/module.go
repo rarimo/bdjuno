@@ -5,7 +5,7 @@ import (
 
 	distrsource "gitlab.com/rarimo/bdjuno/modules/distribution/source"
 
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
 	"gitlab.com/rarimo/bdjuno/database"
 )

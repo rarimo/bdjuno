@@ -12,12 +12,12 @@ import (
 	"github.com/rs/zerolog/log"
 	modulestypes "gitlab.com/rarimo/bdjuno/modules/types"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v3/parser"
+	"github.com/forbole/juno/v4/parser"
 
 	"gitlab.com/rarimo/bdjuno/database"
 	"gitlab.com/rarimo/bdjuno/modules/distribution"
@@ -53,14 +53,14 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build expected modules of gov modules for handleParamChangeProposal
-			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
-			oracleManager := oraclemanager.NewModule(sources.OracleManagerSource, parseCtx.EncodingConfig.Marshaler, db)
-			tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, parseCtx.EncodingConfig.Marshaler, db)
-			bridgeModule := bridge.NewModule(sources.BridgeSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
+			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
+			rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, parseCtx.EncodingConfig.Codec, db)
+			oracleManager := oraclemanager.NewModule(sources.OracleManagerSource, parseCtx.EncodingConfig.Codec, db)
+			tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, parseCtx.EncodingConfig.Codec, db)
+			bridgeModule := bridge.NewModule(sources.BridgeSource, parseCtx.EncodingConfig.Codec, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
 			govModule := gov.NewModule(
@@ -74,7 +74,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				tokenmanagerModule,
 				oracleManager,
 				bridgeModule,
-				parseCtx.EncodingConfig.Marshaler,
+				parseCtx.EncodingConfig.Codec,
 				db,
 			)
 
@@ -130,7 +130,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypes.MsgSubmitProposal); !ok {
+		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
 			continue
 		}
 
@@ -161,7 +161,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 		// Handle the MsgDeposit messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypes.MsgDeposit); !ok {
+			if _, ok := msg.(*govtypesv1.MsgDeposit); !ok {
 				continue
 			}
 
@@ -193,7 +193,7 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypes.MsgVote); !ok {
+			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
 				continue
 			}
 
