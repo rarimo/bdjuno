@@ -11,6 +11,8 @@ func (m *Module) handleTokenManagerProposal(height int64, rawProposal govtypesv1
 		return nil
 	}
 
+	// TODO: add handle for tokenmanager proposal
+
 	var content govtypesv1beta.Content
 	err := m.db.EncodingConfig.Codec.UnpackAny(rawProposal.Content, &content)
 	if err != nil {
