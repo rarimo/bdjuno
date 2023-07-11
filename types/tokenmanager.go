@@ -1,20 +1,26 @@
 package types
 
 import (
+	"encoding/json"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 //--------------------------------------------------------
 
-// NetworkParams contains the data of the x/tokenmanager network params
-type NetworkParams struct {
+// Network contains the data of the x/tokenmanager network params
+type Network struct {
 	Name     string                        `json:"name,omitempty" yaml:"name,omitempty"`
 	Contract string                        `json:"contract,omitempty" yaml:"contract,omitempty"`
 	Type     tokenmanagertypes.NetworkType `json:"type" yaml:"type"`
 }
 
+type NetworkParams struct {
+	Type tokenmanagertypes.NetworkType `json:"name,omitempty" yaml:"name,omitempty"`
+}
+
 type TokenManagerParamsInner struct {
-	Networks []NetworkParams `json:"networks,omitempty" yaml:"networks,omitempty"`
+	Networks []Network       `json:"networks,omitempty" yaml:"networks,omitempty"`
+	Details  json.RawMessage `json:"details,omitempty" yaml:"details,omitempty"`
 }
 
 // TokenManagerParams contains the data of the x/tokenmanager module params instance
@@ -25,10 +31,10 @@ type TokenManagerParams struct {
 
 // NewTokenManagerParams allows to build a new TokenManagerParams instance
 func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) *TokenManagerParams {
-	networks := make([]NetworkParams, 0)
+	networks := make([]Network, 0)
 
 	for _, network := range params.Networks {
-		networks = append(networks, NetworkParams{
+		networks = append(networks, Network{
 			Name:     network.Name,
 			Contract: network.Contract,
 			Type:     network.Type,
