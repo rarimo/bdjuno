@@ -267,7 +267,7 @@ func ItemFromCore(item tokenmanagertypes.Item) Item {
 		indexes = append(indexes, OnChainItemIndexFromCore(onChain))
 	}
 
-	meta := ItemMetadataFromCore(item.Meta)
+	meta := ItemMetadataFromCore(&item.Meta)
 
 	return NewItem(
 		item.Index,

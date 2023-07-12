@@ -99,7 +99,7 @@ func (m *Module) CreateCollection(
 ) error {
 	coreCollection := tokenmanagertypes.Collection{
 		Index: index,
-		Meta:  meta,
+		Meta:  *meta,
 		Data:  make([]*tokenmanagertypes.CollectionDataIndex, 0, len(data)),
 	}
 

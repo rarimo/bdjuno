@@ -1,12 +1,26 @@
 package rarimocore
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 	"gitlab.com/rarimo/bdjuno/types"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
+
+func (m *Module) SaveOperationByIndex(height int64, index string) error {
+	operation, err := m.source.Operation(height, index)
+	if err != nil {
+		return fmt.Errorf("failed to get operation by index: %s", err)
+	}
+
+	err = m.saveOperations([]rarimocoretypes.Operation{operation})
+	if err != nil {
+		return fmt.Errorf("failed to save operation: %s", err)
+	}
+	return nil
+}
 
 func (m *Module) saveOperations(slice []rarimocoretypes.Operation) error {
 	operations := coreOperationsToInternal(slice)

@@ -10,6 +10,8 @@ import (
 	oracletypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	"math/big"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -94,12 +96,12 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 		return fmt.Errorf("failed to get collection data: %s", err)
 	}
 
-	from, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.From)
+	from, err := m.tokenmanagerSource.OnChainItem(tx.Height, *transfer.From)
 	if err != nil {
 		return fmt.Errorf("failed to get on chain item: %s", err)
 	}
 
-	item, err := m.tokenManagerSource.Item(tx.Height, transfer.Origin)
+	item, err := m.tokenmanagerSource.Item(tx.Height, transfer.Origin)
 	if err != nil {
 		return fmt.Errorf("failed to get item: %s", err)
 	}
@@ -110,7 +112,7 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 	}
 
 	if item.Meta.Seed != "" {
-		seed, err := m.tokenManagerSource.Seed(tx.Height, item.Meta.Seed)
+		seed, err := m.tokenmanagerSource.Seed(tx.Height, item.Meta.Seed)
 		if err != nil {
 			return fmt.Errorf("failed to get seed: %s", err)
 		}
@@ -121,7 +123,7 @@ func (m *Module) handleApproveTransfer(tx *juno.Tx, op rarimocoretypes.Operation
 		}
 	}
 
-	to, err := m.tokenManagerSource.OnChainItem(tx.Height, *transfer.To)
+	to, err := m.tokenmanagerSource.OnChainItem(tx.Height, *transfer.To)
 	if err != nil {
 		return fmt.Errorf("failed to get on chain item: %s", err)
 	}
@@ -224,4 +226,79 @@ func (m *Module) handleMsgCreateConfirmation(tx *juno.Tx, msg *rarimocoretypes.M
 	}
 
 	return nil
+}
+
+func (m *Module) HandleUpdateContract(height int64, details tokenmanagertypes.ContractUpgradeDetails) error {
+	params, err := m.tokenmanagerSource.Params(height)
+	if err != nil {
+		return fmt.Errorf("failed to tokenmanager get params: %s", err)
+	}
+
+	network, ok := GetNetwork(params, details.Chain)
+	if !ok {
+		return fmt.Errorf("failed to get network")
+	}
+
+	upgrade := &rarimocoretypes.ContractUpgrade{
+		TargetContract:            details.TargetContract,
+		Chain:                     details.Chain,
+		NewImplementationContract: details.NewImplementationContract,
+		Hash:                      details.Hash,
+		BufferAccount:             details.BufferAccount,
+		Nonce:                     details.Nonce,
+		Type:                      details.Type,
+	}
+
+	content, err := pkg.GetContractUpgradeContent(network, upgrade)
+	if err != nil {
+		return fmt.Errorf("error creating content %s", err)
+	}
+
+	index := hexutil.Encode(crypto.Keccak256(big.NewInt(height).Bytes(), content.CalculateHash()))
+
+	op, err := m.source.Operation(height, index)
+	if err != nil {
+		return fmt.Errorf("failed to get contract upgrade operation: %s", err)
+	}
+
+	err = m.saveOperations([]rarimocoretypes.Operation{op})
+	if err != nil {
+		return fmt.Errorf("failed to save contract upgrade operation: %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error) {
+	params, err := m.tokenmanagerSource.Params(height)
+	if err != nil {
+		return nil, fmt.Errorf("failed to tokenmanager get params: %s", err)
+	}
+
+	network, ok := GetNetwork(params, chain)
+	if !ok {
+		return nil, fmt.Errorf("failed to get network")
+	}
+
+	feeparams := network.GetFeeParams()
+	if feeparams == nil {
+		return nil, fmt.Errorf("failed to get fee params")
+	}
+
+	feetoken := feeparams.GetFeeToken(contract)
+	if feetoken == nil {
+		return nil, fmt.Errorf("failed to get fee token")
+	}
+
+	return feetoken, nil
+}
+
+func GetNetwork(params tokenmanagertypes.Params, name string) (param tokenmanagertypes.Network, ok bool) {
+	for _, network := range params.Networks {
+		if network.Name == name {
+			return *network, true
+		}
+	}
+
+	return
 }

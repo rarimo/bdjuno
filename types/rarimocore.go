@@ -132,8 +132,8 @@ func NewTransfer(operationIndex string, t rarimocoretypes.Transfer) Transfer {
 		BundleData:     t.BundleData,
 		BundleSalt:     t.BundleSalt,
 		ItemMeta:       ItemMetadataFromCore(t.Meta),
-		From:           OnChainItemIndexFromCore(t.From),
-		To:             OnChainItemIndexFromCore(t.To),
+		From:           OnChainItemIndexFromCore(&t.From),
+		To:             OnChainItemIndexFromCore(&t.To),
 	}
 }
 
