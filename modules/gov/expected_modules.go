@@ -27,6 +27,8 @@ type SlashingModule = ParamsUpdater
 type RarimoCoreModule interface {
 	ParamsUpdater
 	SaveOperationByIndex(height int64, index string) error
+	HandleUpdateContract(height int64, details tokenmanagertypes.ContractUpgradeDetails) error
+	GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error)
 }
 
 type BridgeModule = ParamsUpdater
@@ -51,8 +53,6 @@ type TokenManagerModule interface {
 	CreateCollectionDatas(height int64, datas []*tokenmanagertypes.CollectionData) error
 	RemoveCollectionDatas(height int64, indexes []*tokenmanagertypes.CollectionDataIndex) error
 	RemoveCollection(index string) error
-	HandleUpdateContract(height int64, details tokenmanagertypes.ContractUpgradeDetails) error
-	GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error)
 }
 
 type StakingModule interface {

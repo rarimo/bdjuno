@@ -229,12 +229,7 @@ func (m *Module) handleMsgCreateConfirmation(tx *juno.Tx, msg *rarimocoretypes.M
 }
 
 func (m *Module) HandleUpdateContract(height int64, details tokenmanagertypes.ContractUpgradeDetails) error {
-	params, err := m.tokenmanagerSource.Params(height)
-	if err != nil {
-		return fmt.Errorf("failed to tokenmanager get params: %s", err)
-	}
-
-	network, ok := GetNetwork(params, details.Chain)
+	network, ok := m.tokenmanagerSource.GetNetwork(height, details.Chain)
 	if !ok {
 		return fmt.Errorf("failed to get network")
 	}
@@ -270,35 +265,5 @@ func (m *Module) HandleUpdateContract(height int64, details tokenmanagertypes.Co
 }
 
 func (m *Module) GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error) {
-	params, err := m.tokenmanagerSource.Params(height)
-	if err != nil {
-		return nil, fmt.Errorf("failed to tokenmanager get params: %s", err)
-	}
-
-	network, ok := GetNetwork(params, chain)
-	if !ok {
-		return nil, fmt.Errorf("failed to get network")
-	}
-
-	feeparams := network.GetFeeParams()
-	if feeparams == nil {
-		return nil, fmt.Errorf("failed to get fee params")
-	}
-
-	feetoken := feeparams.GetFeeToken(contract)
-	if feetoken == nil {
-		return nil, fmt.Errorf("failed to get fee token")
-	}
-
-	return feetoken, nil
-}
-
-func GetNetwork(params tokenmanagertypes.Params, name string) (param tokenmanagertypes.Network, ok bool) {
-	for _, network := range params.Networks {
-		if network.Name == name {
-			return *network, true
-		}
-	}
-
-	return
+	return m.tokenmanagerSource.GetFeeToken(height, chain, contract)
 }

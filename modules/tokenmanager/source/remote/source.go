@@ -40,6 +40,40 @@ func (s Source) Params(height int64) (tokenmanagertypes.Params, error) {
 	return res.Params, err
 }
 
+func (s Source) GetNetwork(height int64, network string) (tokenmanagertypes.Network, bool) {
+	params, err := s.Params(height)
+	if err != nil {
+		return tokenmanagertypes.Network{}, false
+	}
+
+	for _, net := range params.Networks {
+		if net.Name == network {
+			return *net, true
+		}
+	}
+
+	return tokenmanagertypes.Network{}, false
+}
+
+func (s Source) GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error) {
+	network, ok := s.GetNetwork(height, chain)
+	if !ok {
+		return nil, fmt.Errorf("failed to get network")
+	}
+
+	feeparams := network.GetFeeParams()
+	if feeparams == nil {
+		return nil, fmt.Errorf("failed to get fee params")
+	}
+
+	feetoken := feeparams.GetFeeToken(contract)
+	if feetoken == nil {
+		return nil, fmt.Errorf("failed to get fee token")
+	}
+
+	return feetoken, nil
+}
+
 // Item implements tokenmanagersource.Source
 func (s Source) Item(height int64, index string) (tokenmanagertypes.Item, error) {
 	res, err := s.tokenmanagerClient.Item(

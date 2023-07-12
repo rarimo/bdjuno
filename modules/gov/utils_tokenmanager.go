@@ -22,7 +22,7 @@ func (m *Module) handleTokenManagerProposal(height int64, rawProposal govtypesv1
 
 	switch proposal := content.(type) {
 	case *tokenmanagertypes.UpgradeContractProposal:
-		return m.tokenmanagerModule.HandleUpdateContract(height, proposal.Details)
+		return m.rarimocoreModule.HandleUpdateContract(height, proposal.Details)
 	case *tokenmanagertypes.AddNetworkProposal,
 		*tokenmanagertypes.RemoveNetworkProposal:
 		return m.tokenmanagerModule.UpdateParams(height)
@@ -68,7 +68,7 @@ func (m *Module) handleRemoveFeeToken(height int64, proposal *tokenmanagertypes.
 		return fmt.Errorf("error while updating tokenmanager proposal: %s", err)
 	}
 
-	token, err := m.tokenmanagerModule.GetFeeToken(height, proposal.Chain, proposal.Contract)
+	token, err := m.rarimocoreModule.GetFeeToken(height, proposal.Chain, proposal.Contract)
 	if err != nil {
 		return fmt.Errorf("error while getting fee token to remove: %s", err)
 	}
