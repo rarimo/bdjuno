@@ -15,16 +15,18 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *bridgetypes.MsgWithdrawNative:
-		return m.handleMsgWithdrawNative(tx, cosmosMsg)
+		return m.handleMsgWithdrawNative(cosmosMsg.Origin)
+	case *bridgetypes.MsgWithdrawFee:
+		return m.handleMsgWithdrawNative(cosmosMsg.Origin)
 	}
 
 	return nil
 }
 
-func (m *Module) handleMsgWithdrawNative(tx *juno.Tx, msg *bridgetypes.MsgWithdrawNative) error {
+func (m *Module) handleMsgWithdrawNative(origin string) error {
 	return m.db.SaveHashes([]types.Hash{
 		{
-			Index: msg.Origin,
+			Index: origin,
 		},
 	})
 }
