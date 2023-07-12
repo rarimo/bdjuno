@@ -87,7 +87,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	rarimocoreModule := rarimocore.NewModule(sources.RarimoCoreSource, sources.TokenManagerSource, cdc, db)
 	tokenmanagerModule := tokenmanager.NewModule(sources.TokenManagerSource, cdc, db)
-	oraclemanagerModule := oraclemanager.NewModule(sources.OracleManagerSource, cdc, db)
+	oraclemanagerModule := oraclemanager.NewModule(sources.OracleManagerSource, rarimocoreModule, cdc, db)
 	bridgeModule := bridge.NewModule(sources.BridgeSource, cdc, db)
 	govModule := gov.NewModule(
 		sources.GovSource,

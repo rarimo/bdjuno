@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"gitlab.com/rarimo/bdjuno/database"
 	oraclemanager "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
+	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
 
 	"github.com/forbole/juno/v4/modules"
 )
@@ -19,14 +20,16 @@ type Module struct {
 	cdc    codec.Codec
 	db     *database.Db
 	source oraclemanager.Source
+	rc     *rarimocore.Module
 }
 
 // NewModule builds a new Module instance
-func NewModule(source oraclemanager.Source, cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source oraclemanager.Source, rc *rarimocore.Module, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		source: source,
 		cdc:    cdc,
 		db:     db,
+		rc:     rc,
 	}
 }
 
