@@ -1325,6 +1325,8 @@ gitlab.com/rarimo/go-merkle v0.0.0-20221212103215-4a9612e1bed1 h1:/NTsZ61HpUSxJu
 gitlab.com/rarimo/go-merkle v0.0.0-20221212103215-4a9612e1bed1/go.mod h1:O4/lUka2v/6HvcxNielMJ2HsTZaizQN6uBYimSIithE=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230710140617-36f56c6dbd69 h1:CuMBbGfAsiIQ+G9xkMjQOKPT91SYZ4vTaCJUFl620fo=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230710140617-36f56c6dbd69/go.mod h1:gu7K/hnfTAHPVzy/kj0r4M6oCuZ70SS96jbnsNekbkc=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230711182420-88754f876a4d h1:T09227lYMU2UX/z6OyVkealSLq4Pe8bTU3YZ6nbw7Z8=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230711182420-88754f876a4d/go.mod h1:gu7K/hnfTAHPVzy/kj0r4M6oCuZ70SS96jbnsNekbkc=
 go.etcd.io/bbolt v1.3.6 h1:/ecaJf0sk1l4l6V4awd65v2C3ILy7MSj+s/x1ADCIMU=
 go.etcd.io/bbolt v1.3.6/go.mod h1:qXsaaIqmgQH0T+OPdb99Bf+PKfBBQVAdyD6TY9G8XM4=
 go.etcd.io/etcd/api/v3 v3.5.0/go.mod h1:cbVKeC6lCfl7j/8jBhAK6aIYO9XOjdptoxU/nLQcPvs=

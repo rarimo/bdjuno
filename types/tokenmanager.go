@@ -42,10 +42,34 @@ func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) (*Toke
 		}
 
 		for i, networkParams := range network.Params {
-			details, err := json.Marshal(networkParams.Details)
-			if err != nil {
-				return nil, fmt.Errorf("error while marshalling network params details: %s", err)
+			details := json.RawMessage{}
+
+			bridgeParams := network.GetBridgeParams()
+			var err error
+
+			if bridgeParams != nil {
+				details, err = json.Marshal(bridgeParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling bridge params details: %s", err)
+				}
 			}
+
+			feeParams := network.GetFeeParams()
+			if feeParams != nil {
+				details, err = json.Marshal(feeParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling fee params details: %s", err)
+				}
+			}
+
+			identityParams := network.GetIdentityParams()
+			if identityParams != nil {
+				details, err = json.Marshal(identityParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling identity params details: %s", err)
+				}
+			}
+
 			n.Params[i] = NetworkParams{
 				Type:    networkParams.Type,
 				Details: details,

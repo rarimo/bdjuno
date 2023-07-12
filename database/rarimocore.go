@@ -372,6 +372,7 @@ func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTran
 			transfer.GISTCreatedAtBlock,
 			transfer.GISTReplacedAtTimestamp,
 			transfer.GISTReplacedAtBlock,
+			transfer.ReplacedStateHash,
 		)
 	}
 
