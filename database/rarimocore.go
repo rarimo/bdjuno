@@ -273,6 +273,118 @@ func (db *Db) SaveChangeParties(changeParties []types.ChangeParties) (err error)
 	return nil
 }
 
+func (db *Db) SaveContractUpgrades(contractUpgrades []types.ContractUpgrade) (err error) {
+	if len(contractUpgrades) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO contract_upgrade (operation_index, target_contract, chain, new_implementation_contract, hash, buffer_account, nonce, type) VALUES`
+	var params []interface{}
+
+	for i, contractUpgrade := range contractUpgrades {
+		vi := i * 8
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+
+		params = append(params,
+			contractUpgrade.OperationIndex,
+			contractUpgrade.TargetContract,
+			contractUpgrade.Chain,
+			contractUpgrade.NewImplementationContract,
+			contractUpgrade.Hash,
+			contractUpgrade.BufferAccount,
+			contractUpgrade.Nonce,
+			contractUpgrade.Type,
+		)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing contract upgrades: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveFeeTokenManagements(managements []types.FeeTokenManagement) (err error) {
+	if len(managements) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO fee_token_management (operation_index, op_type, fee_token_contract, fee_token_amount, chain, receiver, nonce) VALUES`
+	var params []interface{}
+
+	for i, management := range managements {
+		vi := i * 7
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+
+		params = append(params,
+			management.OperationIndex,
+			management.OpType,
+			management.FeeTokenContract,
+			management.FeeTokenAmount,
+			management.Chain,
+			management.Receiver,
+			management.Nonce,
+		)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing fee token managements: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTransfer) (err error) {
+	if len(transfers) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO identity_default_transfer (operation_index, contract, chain, gisthash, id, state_hash, state_created_at_timestamp, state_created_at_block, state_replaced_at_timestamp, state_replaced_at_block, state_replaced_by, gistreplaced_by, gistcreated_at_timestamp, gistcreated_at_block, gistreplaced_at_timestamp, gistreplaced_at_block, replaced_state_hash) VALUES`
+	var params []interface{}
+
+	for i, transfer := range transfers {
+		vi := i * 17
+		query += fmt.Sprintf(
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13, vi+14, vi+15, vi+16, vi+17,
+		)
+
+		params = append(params,
+			transfer.OperationIndex,
+			transfer.Contract,
+			transfer.Chain,
+			transfer.GISTHash,
+			transfer.Id,
+			transfer.StateHash,
+			transfer.StateCreatedAtTimestamp,
+			transfer.StateCreatedAtBlock,
+			transfer.StateReplacedAtTimestamp,
+			transfer.StateReplacedAtBlock,
+			transfer.StateReplacedBy,
+			transfer.GISTReplacedBy,
+			transfer.GISTCreatedAtTimestamp,
+			transfer.GISTCreatedAtBlock,
+			transfer.GISTReplacedAtTimestamp,
+			transfer.GISTReplacedAtBlock,
+		)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing identity default transfers: %s", err)
+	}
+
+	return nil
+}
+
 func (db *Db) UpdateChangeParties(changeParties types.ChangeParties) (err error) {
 	query := `UPDATE change_parties SET parties = $1, new_public_key = $2, signature = $3 WHERE operation_index = $4`
 	_, err = db.SQL.Exec(query,
