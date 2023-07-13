@@ -218,45 +218,39 @@ func NewFeeTokenManagement(operationIndex string, f rarimocoretypes.FeeTokenMana
 //--------------------------------------------------------
 
 type IdentityDefaultTransfer struct {
-	OperationIndex           string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
-	Contract                 string `json:"contract,omitempty" yaml:"contract,omitempty"`
-	Chain                    string `json:"chain,omitempty" yaml:"chain,omitempty"`
-	GISTHash                 string `json:"gisthash,omitempty" yaml:"gisthash,omitempty"`
-	Id                       string `json:"id,omitempty" yaml:"id,omitempty"`
-	StateHash                string `json:"state_hash,omitempty" yaml:"state_hash,omitempty"`
-	StateCreatedAtTimestamp  string `json:"state_created_at_timestamp,omitempty" yaml:"state_created_at_timestamp,omitempty"`
-	StateCreatedAtBlock      string `json:"state_created_at_block,omitempty" yaml:"state_created_at_block,omitempty"`
-	StateReplacedAtTimestamp string `json:"state_replaced_at_timestamp,omitempty" yaml:"state_replaced_at_timestamp,omitempty"`
-	StateReplacedAtBlock     string `json:"state_replaced_at_block,omitempty" yaml:"state_replaced_at_block,omitempty"`
-	StateReplacedBy          string `json:"state_replaced_by,omitempty" yaml:"state_replaced_by,omitempty"`
-	GISTReplacedBy           string `json:"gistreplaced_by,omitempty" yaml:"gistreplaced_by,omitempty"`
-	GISTCreatedAtTimestamp   string `json:"gistcreated_at_timestamp,omitempty" yaml:"gistcreated_at_timestamp,omitempty"`
-	GISTCreatedAtBlock       string `json:"gistcreated_at_block,omitempty" yaml:"gistcreated_at_block,omitempty"`
-	GISTReplacedAtTimestamp  string `json:"gistreplaced_at_timestamp,omitempty" yaml:"gistreplaced_at_timestamp,omitempty"`
-	GISTReplacedAtBlock      string `json:"gistreplaced_at_block,omitempty" yaml:"gistreplaced_at_block,omitempty"`
-	ReplacedStateHash        string `json:"replaced_state_hash,omitempty" yaml:"replaced_state_hash,omitempty"`
+	OperationIndex          string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Contract                string `json:"contract,omitempty" yaml:"contract,omitempty"`
+	Chain                   string `json:"chain,omitempty" yaml:"chain,omitempty"`
+	GISTHash                string `json:"gisthash,omitempty" yaml:"gisthash,omitempty"`
+	Id                      string `json:"id,omitempty" yaml:"id,omitempty"`
+	StateHash               string `json:"state_hash,omitempty" yaml:"state_hash,omitempty"`
+	StateCreatedAtTimestamp string `json:"state_created_at_timestamp,omitempty" yaml:"state_created_at_timestamp,omitempty"`
+	StateCreatedAtBlock     string `json:"state_created_at_block,omitempty" yaml:"state_created_at_block,omitempty"`
+	StateReplacedBy         string `json:"state_replaced_by,omitempty" yaml:"state_replaced_by,omitempty"`
+	GISTReplacedBy          string `json:"gistreplaced_by,omitempty" yaml:"gistreplaced_by,omitempty"`
+	GISTCreatedAtTimestamp  string `json:"gistcreated_at_timestamp,omitempty" yaml:"gistcreated_at_timestamp,omitempty"`
+	GISTCreatedAtBlock      string `json:"gistcreated_at_block,omitempty" yaml:"gistcreated_at_block,omitempty"`
+	ReplacedStateHash       string `json:"replaced_state_hash,omitempty" yaml:"replaced_state_hash,omitempty"`
+	ReplacedGISTHash        string `json:"replaced_gist_hash,omitempty" yaml:"replaced_gist_hash,omitempty"`
 }
 
 // NewIdentityDefaultTransfer allows to build a new IdentityDefaultTransfer instance
 func NewIdentityDefaultTransfer(operationIndex string, i rarimocoretypes.IdentityDefaultTransfer) IdentityDefaultTransfer {
 	return IdentityDefaultTransfer{
-		OperationIndex:           operationIndex,
-		Contract:                 i.Contract,
-		Chain:                    i.Chain,
-		GISTHash:                 i.GISTHash,
-		Id:                       i.Id,
-		StateHash:                i.StateHash,
-		StateCreatedAtTimestamp:  i.StateCreatedAtTimestamp,
-		StateCreatedAtBlock:      i.StateCreatedAtBlock,
-		StateReplacedAtTimestamp: i.StateReplacedAtTimestamp,
-		StateReplacedAtBlock:     i.StateReplacedAtBlock,
-		StateReplacedBy:          i.StateReplacedBy,
-		GISTReplacedBy:           i.GISTReplacedBy,
-		GISTCreatedAtTimestamp:   i.GISTCreatedAtTimestamp,
-		GISTCreatedAtBlock:       i.GISTCreatedAtBlock,
-		GISTReplacedAtTimestamp:  i.GISTReplacedAtTimestamp,
-		GISTReplacedAtBlock:      i.GISTReplacedAtBlock,
-		ReplacedStateHash:        i.ReplacedStateHash,
+		OperationIndex:          operationIndex,
+		Contract:                i.Contract,
+		Chain:                   i.Chain,
+		GISTHash:                i.GISTHash,
+		Id:                      i.Id,
+		StateHash:               i.StateHash,
+		StateCreatedAtTimestamp: i.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     i.StateCreatedAtBlock,
+		StateReplacedBy:         i.StateReplacedBy,
+		GISTReplacedBy:          i.GISTReplacedBy,
+		GISTCreatedAtTimestamp:  i.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:      i.GISTCreatedAtBlock,
+		ReplacedStateHash:       i.ReplacedStateHash,
+		ReplacedGISTHash:        i.ReplacedGISTHash,
 	}
 
 }

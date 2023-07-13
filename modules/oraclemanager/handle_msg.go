@@ -37,22 +37,19 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 func (m *Module) handleCreateIdentity(height int64, msg *oracletypes.MsgCreateIdentityDefaultTransferOp) error {
 	transfer := &rarimocoretypes.IdentityDefaultTransfer{
-		Contract:                 msg.Contract,
-		Chain:                    msg.Chain,
-		GISTHash:                 msg.GISTHash,
-		Id:                       msg.Id,
-		StateHash:                msg.StateHash,
-		StateCreatedAtTimestamp:  msg.StateCreatedAtTimestamp,
-		StateCreatedAtBlock:      msg.StateCreatedAtBlock,
-		StateReplacedAtTimestamp: msg.StateReplacedAtTimestamp,
-		StateReplacedAtBlock:     msg.StateReplacedAtBlock,
-		StateReplacedBy:          msg.StateReplacedBy,
-		GISTReplacedBy:           msg.GISTReplacedBy,
-		GISTCreatedAtTimestamp:   msg.GISTCreatedAtTimestamp,
-		GISTCreatedAtBlock:       msg.GISTCreatedAtBlock,
-		GISTReplacedAtTimestamp:  msg.GISTReplacedAtTimestamp,
-		GISTReplacedAtBlock:      msg.GISTReplacedAtBlock,
-		ReplacedStateHash:        msg.ReplacedStateHash,
+		Contract:                msg.Contract,
+		Chain:                   msg.Chain,
+		GISTHash:                msg.GISTHash,
+		Id:                      msg.Id,
+		StateHash:               msg.StateHash,
+		StateCreatedAtTimestamp: msg.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     msg.StateCreatedAtBlock,
+		StateReplacedBy:         msg.StateReplacedBy,
+		GISTReplacedBy:          msg.GISTReplacedBy,
+		GISTCreatedAtTimestamp:  msg.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:      msg.GISTCreatedAtBlock,
+		ReplacedStateHash:       msg.ReplacedStateHash,
+		ReplacedGISTHash:        msg.ReplacedGISTtHash,
 	}
 
 	content, err := pkg.GetIdentityDefaultTransferContent(transfer)

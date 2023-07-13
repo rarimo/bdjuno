@@ -345,14 +345,14 @@ func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTran
 		return nil
 	}
 
-	query := `INSERT INTO identity_default_transfer (operation_index, contract, chain, gisthash, id, state_hash, state_created_at_timestamp, state_created_at_block, state_replaced_at_timestamp, state_replaced_at_block, state_replaced_by, gistreplaced_by, gistcreated_at_timestamp, gistcreated_at_block, gistreplaced_at_timestamp, gistreplaced_at_block, replaced_state_hash) VALUES`
+	query := `INSERT INTO identity_default_transfer (operation_index, contract, chain, gisthash, id, state_hash, state_created_at_timestamp, state_created_at_block, state_replaced_by, gistreplaced_by, gistcreated_at_timestamp, gistcreated_at_block, replaced_state_hash, replaced_gist_hash) VALUES`
 	var params []interface{}
 
 	for i, transfer := range transfers {
 		vi := i * 17
 		query += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13, vi+14, vi+15, vi+16, vi+17,
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13, vi+14,
 		)
 
 		params = append(params,
@@ -364,15 +364,12 @@ func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTran
 			transfer.StateHash,
 			transfer.StateCreatedAtTimestamp,
 			transfer.StateCreatedAtBlock,
-			transfer.StateReplacedAtTimestamp,
-			transfer.StateReplacedAtBlock,
 			transfer.StateReplacedBy,
 			transfer.GISTReplacedBy,
 			transfer.GISTCreatedAtTimestamp,
 			transfer.GISTCreatedAtBlock,
-			transfer.GISTReplacedAtTimestamp,
-			transfer.GISTReplacedAtBlock,
 			transfer.ReplacedStateHash,
+			transfer.ReplacedGISTHash,
 		)
 	}
 

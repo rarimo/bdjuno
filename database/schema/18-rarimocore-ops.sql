@@ -32,18 +32,15 @@ CREATE TABLE identity_default_transfer
     state_hash                  TEXT NOT NULL,
     state_created_at_timestamp  TEXT NOT NULL,
     state_created_at_block      TEXT NOT NULL,
-    state_replaced_at_timestamp TEXT NOT NULL,
-    state_replaced_at_block     TEXT NOT NULL,
     state_replaced_by           TEXT NOT NULL,
     gistreplaced_by             TEXT NOT NULL,
     gistcreated_at_timestamp    TEXT NOT NULL,
     gistcreated_at_block        TEXT NOT NULL,
-    gistreplaced_at_timestamp   TEXT NOT NULL,
-    gistreplaced_at_block       TEXT NOT NULL,
-    replaced_state_hash         TEXT NOT NULL
+    replaced_state_hash         TEXT NOT NULL,
+    replaced_gist_hash          TEXT NOT NULL
 );
 
 -- +migrate Down
 DROP TABLE identity_default_transfer;
 DROP TABLE fee_token_management;
-DROP TABLE contract_update;
+DROP TABLE contract_upgrade;

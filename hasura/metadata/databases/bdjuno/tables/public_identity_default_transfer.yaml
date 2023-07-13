@@ -23,14 +23,11 @@ select_permissions:
         - state_hash
         - state_created_at_timestamp
         - state_created_at_block
-        - state_replaced_at_timestamp
-        - state_replaced_at_block
         - state_replaced_by
         - gistreplaced_by
         - gistcreated_at_timestamp
         - gistcreated_at_block
-        - gistreplaced_at_timestamp
-        - gistreplaced_at_block
         - replaced_state_hash
+        - replaced_gist_hash
       filter: {}
     role: anonymous
