@@ -1329,6 +1329,8 @@ gitlab.com/rarimo/rarimo-core v0.0.0-20230711182420-88754f876a4d h1:T09227lYMU2U
 gitlab.com/rarimo/rarimo-core v0.0.0-20230711182420-88754f876a4d/go.mod h1:gu7K/hnfTAHPVzy/kj0r4M6oCuZ70SS96jbnsNekbkc=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230713073353-20bcfef13ce6 h1:0Ft0UnXs0ZxYrd8DzEDda3RKLJCNdO58piZGIJq+l7g=
 gitlab.com/rarimo/rarimo-core v0.0.0-20230713073353-20bcfef13ce6/go.mod h1:jtjUjEZu/v0oSXC6GjpCQhdtfQDnA3ye69/jQqEIr50=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230717151930-21f3f2a703e4 h1:U3i29lGB4CAvNWCVY2ll2GZ8RPeY9KcPzuq28rNwcwM=
+gitlab.com/rarimo/rarimo-core v0.0.0-20230717151930-21f3f2a703e4/go.mod h1:jtjUjEZu/v0oSXC6GjpCQhdtfQDnA3ye69/jQqEIr50=
 go.etcd.io/bbolt v1.3.6 h1:/ecaJf0sk1l4l6V4awd65v2C3ILy7MSj+s/x1ADCIMU=
 go.etcd.io/bbolt v1.3.6/go.mod h1:qXsaaIqmgQH0T+OPdb99Bf+PKfBBQVAdyD6TY9G8XM4=
 go.etcd.io/etcd/api/v3 v3.5.0/go.mod h1:cbVKeC6lCfl7j/8jBhAK6aIYO9XOjdptoxU/nLQcPvs=
