@@ -29,6 +29,34 @@ object_relationships:
         remote_table:
           name: change_parties
           schema: public
+  - name: contract_upgrade
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: contract_upgrade
+          schema: public
+  - name: fee_token_management
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: fee_token_management
+          schema: public
+  - name: identity_default_transfer
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: identity_default_transfer
+          schema: public
+
 select_permissions:
   - permission:
       allow_aggregations: true

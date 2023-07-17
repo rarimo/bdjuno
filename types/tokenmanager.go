@@ -1,20 +1,27 @@
 package types
 
 import (
+	"encoding/json"
+	"fmt"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 //--------------------------------------------------------
 
-// NetworkParams contains the data of the x/tokenmanager network params
+// Network contains the data of the x/tokenmanager network params
+type Network struct {
+	Name   string                        `json:"name,omitempty" yaml:"name,omitempty"`
+	Type   tokenmanagertypes.NetworkType `json:"type" yaml:"type"`
+	Params []NetworkParams               `json:"params,omitempty" yaml:"params,omitempty"`
+}
+
 type NetworkParams struct {
-	Name     string                        `json:"name,omitempty" yaml:"name,omitempty"`
-	Contract string                        `json:"contract,omitempty" yaml:"contract,omitempty"`
-	Type     tokenmanagertypes.NetworkType `json:"type" yaml:"type"`
+	Type    tokenmanagertypes.NetworkParamType `json:"name,omitempty" yaml:"name,omitempty"`
+	Details json.RawMessage                    `json:"details,omitempty" yaml:"details,omitempty"`
 }
 
 type TokenManagerParamsInner struct {
-	Networks []NetworkParams `json:"networks,omitempty" yaml:"networks,omitempty"`
+	Networks []Network `json:"networks,omitempty" yaml:"networks,omitempty"`
 }
 
 // TokenManagerParams contains the data of the x/tokenmanager module params instance
@@ -24,22 +31,61 @@ type TokenManagerParams struct {
 }
 
 // NewTokenManagerParams allows to build a new TokenManagerParams instance
-func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) *TokenManagerParams {
-	networks := make([]NetworkParams, 0)
+func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) (*TokenManagerParams, error) {
+	networks := make([]Network, 0)
 
 	for _, network := range params.Networks {
-		networks = append(networks, NetworkParams{
-			Name:     network.Name,
-			Contract: network.Contract,
-			Type:     network.Type,
-		})
+		n := Network{
+			Name:   network.Name,
+			Type:   network.Type,
+			Params: make([]NetworkParams, len(network.Params)),
+		}
+
+		for i, networkParams := range network.Params {
+			details := json.RawMessage{}
+
+			bridgeParams := network.GetBridgeParams()
+			var err error
+
+			if bridgeParams != nil {
+				details, err = json.Marshal(bridgeParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling bridge params details: %s", err)
+				}
+			}
+
+			feeParams := network.GetFeeParams()
+			if feeParams != nil {
+				details, err = json.Marshal(feeParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling fee params details: %s", err)
+				}
+			}
+
+			identityParams := network.GetIdentityParams()
+			if identityParams != nil {
+				details, err = json.Marshal(identityParams)
+				if err != nil {
+					return nil, fmt.Errorf("error while marshalling identity params details: %s", err)
+				}
+			}
+
+			n.Params[i] = NetworkParams{
+				Type:    networkParams.Type,
+				Details: details,
+			}
+		}
+
+		networks = append(networks, n)
 
 	}
 
 	return &TokenManagerParams{
-		Params: TokenManagerParamsInner{Networks: networks},
+		Params: TokenManagerParamsInner{
+			Networks: networks,
+		},
 		Height: height,
-	}
+	}, nil
 }
 
 //--------------------------------------------------------
@@ -245,7 +291,7 @@ func ItemFromCore(item tokenmanagertypes.Item) Item {
 		indexes = append(indexes, OnChainItemIndexFromCore(onChain))
 	}
 
-	meta := ItemMetadataFromCore(item.Meta)
+	meta := ItemMetadataFromCore(&item.Meta)
 
 	return NewItem(
 		item.Index,

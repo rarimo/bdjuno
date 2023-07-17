@@ -21,14 +21,14 @@ type Module struct {
 	cdc                codec.Codec
 	db                 *database.Db
 	source             rarimocore.Source
-	tokenManagerSource tokenmanager.Source
+	tokenmanagerSource tokenmanager.Source
 }
 
 // NewModule builds a new Module instance
-func NewModule(source rarimocore.Source, tokenManagerSource tokenmanager.Source, cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source rarimocore.Source, tokenmanagerSource tokenmanager.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		source:             source,
-		tokenManagerSource: tokenManagerSource,
+		tokenmanagerSource: tokenmanagerSource,
 		cdc:                cdc,
 		db:                 db,
 	}

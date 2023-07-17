@@ -3,9 +3,12 @@ package oraclemanager
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	juno "github.com/forbole/juno/v4/types"
 	"gitlab.com/rarimo/bdjuno/types"
 	oracletypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
+	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
+	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -16,38 +19,52 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *oracletypes.MsgStake:
-		return m.handleMsgStake(tx, cosmosMsg)
+		return m.HandleOracle(tx.Height, cosmosMsg.Index.Chain, cosmosMsg.Index.Account)
 	case *oracletypes.MsgUnstake:
-		return m.handleMsgUnstake(tx, cosmosMsg)
+		return m.HandleOracle(tx.Height, cosmosMsg.Index.Chain, cosmosMsg.Index.Account)
 	case *oracletypes.MsgUnjail:
-		return m.handleMsgUnjail(tx, cosmosMsg)
+		return m.HandleOracle(tx.Height, cosmosMsg.Index.Chain, cosmosMsg.Index.Account)
 	case *oracletypes.MsgCreateTransferOp:
-		return m.handleMsgCreateTransferOp(tx, cosmosMsg)
+		return m.HandleOracle(tx.Height, cosmosMsg.From.Chain, cosmosMsg.Creator)
 	case *oracletypes.MsgVote:
-		return m.handleMsgVote(tx, cosmosMsg)
+		return m.HandleOracle(tx.Height, cosmosMsg.Index.Chain, cosmosMsg.Index.Account)
+	case *oracletypes.MsgCreateIdentityDefaultTransferOp:
+		return m.handleCreateIdentity(tx.Height, cosmosMsg)
 	}
 
 	return nil
 }
 
-func (m *Module) handleMsgStake(tx *juno.Tx, msg *oracletypes.MsgStake) error {
-	return m.HandleOracle(tx.Height, msg.Index.Chain, msg.Index.Account)
-}
+func (m *Module) handleCreateIdentity(height int64, msg *oracletypes.MsgCreateIdentityDefaultTransferOp) error {
+	transfer := &rarimocoretypes.IdentityDefaultTransfer{
+		Contract:                msg.Contract,
+		Chain:                   msg.Chain,
+		GISTHash:                msg.GISTHash,
+		Id:                      msg.Id,
+		StateHash:               msg.StateHash,
+		StateCreatedAtTimestamp: msg.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     msg.StateCreatedAtBlock,
+		StateReplacedBy:         msg.StateReplacedBy,
+		GISTReplacedBy:          msg.GISTReplacedBy,
+		GISTCreatedAtTimestamp:  msg.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:      msg.GISTCreatedAtBlock,
+		ReplacedStateHash:       msg.ReplacedStateHash,
+		ReplacedGISTHash:        msg.ReplacedGISTtHash,
+	}
 
-func (m *Module) handleMsgUnstake(tx *juno.Tx, msg *oracletypes.MsgUnstake) error {
-	return m.HandleOracle(tx.Height, msg.Index.Chain, msg.Index.Account)
-}
+	content, err := pkg.GetIdentityDefaultTransferContent(transfer)
+	if err != nil {
+		return fmt.Errorf("error creating content %s", err)
+	}
 
-func (m *Module) handleMsgUnjail(tx *juno.Tx, msg *oracletypes.MsgUnjail) error {
-	return m.HandleOracle(tx.Height, msg.Index.Chain, msg.Index.Account)
-}
+	index := hexutil.Encode(content.CalculateHash())
 
-func (m *Module) handleMsgCreateTransferOp(tx *juno.Tx, msg *oracletypes.MsgCreateTransferOp) error {
-	return m.HandleOracle(tx.Height, msg.From.Chain, msg.Creator)
-}
+	err = m.rc.SaveOperationByIndex(height, index)
+	if err != nil {
+		return fmt.Errorf("error saving operation %s", err)
+	}
 
-func (m *Module) handleMsgVote(tx *juno.Tx, msg *oracletypes.MsgVote) error {
-	return m.HandleOracle(tx.Height, msg.Index.Chain, msg.Index.Account)
+	return nil
 }
 
 func (m *Module) HandleOracle(height int64, chain, account string) error {

@@ -1,12 +1,17 @@
 package tokenmanager
 
 import (
+	"fmt"
 	"gitlab.com/rarimo/bdjuno/types"
 	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 func (m *Module) saveParams(params tokenmanagertypes.Params, height int64) (err error) {
-	return m.db.SaveTokenManagerParams(types.NewTokenManagerParams(params, height))
+	p, err := types.NewTokenManagerParams(params, height)
+	if err != nil {
+		return fmt.Errorf("error while building token manager params: %s", err)
+	}
+	return m.db.SaveTokenManagerParams(p)
 }
 
 func (m *Module) saveCollections(collections []tokenmanagertypes.Collection) (err error) {

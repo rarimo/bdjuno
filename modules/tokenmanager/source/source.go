@@ -7,6 +7,8 @@ import (
 
 type Source interface {
 	Params(height int64) (tokenmanagertypes.Params, error)
+	GetNetwork(height int64, network string) (tokenmanagertypes.Network, bool)
+	GetFeeToken(height int64, chain, contract string) (*tokenmanagertypes.FeeToken, error)
 	Item(height int64, index string) (tokenmanagertypes.Item, error)
 	ItemAll(height int64) ([]tokenmanagertypes.Item, error)
 	OnChainItem(height int64, index types.OnChainItemIndex) (tokenmanagertypes.OnChainItem, error)

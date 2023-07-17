@@ -2,6 +2,7 @@ package types
 
 import (
 	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	"gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 //--------------------------------------------------------
@@ -132,8 +133,8 @@ func NewTransfer(operationIndex string, t rarimocoretypes.Transfer) Transfer {
 		BundleData:     t.BundleData,
 		BundleSalt:     t.BundleSalt,
 		ItemMeta:       ItemMetadataFromCore(t.Meta),
-		From:           OnChainItemIndexFromCore(t.From),
-		To:             OnChainItemIndexFromCore(t.To),
+		From:           OnChainItemIndexFromCore(&t.From),
+		To:             OnChainItemIndexFromCore(&t.To),
 	}
 }
 
@@ -160,6 +161,98 @@ func NewChangeParties(operationIndex string, c rarimocoretypes.ChangeParties) Ch
 		NewPublicKey:   c.NewPublicKey,
 		Signature:      c.Signature,
 	}
+}
+
+//--------------------------------------------------------
+
+type ContractUpgrade struct {
+	OperationIndex            string            `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	TargetContract            string            `json:"target_contract,omitempty" yaml:"target_contract,omitempty"`
+	Chain                     string            `json:"chain,omitempty" yaml:"chain,omitempty"`
+	NewImplementationContract string            `json:"new_implementation_contract,omitempty" yaml:"new_implementation_contract,omitempty"`
+	Hash                      string            `json:"hash,omitempty" yaml:"hash,omitempty"`
+	BufferAccount             string            `json:"buffer_account,omitempty" yaml:"buffer_account,omitempty"`
+	Nonce                     string            `json:"nonce,omitempty" yaml:"nonce,omitempty"`
+	Type                      types.UpgradeType `json:"type,omitempty" yaml:"type,omitempty"`
+}
+
+// NewContractUpdate allows to build a new ContractUpgrade instance
+func NewContractUpdate(operationIndex string, c rarimocoretypes.ContractUpgrade) ContractUpgrade {
+	return ContractUpgrade{
+		OperationIndex:            operationIndex,
+		TargetContract:            c.TargetContract,
+		Chain:                     c.Chain,
+		NewImplementationContract: c.NewImplementationContract,
+		Hash:                      c.Hash,
+		BufferAccount:             c.BufferAccount,
+		Nonce:                     c.Nonce,
+		Type:                      c.Type,
+	}
+}
+
+//--------------------------------------------------------
+
+type FeeTokenManagement struct {
+	OperationIndex   string                                 `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	OpType           rarimocoretypes.FeeTokenManagementType `json:"op_type,omitempty" yaml:"op_type,omitempty"`
+	FeeTokenContract string                                 `json:"fee_token_contract" yaml:"fee_token_contract"`
+	FeeTokenAmount   string                                 `json:"fee_token_amount" yaml:"fee_token_amount"`
+	Chain            string                                 `json:"chain,omitempty" yaml:"chain,omitempty"`
+	Receiver         string                                 `json:"receiver,omitempty" yaml:"receiver,omitempty"`
+	Nonce            string                                 `json:"nonce,omitempty" yaml:"nonce,omitempty"`
+}
+
+// NewFeeTokenManagement allows to build a new FeeTokenManagement instance
+func NewFeeTokenManagement(operationIndex string, f rarimocoretypes.FeeTokenManagement) FeeTokenManagement {
+	return FeeTokenManagement{
+		OperationIndex:   operationIndex,
+		OpType:           f.OpType,
+		FeeTokenContract: f.Token.Contract,
+		FeeTokenAmount:   f.Token.Amount,
+		Chain:            f.Chain,
+		Receiver:         f.Receiver,
+		Nonce:            f.Nonce,
+	}
+}
+
+//--------------------------------------------------------
+
+type IdentityDefaultTransfer struct {
+	OperationIndex          string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Contract                string `json:"contract,omitempty" yaml:"contract,omitempty"`
+	Chain                   string `json:"chain,omitempty" yaml:"chain,omitempty"`
+	GISTHash                string `json:"gisthash,omitempty" yaml:"gisthash,omitempty"`
+	Id                      string `json:"id,omitempty" yaml:"id,omitempty"`
+	StateHash               string `json:"state_hash,omitempty" yaml:"state_hash,omitempty"`
+	StateCreatedAtTimestamp string `json:"state_created_at_timestamp,omitempty" yaml:"state_created_at_timestamp,omitempty"`
+	StateCreatedAtBlock     string `json:"state_created_at_block,omitempty" yaml:"state_created_at_block,omitempty"`
+	StateReplacedBy         string `json:"state_replaced_by,omitempty" yaml:"state_replaced_by,omitempty"`
+	GISTReplacedBy          string `json:"gistreplaced_by,omitempty" yaml:"gistreplaced_by,omitempty"`
+	GISTCreatedAtTimestamp  string `json:"gistcreated_at_timestamp,omitempty" yaml:"gistcreated_at_timestamp,omitempty"`
+	GISTCreatedAtBlock      string `json:"gistcreated_at_block,omitempty" yaml:"gistcreated_at_block,omitempty"`
+	ReplacedStateHash       string `json:"replaced_state_hash,omitempty" yaml:"replaced_state_hash,omitempty"`
+	ReplacedGISTHash        string `json:"replaced_gist_hash,omitempty" yaml:"replaced_gist_hash,omitempty"`
+}
+
+// NewIdentityDefaultTransfer allows to build a new IdentityDefaultTransfer instance
+func NewIdentityDefaultTransfer(operationIndex string, i rarimocoretypes.IdentityDefaultTransfer) IdentityDefaultTransfer {
+	return IdentityDefaultTransfer{
+		OperationIndex:          operationIndex,
+		Contract:                i.Contract,
+		Chain:                   i.Chain,
+		GISTHash:                i.GISTHash,
+		Id:                      i.Id,
+		StateHash:               i.StateHash,
+		StateCreatedAtTimestamp: i.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     i.StateCreatedAtBlock,
+		StateReplacedBy:         i.StateReplacedBy,
+		GISTReplacedBy:          i.GISTReplacedBy,
+		GISTCreatedAtTimestamp:  i.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:      i.GISTCreatedAtBlock,
+		ReplacedStateHash:       i.ReplacedStateHash,
+		ReplacedGISTHash:        i.ReplacedGISTHash,
+	}
+
 }
 
 //--------------------------------------------------------
