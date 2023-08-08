@@ -3,6 +3,7 @@ package multisig
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	juno "github.com/forbole/juno/v4/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -54,6 +55,8 @@ func (m *Module) updateProposals(height int64) error {
 }
 
 func (m *Module) handleProposalExecution(height int64, proposal multisigtypes.Proposal) error {
+	addresses := make([]string, 0)
+
 	for _, msg := range proposal.Messages {
 		var stdMsg sdk.Msg
 		err := m.cdc.UnpackAny(msg, &stdMsg)
@@ -67,7 +70,18 @@ func (m *Module) handleProposalExecution(height int64, proposal multisigtypes.Pr
 			if err != nil {
 				return fmt.Errorf("error while handling multisend: %s", err)
 			}
+		case *banktypes.MsgSend:
+			addresses = append(addresses, message.FromAddress, message.ToAddress)
 		}
+	}
+
+	if len(addresses) == 0 {
+		return nil
+	}
+
+	err := m.auth.RefreshAccounts(height, addresses)
+	if err != nil {
+		return fmt.Errorf("error while refreshing accounts: %s", err)
 	}
 
 	return nil

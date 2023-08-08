@@ -9,7 +9,6 @@ import (
 	"github.com/forbole/juno/v4/modules/messages"
 	migratecmd "gitlab.com/rarimo/bdjuno/cmd/migrate"
 	parsecmd "gitlab.com/rarimo/bdjuno/cmd/parse"
-
 	"gitlab.com/rarimo/bdjuno/types/config"
 
 	"gitlab.com/rarimo/bdjuno/database"

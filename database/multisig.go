@@ -52,7 +52,13 @@ INSERT INTO "group"(
 	var params []interface{}
 
 	for i, group := range groups {
+		membersAccounts := make([]types.Account, len(group.Members))
+		for j, member := range group.Members {
+			membersAccounts[j] = types.NewAccount(member)
+		}
+
 		accounts = append(accounts, types.NewAccount(group.Account))
+		accounts = append(accounts, membersAccounts...)
 
 		vi := i * 3
 		query += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)

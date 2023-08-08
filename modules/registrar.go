@@ -125,6 +125,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		tokenmanagerModule,
 		oraclemanagerModule,
 		bridgeModule,
-		multisig.NewModule(sources.MultisigSource, cdc, db),
+		multisig.NewModule(sources.MultisigSource, cdc, db, authModule),
 	}
 }
