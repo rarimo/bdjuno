@@ -4,11 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"strings"
-
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/gogo/protobuf/proto"
 
 	"gitlab.com/rarimo/bdjuno/types"
 
@@ -137,8 +133,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	proposalsQuery := `
 INSERT INTO proposal(
-	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
-    submit_block, deposit_end_block, voting_start_block, voting_end_block
+	id, content, proposer_address, status, submit_block, deposit_end_block, voting_start_block, voting_end_block, metadata
 ) VALUES`
 	var proposalsParams []interface{}
 
@@ -147,39 +142,20 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 12
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
-
-		// Encode the content properly
-		protoContent, ok := proposal.Content.(proto.Message)
-		if !ok {
-			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
-		}
-
-		anyContent, err := codectypes.NewAnyWithValue(protoContent)
-		if err != nil {
-			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
-		}
-
-		contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
-		if err != nil {
-			return fmt.Errorf("error while marshaling proposal content: %s", err)
-		}
+		vi := i * 9
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9)
 
 		proposalsParams = append(proposalsParams,
 			proposal.ProposalID,
-			proposal.Content.GetTitle(),
-			proposal.Content.GetDescription(),
-			string(contentBz),
+			proposal.Content,
 			proposal.Proposer,
-			proposal.ProposalRoute,
-			proposal.ProposalType,
 			proposal.Status,
 			proposal.SubmitBlock,
 			proposal.DepositEndBlock,
 			proposal.VotingStartBlock,
 			proposal.VotingEndBlock,
+			proposal.Metadata,
 		)
 	}
 
@@ -214,29 +190,16 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 
 	row := rows[0]
 
-	var contentAny codectypes.Any
-	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
-	if err != nil {
-		return nil, err
-	}
-
-	var content govtypesv1beta1.Content
-	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
-	if err != nil {
-		return nil, err
-	}
-
 	proposal := types.NewProposal(
 		row.ProposalID,
-		row.ProposalRoute,
-		row.ProposalType,
-		content,
+		row.Content,
 		row.Status,
 		row.SubmitBlock,
 		row.DepositEndBlock,
 		row.VotingStartBlock,
 		row.VotingEndBlock,
 		row.Proposer,
+		row.Metadata,
 	)
 	return &proposal, nil
 }

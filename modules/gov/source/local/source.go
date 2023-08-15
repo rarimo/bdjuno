@@ -46,6 +46,20 @@ func (s Source) Proposal(height int64, id uint64) (govtypesv1beta1.Proposal, err
 	return res.Proposal, nil
 }
 
+func (s Source) ProposalV1(height int64, id uint64) (govtypesv1.Proposal, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return govtypesv1.Proposal{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &govtypesv1.QueryProposalRequest{ProposalId: id})
+	if err != nil {
+		return govtypesv1.Proposal{}, err
+	}
+
+	return *res.Proposal, nil
+}
+
 // ProposalDeposit implements govsource.Source
 func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (*govtypesv1.Deposit, error) {
 	ctx, err := s.LoadHeight(height)

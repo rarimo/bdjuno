@@ -41,6 +41,15 @@ func (s Source) Proposal(height int64, id uint64) (govtypesv1beta1.Proposal, err
 	return res.Proposal, err
 }
 
+func (s Source) ProposalV1(height int64, id uint64) (govtypesv1.Proposal, error) {
+	res, err := s.q.Proposal(remote.GetHeightRequestContext(s.Ctx, height), &govtypesv1.QueryProposalRequest{ProposalId: id})
+	if err != nil {
+		return govtypesv1.Proposal{}, err
+	}
+
+	return *res.Proposal, err
+}
+
 // ProposalDeposit implements govsource.Source
 func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (*govtypesv1.Deposit, error) {
 	res, err := s.q.Deposit(

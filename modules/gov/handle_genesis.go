@@ -3,6 +3,8 @@ package gov
 import (
 	"encoding/json"
 	"fmt"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"gitlab.com/rarimo/bdjuno/types"
@@ -43,7 +45,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	return nil
 }
 
-/// saveGenesisProposals save proposals from genesis file
+// / saveGenesisProposals save proposals from genesis file
 func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *tmtypes.GenesisDoc) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
@@ -51,17 +53,51 @@ func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *t
 
 	for index, proposal := range slice {
 		// Since it's not possible to get the proposer, set it to nil
+
+		// Unpack the content
+		var content govtypesv1beta1.Content
+		err := m.cdc.UnpackAny(proposal.Content, &content)
+		if err != nil {
+			return fmt.Errorf("error while unpacking proposal content: %s", err)
+		}
+
+		// Encode the content properly
+		protoContent, ok := content.(proto.Message)
+		if !ok {
+			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
+		}
+
+		anyContent, err := codectypes.NewAnyWithValue(protoContent)
+		if err != nil {
+			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
+		}
+
+		contentBz, err := m.db.EncodingConfig.Codec.MarshalJSON(anyContent)
+		if err != nil {
+			return fmt.Errorf("error while marshaling proposal content: %s", err)
+		}
+
+		metadata := map[string]string{
+			"title":       proposal.GetContent().GetTitle(),
+			"description": proposal.GetContent().GetDescription(),
+			"type":        proposal.ProposalType(),
+		}
+
+		metadataBz, err := json.Marshal(metadata)
+		if err != nil {
+			return fmt.Errorf("error while marshaling proposal metadata: %s", err)
+		}
+
 		proposals[index] = types.NewProposal(
 			proposal.ProposalId,
-			proposal.ProposalRoute(),
-			proposal.ProposalType(),
-			proposal.GetContent(),
+			string(contentBz),
 			proposal.Status.String(),
 			proposal.SubmitBlock,
 			proposal.DepositEndBlock,
 			proposal.VotingStartBlock,
 			proposal.VotingEndBlock,
 			"",
+			string(metadataBz),
 		)
 
 		tallyResults[index] = types.NewTallyResult(

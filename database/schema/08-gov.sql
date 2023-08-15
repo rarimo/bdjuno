@@ -12,11 +12,8 @@ CREATE TABLE gov_params
 CREATE TABLE proposal
 (
     id                 INTEGER NOT NULL PRIMARY KEY,
-    title              TEXT    NOT NULL,
-    description        TEXT    NOT NULL,
+    metadata           TEXT    NOT NULL,
     content            JSONB   NOT NULL,
-    proposal_route     TEXT    NOT NULL,
-    proposal_type      TEXT    NOT NULL,
     submit_block       BIGINT  NOT NULL,
     deposit_end_block  BIGINT,
     voting_start_block BIGINT,
