@@ -290,7 +290,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, govtypesv1.VoteOption(vote.Option).String(), vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}
