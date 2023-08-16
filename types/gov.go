@@ -125,35 +125,31 @@ func NewGenesisGovParams(votingParams VotingParams, depositParams DepositParams,
 
 // Proposal represents a single governance proposal
 type Proposal struct {
-	ProposalRoute    string
-	ProposalType     string
 	ProposalID       uint64
-	Content          govtypesv1beta1.Content
+	Content          string
 	Status           string
 	SubmitBlock      uint64
 	DepositEndBlock  uint64
 	VotingStartBlock uint64
 	VotingEndBlock   uint64
 	Proposer         string
+	Metadata         string
 }
 
 // NewProposal return a new Proposal instance
 func NewProposal(
 	proposalID uint64,
-	proposalRoute string,
-	proposalType string,
-	content govtypesv1beta1.Content,
+	content,
 	status string,
 	submitBlock,
 	depositEndBlock,
 	votingStartBlock,
 	votingEndBlock uint64,
-	proposer string,
+	proposer,
+	metadata string,
 ) Proposal {
 	return Proposal{
 		Content:          content,
-		ProposalRoute:    proposalRoute,
-		ProposalType:     proposalType,
 		ProposalID:       proposalID,
 		Status:           status,
 		SubmitBlock:      submitBlock,
@@ -161,21 +157,21 @@ func NewProposal(
 		VotingStartBlock: votingStartBlock,
 		VotingEndBlock:   votingEndBlock,
 		Proposer:         proposer,
+		Metadata:         metadata,
 	}
 }
 
 // Equal tells whether p and other contain the same data
 func (p Proposal) Equal(other Proposal) bool {
-	return p.ProposalRoute == other.ProposalRoute &&
-		p.ProposalType == other.ProposalType &&
-		p.ProposalID == other.ProposalID &&
-		p.Content.String() == other.Content.String() &&
+	return p.ProposalID == other.ProposalID &&
+		p.Content == other.Content &&
 		p.Status == other.Status &&
 		p.SubmitBlock == other.SubmitBlock &&
 		p.DepositEndBlock == other.DepositEndBlock &&
 		p.VotingStartBlock == other.VotingStartBlock &&
 		p.VotingEndBlock == other.VotingEndBlock &&
-		p.Proposer == other.Proposer
+		p.Proposer == other.Proposer &&
+		p.Metadata == other.Metadata
 }
 
 // ProposalUpdate contains the data that should be used when updating a governance proposal
@@ -229,7 +225,7 @@ func NewDeposit(
 type Vote struct {
 	ProposalID uint64
 	Voter      string
-	Option     govtypesv1beta1.VoteOption
+	Option     int32
 	Height     int64
 }
 
@@ -237,7 +233,7 @@ type Vote struct {
 func NewVote(
 	proposalID uint64,
 	voter string,
-	option govtypesv1beta1.VoteOption,
+	option int32,
 	height int64,
 ) Vote {
 	return Vote{

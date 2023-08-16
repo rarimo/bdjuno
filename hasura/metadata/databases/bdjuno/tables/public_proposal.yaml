@@ -56,10 +56,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - title
-    - description
-    - proposal_route
-    - proposal_type
+    - metadata
     - id
     - submit_block
     - deposit_end_block
