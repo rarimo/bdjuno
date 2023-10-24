@@ -1,8 +1,8 @@
 package types
 
 import (
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
-	"gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
+	"github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 //--------------------------------------------------------

@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"gitlab.com/rarimo/bdjuno/modules/utils"
+	"github.com/rarimo/bdjuno/modules/utils"
 
 	"github.com/stretchr/testify/require"
 )

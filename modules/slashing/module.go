@@ -4,8 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v4/modules"
 
-	"gitlab.com/rarimo/bdjuno/database"
-	slashingsource "gitlab.com/rarimo/bdjuno/modules/slashing/source"
+	"github.com/rarimo/bdjuno/database"
+	slashingsource "github.com/rarimo/bdjuno/modules/slashing/source"
 )
 
 var (

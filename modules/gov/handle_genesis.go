@@ -7,7 +7,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"

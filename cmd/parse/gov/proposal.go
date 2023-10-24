@@ -3,14 +3,14 @@ package gov
 import (
 	"encoding/hex"
 	"fmt"
-	"gitlab.com/rarimo/bdjuno/modules/bridge"
-	"gitlab.com/rarimo/bdjuno/modules/oraclemanager"
-	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
-	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
+	"github.com/rarimo/bdjuno/modules/bridge"
+	"github.com/rarimo/bdjuno/modules/oraclemanager"
+	"github.com/rarimo/bdjuno/modules/rarimocore"
+	"github.com/rarimo/bdjuno/modules/tokenmanager"
 	"strconv"
 
+	modulestypes "github.com/rarimo/bdjuno/modules/types"
 	"github.com/rs/zerolog/log"
-	modulestypes "gitlab.com/rarimo/bdjuno/modules/types"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
@@ -19,13 +19,13 @@ import (
 
 	"github.com/forbole/juno/v4/parser"
 
-	"gitlab.com/rarimo/bdjuno/database"
-	"gitlab.com/rarimo/bdjuno/modules/distribution"
-	"gitlab.com/rarimo/bdjuno/modules/gov"
-	"gitlab.com/rarimo/bdjuno/modules/mint"
-	"gitlab.com/rarimo/bdjuno/modules/slashing"
-	"gitlab.com/rarimo/bdjuno/modules/staking"
-	"gitlab.com/rarimo/bdjuno/utils"
+	"github.com/rarimo/bdjuno/database"
+	"github.com/rarimo/bdjuno/modules/distribution"
+	"github.com/rarimo/bdjuno/modules/gov"
+	"github.com/rarimo/bdjuno/modules/mint"
+	"github.com/rarimo/bdjuno/modules/slashing"
+	"github.com/rarimo/bdjuno/modules/staking"
+	"github.com/rarimo/bdjuno/utils"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal

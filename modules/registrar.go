@@ -1,18 +1,18 @@
 package modules
 
 import (
-	"gitlab.com/rarimo/bdjuno/modules/actions"
-	"gitlab.com/rarimo/bdjuno/modules/bridge"
-	"gitlab.com/rarimo/bdjuno/modules/multisig"
-	"gitlab.com/rarimo/bdjuno/modules/oraclemanager"
-	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
-	"gitlab.com/rarimo/bdjuno/modules/tokenmanager"
-	"gitlab.com/rarimo/bdjuno/modules/types"
+	"github.com/rarimo/bdjuno/modules/actions"
+	"github.com/rarimo/bdjuno/modules/bridge"
+	"github.com/rarimo/bdjuno/modules/multisig"
+	"github.com/rarimo/bdjuno/modules/oraclemanager"
+	"github.com/rarimo/bdjuno/modules/rarimocore"
+	"github.com/rarimo/bdjuno/modules/tokenmanager"
+	"github.com/rarimo/bdjuno/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
 
-	"gitlab.com/rarimo/bdjuno/modules/slashing"
+	"github.com/rarimo/bdjuno/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,20 +20,20 @@ import (
 	"github.com/forbole/juno/v4/modules/messages"
 	"github.com/forbole/juno/v4/modules/registrar"
 
-	"gitlab.com/rarimo/bdjuno/utils"
+	"github.com/rarimo/bdjuno/utils"
 
-	"gitlab.com/rarimo/bdjuno/database"
-	"gitlab.com/rarimo/bdjuno/modules/auth"
-	"gitlab.com/rarimo/bdjuno/modules/bank"
-	"gitlab.com/rarimo/bdjuno/modules/consensus"
-	"gitlab.com/rarimo/bdjuno/modules/distribution"
-	"gitlab.com/rarimo/bdjuno/modules/feegrant"
+	"github.com/rarimo/bdjuno/database"
+	"github.com/rarimo/bdjuno/modules/auth"
+	"github.com/rarimo/bdjuno/modules/bank"
+	"github.com/rarimo/bdjuno/modules/consensus"
+	"github.com/rarimo/bdjuno/modules/distribution"
+	"github.com/rarimo/bdjuno/modules/feegrant"
 
-	"gitlab.com/rarimo/bdjuno/modules/gov"
-	"gitlab.com/rarimo/bdjuno/modules/mint"
-	"gitlab.com/rarimo/bdjuno/modules/modules"
-	"gitlab.com/rarimo/bdjuno/modules/pricefeed"
-	"gitlab.com/rarimo/bdjuno/modules/staking"
+	"github.com/rarimo/bdjuno/modules/gov"
+	"github.com/rarimo/bdjuno/modules/mint"
+	"github.com/rarimo/bdjuno/modules/modules"
+	"github.com/rarimo/bdjuno/modules/pricefeed"
+	"github.com/rarimo/bdjuno/modules/staking"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses

@@ -1,6 +1,6 @@
 package source
 
-import rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+import rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 
 type Source interface {
 	Params(height int64) (rarimocoretypes.Params, error)

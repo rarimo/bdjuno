@@ -3,9 +3,9 @@ package tokenmanager
 import (
 	"encoding/json"
 	"fmt"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 // HandleGenesis implements modules.Module

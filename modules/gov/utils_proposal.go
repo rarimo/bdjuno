@@ -12,7 +12,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 

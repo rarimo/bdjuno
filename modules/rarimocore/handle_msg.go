@@ -6,11 +6,11 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	juno "github.com/forbole/juno/v4/types"
-	"gitlab.com/rarimo/bdjuno/types"
-	oracletypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
-	"gitlab.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	"github.com/rarimo/bdjuno/types"
+	oracletypes "github.com/rarimo/rarimo-core/x/oraclemanager/types"
+	"github.com/rarimo/rarimo-core/x/rarimocore/crypto/pkg"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 	"math/big"
 )
 

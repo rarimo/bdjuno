@@ -3,7 +3,7 @@ package source
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 type Source interface {

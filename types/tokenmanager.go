@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 //--------------------------------------------------------

@@ -3,7 +3,7 @@ package pricefeed
 import (
 	"gopkg.in/yaml.v3"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 // Config contains the configuration about the pricefeed module

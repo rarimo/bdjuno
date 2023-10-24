@@ -5,9 +5,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	juno "github.com/forbole/juno/v4/types"
+	multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
 )
 
 // HandleBlock implements BlockModule

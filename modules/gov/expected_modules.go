@@ -2,10 +2,10 @@ package gov
 
 import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 type ParamsUpdater interface {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lib/pq"
-	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
-	"gitlab.com/rarimo/bdjuno/types"
+	dbtypes "github.com/rarimo/bdjuno/database/types"
+	"github.com/rarimo/bdjuno/types"
 	"strings"
 )
 

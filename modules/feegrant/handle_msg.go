@@ -7,7 +7,7 @@ import (
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	juno "github.com/forbole/juno/v4/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 // HandleMsg implements modules.MessageModule

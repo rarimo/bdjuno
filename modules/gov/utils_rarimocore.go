@@ -3,7 +3,7 @@ package gov
 import (
 	"fmt"
 	govtypesv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 func (m *Module) handleRarimoCoreProposal(height int64, proposal govtypesv1beta.Proposal) error {

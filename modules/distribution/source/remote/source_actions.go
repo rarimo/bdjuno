@@ -7,7 +7,7 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	"gitlab.com/rarimo/bdjuno/utils"
+	"github.com/rarimo/bdjuno/utils"
 )
 
 // DelegatorTotalRewards implements distrsource.Source

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
+	multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 )
 
 //--------------------------------------------------------

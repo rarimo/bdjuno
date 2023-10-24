@@ -7,10 +7,10 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
-	"gitlab.com/rarimo/bdjuno/modules/pricefeed/coingecko"
-	"gitlab.com/rarimo/bdjuno/modules/utils"
+	"github.com/rarimo/bdjuno/modules/pricefeed/coingecko"
+	"github.com/rarimo/bdjuno/modules/utils"
 )
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule

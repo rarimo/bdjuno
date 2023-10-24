@@ -5,7 +5,7 @@ import (
 
 	"github.com/forbole/juno/v4/node"
 
-	modulestypes "gitlab.com/rarimo/bdjuno/modules/types"
+	modulestypes "github.com/rarimo/bdjuno/modules/types"
 )
 
 // Context contains the data about a Hasura actions worker execution

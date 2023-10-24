@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 // SaveValidatorsSigningInfos saves the given infos inside the database

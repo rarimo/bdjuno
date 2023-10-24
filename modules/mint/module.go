@@ -4,8 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v4/modules"
 
-	"gitlab.com/rarimo/bdjuno/database"
-	mintsource "gitlab.com/rarimo/bdjuno/modules/mint/source"
+	"github.com/rarimo/bdjuno/database"
+	mintsource "github.com/rarimo/bdjuno/modules/mint/source"
 )
 
 var (

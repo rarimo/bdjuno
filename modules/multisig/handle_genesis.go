@@ -3,10 +3,10 @@ package multisig
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"gitlab.com/rarimo/bdjuno/types"
-	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
 )
 
 // HandleGenesis implements modules.Module

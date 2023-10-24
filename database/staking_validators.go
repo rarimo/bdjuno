@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
+	dbtypes "github.com/rarimo/bdjuno/database/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"

@@ -1,6 +1,6 @@
 package source
 
-import multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
+import multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 
 type Source interface {
 	Params(height int64) (multisigtypes.Params, error)

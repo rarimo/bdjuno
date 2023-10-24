@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 	"strings"
 )
 

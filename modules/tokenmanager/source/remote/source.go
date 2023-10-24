@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v4/node/remote"
-	tokenmanagersource "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
-	"gitlab.com/rarimo/bdjuno/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	tokenmanagersource "github.com/rarimo/bdjuno/modules/tokenmanager/source"
+	"github.com/rarimo/bdjuno/types"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 var (

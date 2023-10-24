@@ -2,9 +2,9 @@ package oraclemanager
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"gitlab.com/rarimo/bdjuno/database"
-	oraclemanager "gitlab.com/rarimo/bdjuno/modules/oraclemanager/source"
-	"gitlab.com/rarimo/bdjuno/modules/rarimocore"
+	"github.com/rarimo/bdjuno/database"
+	oraclemanager "github.com/rarimo/bdjuno/modules/oraclemanager/source"
+	"github.com/rarimo/bdjuno/modules/rarimocore"
 
 	"github.com/forbole/juno/v4/modules"
 )

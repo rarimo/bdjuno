@@ -6,9 +6,9 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
+	dbtypes "github.com/rarimo/bdjuno/database/types"
 
 	"github.com/lib/pq"
 )

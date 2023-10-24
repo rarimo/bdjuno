@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/modules/actions/types"
+	"github.com/rarimo/bdjuno/modules/actions/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rs/zerolog/log"

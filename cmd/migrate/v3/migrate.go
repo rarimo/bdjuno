@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"gitlab.com/rarimo/bdjuno/modules/actions"
+	"github.com/rarimo/bdjuno/modules/actions"
 
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 

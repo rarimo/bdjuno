@@ -2,8 +2,8 @@ package bridge
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"gitlab.com/rarimo/bdjuno/database"
-	bridge "gitlab.com/rarimo/bdjuno/modules/bridge/source"
+	"github.com/rarimo/bdjuno/database"
+	bridge "github.com/rarimo/bdjuno/modules/bridge/source"
 
 	"github.com/forbole/juno/v4/modules"
 )

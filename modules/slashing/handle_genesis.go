@@ -6,7 +6,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/rs/zerolog/log"

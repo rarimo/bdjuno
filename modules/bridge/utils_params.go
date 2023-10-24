@@ -2,9 +2,9 @@ package bridge
 
 import (
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	bridgetypes "github.com/rarimo/rarimo-core/x/bridge/types"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/rarimo/bdjuno/types"
-	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
 )
 
 func (m *Module) UpdateParams(height int64) error {

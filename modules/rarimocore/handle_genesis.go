@@ -3,9 +3,9 @@ package rarimocore
 import (
 	"encoding/json"
 	"fmt"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 // HandleGenesis implements modules.Module

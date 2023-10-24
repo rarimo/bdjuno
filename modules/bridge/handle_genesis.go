@@ -3,10 +3,10 @@ package bridge
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	bridgetypes "github.com/rarimo/rarimo-core/x/bridge/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"gitlab.com/rarimo/bdjuno/types"
-	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
 )
 
 // HandleGenesis implements modules.Module

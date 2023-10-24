@@ -2,10 +2,10 @@ package rarimocore
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	rarimocore "gitlab.com/rarimo/bdjuno/modules/rarimocore/source"
-	tokenmanager "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
+	rarimocore "github.com/rarimo/bdjuno/modules/rarimocore/source"
+	tokenmanager "github.com/rarimo/bdjuno/modules/tokenmanager/source"
 
-	"gitlab.com/rarimo/bdjuno/database"
+	"github.com/rarimo/bdjuno/database"
 
 	"github.com/forbole/juno/v4/modules"
 )

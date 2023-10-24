@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	enccodec "gitlab.com/rarimo/rarimo-core/ethermint/encoding/codec"
+	enccodec "github.com/rarimo/rarimo-core/ethermint/encoding/codec"
 )
 
 // MakeEncodingConfig creates an EncodingConfig to properly handle all the messages

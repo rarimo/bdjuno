@@ -3,7 +3,7 @@ package gov
 import (
 	"fmt"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
+	oraclemanagertypes "github.com/rarimo/rarimo-core/x/oraclemanager/types"
 )
 
 func (m *Module) handleBridgeProposal(height int64, proposal govtypes.Proposal) error {

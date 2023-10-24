@@ -4,7 +4,7 @@ import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v4/types"
-	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
+	multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 	"strconv"
 )
 

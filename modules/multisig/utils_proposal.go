@@ -2,8 +2,8 @@ package multisig
 
 import (
 	"fmt"
-	"gitlab.com/rarimo/bdjuno/types"
-	multisigtypes "gitlab.com/rarimo/rarimo-core/x/multisig/types"
+	"github.com/rarimo/bdjuno/types"
+	multisigtypes "github.com/rarimo/rarimo-core/x/multisig/types"
 )
 
 func (m *Module) saveProposals(slice []multisigtypes.Proposal) error {

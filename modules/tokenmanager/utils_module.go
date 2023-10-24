@@ -2,8 +2,8 @@ package tokenmanager
 
 import (
 	"fmt"
-	"gitlab.com/rarimo/bdjuno/types"
-	tokenmanagertypes "gitlab.com/rarimo/rarimo-core/x/tokenmanager/types"
+	"github.com/rarimo/bdjuno/types"
+	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
 func (m *Module) UpdateItems(items []*tokenmanagertypes.Item) (err error) {

@@ -3,10 +3,10 @@ package oraclemanager
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	oraclemanagertypes "github.com/rarimo/rarimo-core/x/oraclemanager/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"gitlab.com/rarimo/bdjuno/types"
-	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 )
 
 // HandleGenesis implements modules.Module

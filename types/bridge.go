@@ -1,7 +1,7 @@
 package types
 
 import (
-	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
+	bridgetypes "github.com/rarimo/rarimo-core/x/bridge/types"
 )
 
 // BridgeParams contains the data of the x/bridge module params instance

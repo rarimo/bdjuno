@@ -2,9 +2,9 @@ package rarimocore
 
 import (
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/rarimo/bdjuno/types"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 func (m *Module) UpdateParams(height int64) error {

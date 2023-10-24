@@ -7,15 +7,15 @@ import (
 	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
-	migratecmd "gitlab.com/rarimo/bdjuno/cmd/migrate"
-	parsecmd "gitlab.com/rarimo/bdjuno/cmd/parse"
-	"gitlab.com/rarimo/bdjuno/types/config"
+	migratecmd "github.com/rarimo/bdjuno/cmd/migrate"
+	parsecmd "github.com/rarimo/bdjuno/cmd/parse"
+	"github.com/rarimo/bdjuno/types/config"
 
-	"gitlab.com/rarimo/bdjuno/database"
-	"gitlab.com/rarimo/bdjuno/modules"
+	"github.com/rarimo/bdjuno/database"
+	"github.com/rarimo/bdjuno/modules"
 
-	migratedbcmd "gitlab.com/rarimo/bdjuno/cmd/migrate_db"
-	rarimoapp "gitlab.com/rarimo/rarimo-core/app"
+	migratedbcmd "github.com/rarimo/bdjuno/cmd/migrate_db"
+	rarimoapp "github.com/rarimo/rarimo-core/app"
 )
 
 func main() {

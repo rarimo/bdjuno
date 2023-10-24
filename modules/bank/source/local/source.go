@@ -9,8 +9,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	"gitlab.com/rarimo/bdjuno/modules/bank/source"
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/modules/bank/source"
+	"github.com/rarimo/bdjuno/types"
 )
 
 var (

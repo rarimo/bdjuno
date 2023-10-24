@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"gitlab.com/rarimo/bdjuno/modules/actions"
+	"github.com/rarimo/bdjuno/modules/actions"
 )
 
 // Config represents the BDJuno configuration

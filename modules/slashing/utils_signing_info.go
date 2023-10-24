@@ -3,7 +3,7 @@ package slashing
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 func (m *Module) getSigningInfos(height int64) ([]types.ValidatorSigningInfo, error) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/modules/actions/types"
+	"github.com/rarimo/bdjuno/modules/actions/types"
 
 	"google.golang.org/grpc/codes"
 

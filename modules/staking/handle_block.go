@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/forbole/juno/v4/types"

@@ -9,10 +9,10 @@ import (
 	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
 
 	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
-	parseauth "gitlab.com/rarimo/bdjuno/cmd/parse/auth"
-	parsefeegrant "gitlab.com/rarimo/bdjuno/cmd/parse/feegrant"
-	parsegov "gitlab.com/rarimo/bdjuno/cmd/parse/gov"
-	parsestaking "gitlab.com/rarimo/bdjuno/cmd/parse/staking"
+	parseauth "github.com/rarimo/bdjuno/cmd/parse/auth"
+	parsefeegrant "github.com/rarimo/bdjuno/cmd/parse/feegrant"
+	parsegov "github.com/rarimo/bdjuno/cmd/parse/gov"
+	parsestaking "github.com/rarimo/bdjuno/cmd/parse/staking"
 )
 
 // NewParseCmd returns the Cobra command allowing to parse some chain data without having to re-sync the whole database

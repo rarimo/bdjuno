@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
+	"github.com/rarimo/bdjuno/types"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/rarimo/bdjuno/types"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 func (m *Module) SaveOperationByIndex(height int64, index string) error {

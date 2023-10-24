@@ -2,9 +2,9 @@ package tokenmanager
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	tokenmanager "gitlab.com/rarimo/bdjuno/modules/tokenmanager/source"
+	tokenmanager "github.com/rarimo/bdjuno/modules/tokenmanager/source"
 
-	"gitlab.com/rarimo/bdjuno/database"
+	"github.com/rarimo/bdjuno/database"
 
 	"github.com/forbole/juno/v4/modules"
 )

@@ -8,7 +8,7 @@ import (
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/forbole/juno/v4/node/local"
 
-	govsource "gitlab.com/rarimo/bdjuno/modules/gov/source"
+	govsource "github.com/rarimo/bdjuno/modules/gov/source"
 )
 
 var (

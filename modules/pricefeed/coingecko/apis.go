@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 // GetCoinsList allows to fetch from the remote APIs the list of all the supported tokens

@@ -2,9 +2,9 @@ package oraclemanager
 
 import (
 	"fmt"
+	"github.com/rarimo/bdjuno/types"
+	oraclemanagertypes "github.com/rarimo/rarimo-core/x/oraclemanager/types"
 	"github.com/rs/zerolog/log"
-	"gitlab.com/rarimo/bdjuno/types"
-	oraclemanagertypes "gitlab.com/rarimo/rarimo-core/x/oraclemanager/types"
 )
 
 func (m *Module) UpdateParams(height int64) error {

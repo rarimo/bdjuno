@@ -1,8 +1,8 @@
 package rarimocore
 
 import (
-	"gitlab.com/rarimo/bdjuno/types"
-	rarimocoretypes "gitlab.com/rarimo/rarimo-core/x/rarimocore/types"
+	"github.com/rarimo/bdjuno/types"
+	rarimocoretypes "github.com/rarimo/rarimo-core/x/rarimocore/types"
 )
 
 func (m *Module) saveViolationReports(slice []rarimocoretypes.ViolationReport) error {

@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
+	dbtypes "github.com/rarimo/bdjuno/database/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 )
 
 // SaveMintParams allows to store the given params inside the database

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/rarimo/bdjuno/types"
+	"github.com/rarimo/bdjuno/types"
 
-	dbtypes "gitlab.com/rarimo/bdjuno/database/types"
+	dbtypes "github.com/rarimo/bdjuno/database/types"
 )
 
 // GetLastBlock returns the last block stored inside the database based on the heights

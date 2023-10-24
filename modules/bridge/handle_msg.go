@@ -3,8 +3,8 @@ package bridge
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v4/types"
-	"gitlab.com/rarimo/bdjuno/types"
-	bridgetypes "gitlab.com/rarimo/rarimo-core/x/bridge/types"
+	"github.com/rarimo/bdjuno/types"
+	bridgetypes "github.com/rarimo/rarimo-core/x/bridge/types"
 )
 
 // HandleMsg implements modules.MessageModule
