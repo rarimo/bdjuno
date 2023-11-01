@@ -2,6 +2,7 @@ package feegrant
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/x/authz"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -9,6 +10,11 @@ import (
 
 	"github.com/rarimo/bdjuno/types"
 )
+
+// HandleMsgExec implements modules.AuthzMessageModule
+func (m *Module) HandleMsgExec(index int, _ *authz.MsgExec, _ int, executedMsg sdk.Msg, tx *juno.Tx) error {
+	return m.HandleMsg(index, executedMsg, tx)
+}
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
