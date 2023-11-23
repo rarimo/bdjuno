@@ -12,7 +12,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
@@ -29,13 +29,17 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *oracletypes.MsgVote:
 		return m.HandleOracle(tx.Height, cosmosMsg.Index.Chain, cosmosMsg.Index.Account)
 	case *oracletypes.MsgCreateIdentityDefaultTransferOp:
-		return m.handleCreateIdentity(tx.Height, cosmosMsg)
+		return m.handleCreateIdentityDefault(tx.Height, cosmosMsg)
+	case *oracletypes.MsgCreateIdentityGISTTransferOp:
+		return m.handleCreateIdentityGIST(tx.Height, cosmosMsg)
+	case *oracletypes.MsgCreateIdentityStateTransferOp:
+		return m.handleCreateIdentityState(tx.Height, cosmosMsg)
 	}
 
 	return nil
 }
 
-func (m *Module) handleCreateIdentity(height int64, msg *oracletypes.MsgCreateIdentityDefaultTransferOp) error {
+func (m *Module) handleCreateIdentityDefault(height int64, msg *oracletypes.MsgCreateIdentityDefaultTransferOp) error {
 	transfer := &rarimocoretypes.IdentityDefaultTransfer{
 		Contract:                msg.Contract,
 		Chain:                   msg.Chain,
@@ -53,6 +57,57 @@ func (m *Module) handleCreateIdentity(height int64, msg *oracletypes.MsgCreateId
 	}
 
 	content, err := pkg.GetIdentityDefaultTransferContent(transfer)
+	if err != nil {
+		return fmt.Errorf("error creating content %s", err)
+	}
+
+	index := hexutil.Encode(content.CalculateHash())
+
+	err = m.rc.SaveOperationByIndex(height, index)
+	if err != nil {
+		return fmt.Errorf("error saving operation %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) handleCreateIdentityGIST(height int64, msg *oracletypes.MsgCreateIdentityGISTTransferOp) error {
+	transfer := &rarimocoretypes.IdentityGISTTransfer{
+		Contract:               msg.Contract,
+		Chain:                  msg.Chain,
+		GISTHash:               msg.GISTHash,
+		GISTCreatedAtTimestamp: msg.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:     msg.GISTCreatedAtBlock,
+		ReplacedGISTHash:       msg.ReplacedGISTtHash,
+	}
+
+	content, err := pkg.GetIdentityGISTTransferContent(transfer)
+	if err != nil {
+		return fmt.Errorf("error creating content %s", err)
+	}
+
+	index := hexutil.Encode(content.CalculateHash())
+
+	err = m.rc.SaveOperationByIndex(height, index)
+	if err != nil {
+		return fmt.Errorf("error saving operation %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) handleCreateIdentityState(height int64, msg *oracletypes.MsgCreateIdentityStateTransferOp) error {
+	transfer := &rarimocoretypes.IdentityStateTransfer{
+		Contract:                msg.Contract,
+		Chain:                   msg.Chain,
+		Id:                      msg.Id,
+		StateHash:               msg.StateHash,
+		StateCreatedAtTimestamp: msg.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     msg.StateCreatedAtBlock,
+		ReplacedStateHash:       msg.ReplacedStateHash,
+	}
+
+	content, err := pkg.GetIdentityStateTransferContent(transfer)
 	if err != nil {
 		return fmt.Errorf("error creating content %s", err)
 	}
