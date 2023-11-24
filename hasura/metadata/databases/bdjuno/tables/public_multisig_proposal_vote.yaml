@@ -20,6 +20,15 @@ object_relationships:
         remote_table:
           name: account
           schema: public
+  - name: block
+    using:
+      manual_configuration:
+        column_mapping:
+          submit_block: height
+        insertion_order: null
+        remote_table:
+          name: block
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true

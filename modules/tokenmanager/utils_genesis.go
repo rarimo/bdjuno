@@ -6,12 +6,19 @@ import (
 	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
-func (m *Module) saveParams(params tokenmanagertypes.Params, height int64) (err error) {
-	p, err := types.NewTokenManagerParams(params, height)
-	if err != nil {
-		return fmt.Errorf("error while building token manager params: %s", err)
+func (m *Module) saveNetworks(params tokenmanagertypes.Params) (err error) {
+	networks := make([]types.Network, len(params.Networks))
+
+	for i, network := range params.Networks {
+		net, err := types.NewNetwork(*network)
+		if err != nil {
+			return fmt.Errorf("error while building network: %s", err)
+		}
+
+		networks[i] = *net
 	}
-	return m.db.SaveTokenManagerParams(p)
+
+	return m.db.SaveNetworks(networks)
 }
 
 func (m *Module) saveCollections(collections []tokenmanagertypes.Collection) (err error) {

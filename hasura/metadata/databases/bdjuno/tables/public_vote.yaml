@@ -20,6 +20,24 @@ object_relationships:
         remote_table:
           name: operation
           schema: public
+  - name: transaction
+    using:
+      manual_configuration:
+        column_mapping:
+          tx: hash
+        insertion_order: null
+        remote_table:
+          name: transaction
+          schema: public
+  - name: block
+    using:
+      manual_configuration:
+        column_mapping:
+          height: height
+        insertion_order: null
+        remote_table:
+          name: block
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
@@ -27,5 +45,7 @@ select_permissions:
         - operation
         - validator
         - vote
+        - height
+        - tx
       filter: {}
     role: anonymous

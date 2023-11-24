@@ -8,30 +8,38 @@ import (
 	"strings"
 )
 
-// SaveTokenManagerParams saves the given x/tokenmanager parameters inside the database
-func (db *Db) SaveTokenManagerParams(params *types.TokenManagerParams) (err error) {
-	paramsBz, err := json.Marshal(params.Params)
-	if err != nil {
-		return fmt.Errorf("error while marshaling tokenmanager params: %s", err)
+// SaveNetworks saves the given x/tokenmanager network parameters inside the database
+func (db *Db) SaveNetworks(networks []types.Network) (err error) {
+	if len(networks) == 0 {
+		return nil
 	}
 
-	stmt := `
-INSERT INTO tokenmanager_params(params, height)
-VALUES ($1, $2)
-ON CONFLICT (one_row_id) DO UPDATE
-	SET params = excluded.params,
-		height = excluded.height
-WHERE tokenmanager_params.height <= excluded.height
+	stmt := `INSERT INTO networks (name, type, params) VALUES`
+	var params []interface{}
+
+	for i, network := range networks {
+		// Prepare the network query
+		vi := i * 3
+		stmt += fmt.Sprintf("($%d, $%d, $%d),", vi+1, vi+2, vi+3)
+
+		paramsBz, err := json.Marshal(network.Params)
+		if err != nil {
+			return fmt.Errorf("error while marshaling network params: %s", err)
+		}
+
+		params = append(
+			params,
+			network.Name,
+			network.Type,
+			string(paramsBz),
+		)
+	}
+
+	stmt = strings.TrimSuffix(stmt, ",") // Remove trailing ","
+	stmt += ` ON CONFLICT (name) DO UPDATE
+ 	SET params = excluded.params
+WHERE networks.name = excluded.name
 `
-	_, err = db.SQL.Exec(
-		stmt,
-		string(paramsBz),
-		params.Height,
-	)
-	if err != nil {
-		return fmt.Errorf("error while storing tokenmanager params: %s", err)
-	}
-
 	return nil
 }
 

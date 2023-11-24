@@ -57,14 +57,18 @@ CREATE TABLE confirmation
     root            TEXT   NOT NULL PRIMARY KEY,
     indexes         TEXT[] NOT NULL,
     signature_ecdsa TEXT   NOT NULL,
-    creator         TEXT   NOT NULL REFERENCES account (address)
+    creator         TEXT   NOT NULL REFERENCES account (address),
+    height          BIGINT NOT NULL,
+    tx              TEXT
 );
 
 CREATE TABLE vote
 (
-    operation TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
-    validator TEXT NOT NULL REFERENCES account (address),
-    vote      INT  NOT NULL
+    operation TEXT   NOT NULL PRIMARY KEY REFERENCES operation (index),
+    validator TEXT   NOT NULL REFERENCES account (address),
+    vote      INT    NOT NULL,
+    height    BIGINT NOT NULL,
+    tx        TEXT
 );
 
 CREATE TABLE contract_upgrade
@@ -92,23 +96,48 @@ CREATE TABLE fee_token_management
 
 CREATE TABLE identity_default_transfer
 (
-    operation_index             TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
-    contract                    TEXT NOT NULL,
-    chain                       TEXT NOT NULL,
-    gisthash                    TEXT NOT NULL,
-    id                          TEXT NOT NULL,
-    state_hash                  TEXT NOT NULL,
-    state_created_at_timestamp  TEXT NOT NULL,
-    state_created_at_block      TEXT NOT NULL,
-    state_replaced_by           TEXT NOT NULL,
-    gistreplaced_by             TEXT NOT NULL,
-    gistcreated_at_timestamp    TEXT NOT NULL,
-    gistcreated_at_block        TEXT NOT NULL,
-    replaced_state_hash         TEXT NOT NULL,
-    replaced_gist_hash          TEXT NOT NULL
+    operation_index            TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
+    contract                   TEXT NOT NULL,
+    chain                      TEXT NOT NULL,
+    gisthash                   TEXT NOT NULL,
+    id                         TEXT NOT NULL,
+    state_hash                 TEXT NOT NULL,
+    state_created_at_timestamp TEXT NOT NULL,
+    state_created_at_block     TEXT NOT NULL,
+    state_replaced_by          TEXT NOT NULL,
+    gistreplaced_by            TEXT NOT NULL,
+    gistcreated_at_timestamp   TEXT NOT NULL,
+    gistcreated_at_block       TEXT NOT NULL,
+    replaced_state_hash        TEXT NOT NULL,
+    replaced_gist_hash         TEXT NOT NULL
+);
+
+CREATE TABLE identity_gist_transfer
+(
+    operation_index            TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
+    contract                   TEXT NOT NULL,
+    chain                      TEXT NOT NULL,
+    gisthash                   TEXT NOT NULL,
+    gistcreated_at_timestamp   TEXT NOT NULL,
+    gistcreated_at_block       TEXT NOT NULL,
+    replaced_gist_hash         TEXT NOT NULL
+);
+
+CREATE TABLE identity_state_transfer
+(
+    operation_index            TEXT NOT NULL PRIMARY KEY REFERENCES operation (index),
+    contract                   TEXT NOT NULL,
+    chain                      TEXT NOT NULL,
+    id                         TEXT NOT NULL,
+    state_hash                 TEXT NOT NULL,
+    state_created_at_timestamp TEXT NOT NULL,
+    state_created_at_block     TEXT NOT NULL,
+    replaced_state_hash        TEXT NOT NULL
 );
 
 -- +migrate Down
+DROP TABLE identity_state_transfer;
+DROP TABLE identity_gist_transfer;
 DROP TABLE identity_default_transfer;
 DROP TABLE fee_token_management;
 DROP TABLE contract_upgrade;

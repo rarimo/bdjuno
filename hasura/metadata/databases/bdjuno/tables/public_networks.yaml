@@ -1,11 +1,12 @@
 table:
-  name: tokenmanager_params
+  name: networks
   schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
       columns:
+        - name
+        - type
         - params
-        - height
       filter: {}
     role: anonymous

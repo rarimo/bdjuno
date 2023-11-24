@@ -6,8 +6,6 @@ import (
 	tokenmanagertypes "github.com/rarimo/rarimo-core/x/tokenmanager/types"
 )
 
-//--------------------------------------------------------
-
 // Network contains the data of the x/tokenmanager network params
 type Network struct {
 	Name   string                        `json:"name,omitempty" yaml:"name,omitempty"`
@@ -20,75 +18,61 @@ type NetworkParams struct {
 	Details json.RawMessage                    `json:"details,omitempty" yaml:"details,omitempty"`
 }
 
-type TokenManagerParamsInner struct {
-	Networks []Network `json:"networks,omitempty" yaml:"networks,omitempty"`
-}
+// NewNetworkParams allows to build a new NetworkParams slice
+func NewNetworkParams(network tokenmanagertypes.Network) ([]NetworkParams, error) {
+	params := make([]NetworkParams, len(network.Params))
 
-// TokenManagerParams contains the data of the x/tokenmanager module params instance
-type TokenManagerParams struct {
-	Params TokenManagerParamsInner `json:"params,omitempty" yaml:"params,omitempty"`
-	Height int64                   `json:"height,omitempty" yaml:"height,omitempty"`
-}
+	for i, networkParams := range network.Params {
+		details := json.RawMessage{}
 
-// NewTokenManagerParams allows to build a new TokenManagerParams instance
-func NewTokenManagerParams(params tokenmanagertypes.Params, height int64) (*TokenManagerParams, error) {
-	networks := make([]Network, 0)
+		bridgeParams := network.GetBridgeParams()
+		var err error
 
-	for _, network := range params.Networks {
-		n := Network{
-			Name:   network.Name,
-			Type:   network.Type,
-			Params: make([]NetworkParams, len(network.Params)),
-		}
-
-		for i, networkParams := range network.Params {
-			details := json.RawMessage{}
-
-			bridgeParams := network.GetBridgeParams()
-			var err error
-
-			if bridgeParams != nil {
-				details, err = json.Marshal(bridgeParams)
-				if err != nil {
-					return nil, fmt.Errorf("error while marshalling bridge params details: %s", err)
-				}
-			}
-
-			feeParams := network.GetFeeParams()
-			if feeParams != nil {
-				details, err = json.Marshal(feeParams)
-				if err != nil {
-					return nil, fmt.Errorf("error while marshalling fee params details: %s", err)
-				}
-			}
-
-			identityParams := network.GetIdentityParams()
-			if identityParams != nil {
-				details, err = json.Marshal(identityParams)
-				if err != nil {
-					return nil, fmt.Errorf("error while marshalling identity params details: %s", err)
-				}
-			}
-
-			n.Params[i] = NetworkParams{
-				Type:    networkParams.Type,
-				Details: details,
+		if bridgeParams != nil {
+			details, err = json.Marshal(bridgeParams)
+			if err != nil {
+				return nil, fmt.Errorf("error while marshalling bridge params details: %s", err)
 			}
 		}
 
-		networks = append(networks, n)
+		feeParams := network.GetFeeParams()
+		if feeParams != nil {
+			details, err = json.Marshal(feeParams)
+			if err != nil {
+				return nil, fmt.Errorf("error while marshalling fee params details: %s", err)
+			}
+		}
 
+		identityParams := network.GetIdentityParams()
+		if identityParams != nil {
+			details, err = json.Marshal(identityParams)
+			if err != nil {
+				return nil, fmt.Errorf("error while marshalling identity params details: %s", err)
+			}
+		}
+
+		params[i] = NetworkParams{
+			Type:    networkParams.Type,
+			Details: details,
+		}
 	}
 
-	return &TokenManagerParams{
-		Params: TokenManagerParamsInner{
-			Networks: networks,
-		},
-		Height: height,
-	}, nil
+	return params, nil
 }
 
-//--------------------------------------------------------
+// NewNetwork allows to build a new Network instance
+func NewNetwork(network tokenmanagertypes.Network) (*Network, error) {
+	params, err := NewNetworkParams(network)
+	if err != nil {
+		return nil, fmt.Errorf("error while building network params: %s", err)
+	}
+
+	return &Network{
+		Name:   network.Name,
+		Type:   network.Type,
+		Params: params,
+	}, nil
+}
 
 // CollectionDataIndex contains the data of the x/tokenmanager collection data index
 type CollectionDataIndex struct {

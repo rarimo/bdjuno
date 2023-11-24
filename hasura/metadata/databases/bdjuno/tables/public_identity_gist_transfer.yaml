@@ -1,5 +1,5 @@
 table:
-  name: identity_default_transfer
+  name: identity_gist_transfer
   schema: public
 object_relationships:
   - name: operation
@@ -28,15 +28,8 @@ select_permissions:
         - contract
         - chain
         - gisthash
-        - id
-        - state_hash
-        - state_created_at_timestamp
-        - state_created_at_block
-        - state_replaced_by
-        - gistreplaced_by
         - gistcreated_at_timestamp
         - gistcreated_at_block
-        - replaced_state_hash
         - replaced_gist_hash
       filter: {}
     role: anonymous

@@ -5,10 +5,22 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 ### Added
-- `MsgCreateIdentityGISTTransferOp`, `MsgCreateIdentityStateTransferOp` messages handling to the `oraclemanager` module
+- `MsgCreateIdentityGISTTransferOp`, `MsgCreateIdentityStateTransferOp` messages handling
+- `tx` and `height` columns for the `confirmation` and `vote` tables
+- `identity_gist_transfer` and `identity_state_transfer` tables to store new identity transfer types
+- Hasura migrations
+  - `contract_update` entity relation to the `network`
+  - `fee_token_management` entity relation to the `network`
+  - `identity_default_transfer` entity relation to the `network`
+  - `oracle` entity relation to the `network`
+  - `confirmation` entity relation to the `transaction` and `block`
+  - `vote` entity relation to the `transaction` and `block`
+  - `multisig_proposal_vote` entity relation to the `block`
+  - `operation` entity relation to the `identity_gist_transfer` and `identity_state_transfer`
 
 ### Changed
-- `rarimo-core` dependency updated to `v1.0.8`
+- `rarimo-core` dependency updated to `v1.1.0`
+- `tokenmanager_params` table replaced with `network` table
 
 ## [v1.0.3] - 2023-11-03
 ### Added
