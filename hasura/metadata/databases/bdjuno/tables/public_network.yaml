@@ -1,5 +1,5 @@
 table:
-  name: networks
+  name: network
   schema: public
 select_permissions:
   - permission:

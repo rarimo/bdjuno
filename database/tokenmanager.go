@@ -14,7 +14,7 @@ func (db *Db) SaveNetworks(networks []types.Network) (err error) {
 		return nil
 	}
 
-	stmt := `INSERT INTO networks (name, type, params) VALUES`
+	stmt := `INSERT INTO network (name, type, params) VALUES`
 	var params []interface{}
 
 	for i, network := range networks {
@@ -38,8 +38,14 @@ func (db *Db) SaveNetworks(networks []types.Network) (err error) {
 	stmt = strings.TrimSuffix(stmt, ",") // Remove trailing ","
 	stmt += ` ON CONFLICT (name) DO UPDATE
  	SET params = excluded.params
-WHERE networks.name = excluded.name
+WHERE network.name = excluded.name
 `
+
+	_, err = db.SQL.Exec(stmt, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing networks: %s", err)
+	}
+
 	return nil
 }
 

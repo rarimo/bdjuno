@@ -474,14 +474,16 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 	var confirmationsParams []interface{}
 
 	for i, confirmation := range confirmations {
-		vi := i * 4
-		confirmationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
+		vi := i * 6
+		confirmationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 
 		confirmationsParams = append(confirmationsParams,
 			confirmation.Root,
 			pq.StringArray(confirmation.Indexes),
 			confirmation.SignatureECDSA,
 			confirmation.Creator,
+			confirmation.Tx,
+			confirmation.Height,
 		)
 	}
 
@@ -500,13 +502,13 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 		return nil
 	}
 
-	query := `INSERT INTO vote (operation, validator, vote) VALUES `
+	query := `INSERT INTO vote (operation, validator, vote, tx, height) VALUES `
 	var queryParams []interface{}
 
 	for i, vote := range votes {
-		vi := i * 3
-		query += fmt.Sprintf("($%d, $%d, $%d),", vi+1, vi+2, vi+3)
-		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote)
+		vi := i * 5
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote, vote.Tx, vote.Height)
 	}
 
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","

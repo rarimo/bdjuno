@@ -56,7 +56,7 @@
 - "!include public_collection_data.yaml"
 - "!include public_on_chain_item.yaml"
 - "!include public_seed.yaml"
-- "!include public_networks.yaml"
+- "!include public_network.yaml"
 - "!include public_vote.yaml"
 - "!include public_violation_report.yaml"
 - "!include public_oraclemanager_params.yaml"

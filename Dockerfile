@@ -2,7 +2,6 @@ FROM golang:1.20-alpine as buildbase
 
 WORKDIR /go/src/github.com/rarimo/bdjuno
 RUN apk add build-base
-COPY vendor .
 COPY . .
 ENV GO111MODULE="on"
 ENV CGO_ENABLED=1

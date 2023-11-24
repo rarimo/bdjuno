@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE networks
+CREATE TABLE network
 (
     name   TEXT  NOT NULL PRIMARY KEY,
     type   INT   NOT NULL,
@@ -49,4 +49,4 @@ DROP TABLE on_chain_item;
 DROP TABLE item;
 DROP TABLE collection_data;
 DROP TABLE collection;
-DROP TABLE networks;
+DROP TABLE network;
