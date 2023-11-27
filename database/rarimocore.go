@@ -349,7 +349,7 @@ func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTran
 	var params []interface{}
 
 	for i, transfer := range transfers {
-		vi := i * 17
+		vi := i * 14
 		query += fmt.Sprintf(
 			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13, vi+14,
@@ -383,6 +383,73 @@ func (db *Db) SaveIdentityDefaultTransfers(transfers []types.IdentityDefaultTran
 	return nil
 }
 
+func (db *Db) SaveIdentityGISTTransfers(transfers []types.IdentityGISTTransfer) (err error) {
+	if len(transfers) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO identity_gist_transfer (operation_index, contract, chain, gisthash, gistcreated_at_timestamp, gistcreated_at_block, replaced_gist_hash) VALUES`
+	var params []interface{}
+
+	for i, transfer := range transfers {
+		vi := i * 7
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+
+		params = append(params,
+			transfer.OperationIndex,
+			transfer.Contract,
+			transfer.Chain,
+			transfer.GISTHash,
+			transfer.GISTCreatedAtTimestamp,
+			transfer.GISTCreatedAtBlock,
+			transfer.ReplacedGISTHash,
+		)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing identity gist transfers: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveIdentityStateTransfers(transfers []types.IdentityStateTransfer) (err error) {
+	if len(transfers) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO identity_state_transfer (operation_index, contract, chain, id, state_hash, state_created_at_timestamp, state_created_at_block, replaced_state_hash) VALUES`
+	var params []interface{}
+
+	for i, transfer := range transfers {
+		vi := i * 8
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+
+		params = append(params,
+			transfer.OperationIndex,
+			transfer.Contract,
+			transfer.Chain,
+			transfer.Id,
+			transfer.StateHash,
+			transfer.StateCreatedAtTimestamp,
+			transfer.StateCreatedAtBlock,
+			transfer.ReplacedStateHash,
+		)
+	}
+
+	query = strings.TrimSuffix(query, ",") // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(query, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing identity state transfers: %s", err)
+	}
+
+	return nil
+}
+
 func (db *Db) UpdateChangeParties(changeParties types.ChangeParties) (err error) {
 	query := `UPDATE change_parties SET parties = $1, new_public_key = $2, signature = $3 WHERE operation_index = $4`
 	_, err = db.SQL.Exec(query,
@@ -403,18 +470,20 @@ func (db *Db) SaveConfirmations(confirmations []types.Confirmation) (err error) 
 		return nil
 	}
 
-	confirmationsQuery := `INSERT INTO confirmation (root, indexes, signature_ecdsa, creator) VALUES`
+	confirmationsQuery := `INSERT INTO confirmation (root, indexes, signature_ecdsa, creator, tx, height) VALUES`
 	var confirmationsParams []interface{}
 
 	for i, confirmation := range confirmations {
-		vi := i * 4
-		confirmationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4)
+		vi := i * 6
+		confirmationsQuery += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 
 		confirmationsParams = append(confirmationsParams,
 			confirmation.Root,
 			pq.StringArray(confirmation.Indexes),
 			confirmation.SignatureECDSA,
 			confirmation.Creator,
+			confirmation.Tx,
+			confirmation.Height,
 		)
 	}
 
@@ -433,13 +502,13 @@ func (db *Db) SaveRarimoCoreVotes(votes []types.RarimoCoreVote) (err error) {
 		return nil
 	}
 
-	query := `INSERT INTO vote (operation, validator, vote) VALUES `
+	query := `INSERT INTO vote (operation, validator, vote, tx, height) VALUES `
 	var queryParams []interface{}
 
 	for i, vote := range votes {
-		vi := i * 3
-		query += fmt.Sprintf("($%d, $%d, $%d),", vi+1, vi+2, vi+3)
-		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote)
+		vi := i * 5
+		query += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		queryParams = append(queryParams, vote.Operation, vote.Validator, vote.Vote, vote.Tx, vote.Height)
 	}
 
 	query = strings.TrimSuffix(query, ",") // Remove trailing ","

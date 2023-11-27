@@ -56,6 +56,24 @@ object_relationships:
         remote_table:
           name: identity_default_transfer
           schema: public
+  - name: identity_gist_transfer
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: identity_gist_transfer
+          schema: public
+  - name: identity_state_transfer
+    using:
+      manual_configuration:
+        column_mapping:
+          index: operation_index
+        insertion_order: null
+        remote_table:
+          name: identity_state_transfer
+          schema: public
 
 select_permissions:
   - permission:

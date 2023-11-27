@@ -49,8 +49,8 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis tokenmanager seeds: %s", err)
 	}
 
-	// Save the params
-	err = m.saveParams(genState.Params, doc.InitialHeight)
+	// Save the networks
+	err = m.saveNetworks(genState.Params)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis tokenmanager params: %s", err)
 	}

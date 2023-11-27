@@ -11,6 +11,15 @@ object_relationships:
         remote_table:
           name: operation
           schema: public
+  - name: network
+    using:
+      manual_configuration:
+        column_mapping:
+          chain: name
+        insertion_order: null
+        remote_table:
+          name: network
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true

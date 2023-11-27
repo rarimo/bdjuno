@@ -1,24 +1,21 @@
 -- +migrate Up
-CREATE TABLE tokenmanager_params
+CREATE TABLE network
 (
-    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    params     JSONB   NOT NULL,
-    height     BIGINT  NOT NULL,
-    CHECK (one_row_id)
+    name   TEXT  NOT NULL PRIMARY KEY,
+    type   INT   NOT NULL,
+    params JSONB NOT NULL
 );
-CREATE INDEX tokenmanager_params_height_index ON tokenmanager_params (height);
 
 CREATE TABLE collection
 (
-    index     TEXT UNIQUE  NOT NULL PRIMARY KEY,
-    meta      JSONB        NOT NULL,
-    data      JSONB        NOT NULL
+    index TEXT UNIQUE NOT NULL PRIMARY KEY,
+    meta  JSONB       NOT NULL,
+    data  JSONB       NOT NULL
 );
-
 
 CREATE TABLE collection_data
 (
-    index_key  TEXT   NOT NULL PRIMARY KEY,
+    index_key  TEXT    NOT NULL PRIMARY KEY,
     index      JSONB   NOT NULL,
     collection TEXT REFERENCES collection (index),
     token_type INT     NOT NULL,
@@ -52,4 +49,4 @@ DROP TABLE on_chain_item;
 DROP TABLE item;
 DROP TABLE collection_data;
 DROP TABLE collection;
-DROP TABLE tokenmanager_params;
+DROP TABLE network;

@@ -32,13 +32,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the confirmations
-	err = m.saveConfirmations(genState.ConfirmationList)
+	err = m.saveConfirmations(genState.ConfirmationList, doc.InitialHeight, nil)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis rarimocore confirmations: %s", err)
 	}
 
 	// Save the votes
-	err = m.saveVotes(genState.VoteList)
+	err = m.saveVotes(genState.VoteList, doc.InitialHeight, nil)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis rarimocore votes: %s", err)
 	}

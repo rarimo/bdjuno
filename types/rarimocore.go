@@ -257,21 +257,79 @@ func NewIdentityDefaultTransfer(operationIndex string, i rarimocoretypes.Identit
 
 //--------------------------------------------------------
 
+type IdentityGISTTransfer struct {
+	OperationIndex         string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Contract               string `json:"contract,omitempty" yaml:"contract,omitempty"`
+	Chain                  string `json:"chain,omitempty" yaml:"chain,omitempty"`
+	GISTHash               string `json:"gisthash,omitempty" yaml:"gisthash,omitempty"`
+	GISTCreatedAtTimestamp string `json:"gistcreated_at_timestamp,omitempty" yaml:"gistcreated_at_timestamp,omitempty"`
+	GISTCreatedAtBlock     string `json:"gistcreated_at_block,omitempty" yaml:"gistcreated_at_block,omitempty"`
+	ReplacedGISTHash       string `json:"replaced_gist_hash,omitempty" yaml:"replaced_gist_hash,omitempty"`
+}
+
+// NewIdentityGISTTransfer allows to build a new IdentityGISTTransfer instance
+func NewIdentityGISTTransfer(operationIndex string, i rarimocoretypes.IdentityGISTTransfer) IdentityGISTTransfer {
+	return IdentityGISTTransfer{
+		OperationIndex:         operationIndex,
+		Contract:               i.Contract,
+		Chain:                  i.Chain,
+		GISTHash:               i.GISTHash,
+		GISTCreatedAtTimestamp: i.GISTCreatedAtTimestamp,
+		GISTCreatedAtBlock:     i.GISTCreatedAtBlock,
+		ReplacedGISTHash:       i.ReplacedGISTHash,
+	}
+
+}
+
+//--------------------------------------------------------
+
+type IdentityStateTransfer struct {
+	OperationIndex          string `json:"operation_index,omitempty" yaml:"operation_index,omitempty"`
+	Contract                string `json:"contract,omitempty" yaml:"contract,omitempty"`
+	Chain                   string `json:"chain,omitempty" yaml:"chain,omitempty"`
+	Id                      string `json:"id,omitempty" yaml:"id,omitempty"`
+	StateHash               string `json:"state_hash,omitempty" yaml:"state_hash,omitempty"`
+	StateCreatedAtTimestamp string `json:"state_created_at_timestamp,omitempty" yaml:"state_created_at_timestamp,omitempty"`
+	StateCreatedAtBlock     string `json:"state_created_at_block,omitempty" yaml:"state_created_at_block,omitempty"`
+	ReplacedStateHash       string `json:"replaced_state_hash,omitempty" yaml:"replaced_state_hash,omitempty"`
+}
+
+// NewIdentityStateTransfer allows to build a new IdentityStateTransfer instance
+func NewIdentityStateTransfer(operationIndex string, i rarimocoretypes.IdentityStateTransfer) IdentityStateTransfer {
+	return IdentityStateTransfer{
+		OperationIndex:          operationIndex,
+		Contract:                i.Contract,
+		Chain:                   i.Chain,
+		Id:                      i.Id,
+		StateHash:               i.StateHash,
+		StateCreatedAtTimestamp: i.StateCreatedAtTimestamp,
+		StateCreatedAtBlock:     i.StateCreatedAtBlock,
+		ReplacedStateHash:       i.ReplacedStateHash,
+	}
+
+}
+
+//--------------------------------------------------------
+
 // Confirmation represents a single confirmation instance
 type Confirmation struct {
 	Root           string   `json:"root,omitempty" yaml:"root,omitempty"`
 	Indexes        []string `json:"indexes,omitempty" yaml:"indexes,omitempty"`
 	SignatureECDSA string   `json:"signatureECDSA,omitempty" yaml:"signatureECDSA,omitempty"`
 	Creator        string   `json:"creator,omitempty" yaml:"creator,omitempty"`
+	Tx             *string  `json:"tx,omitempty" yaml:"tx,omitempty"`
+	Height         int64    `json:"height,omitempty" yaml:"height,omitempty"`
 }
 
 // NewConfirmation allows to build a new Confirmation instance
-func NewConfirmation(c rarimocoretypes.Confirmation) Confirmation {
+func NewConfirmation(c rarimocoretypes.Confirmation, height int64, tx *string) Confirmation {
 	return Confirmation{
 		Root:           c.Root,
 		Indexes:        c.Indexes,
 		SignatureECDSA: c.SignatureECDSA,
 		Creator:        c.Creator,
+		Tx:             tx,
+		Height:         height,
 	}
 }
 
@@ -282,23 +340,29 @@ type RarimoCoreVote struct {
 	Operation string                   `json:"operation,omitempty" yaml:"operation,omitempty"`
 	Validator string                   `json:"validator,omitempty" yaml:"validator,omitempty"`
 	Vote      rarimocoretypes.VoteType `json:"vote" yaml:"vote"`
+	Tx        *string                  `json:"tx,omitempty" yaml:"tx,omitempty"`
+	Height    int64                    `json:"height,omitempty" yaml:"height,omitempty"`
 }
 
 // NewRarimoCoreVote allows to build a new RarimoCoreVote instance
-func NewRarimoCoreVote(operation, validator string, vote int32) RarimoCoreVote {
+func NewRarimoCoreVote(operation, validator string, vote int32, height int64, tx *string) RarimoCoreVote {
 	return RarimoCoreVote{
 		Operation: operation,
 		Validator: validator,
 		Vote:      rarimocoretypes.VoteType(vote),
+		Tx:        tx,
+		Height:    height,
 	}
 }
 
 // RarimoCoreVoteFromCore allows to build a new RarimoCoreVote instance from a rarimocoretypes.Vote instance
-func RarimoCoreVoteFromCore(vote rarimocoretypes.Vote) RarimoCoreVote {
+func RarimoCoreVoteFromCore(vote rarimocoretypes.Vote, height int64, tx *string) RarimoCoreVote {
 	return RarimoCoreVote{
 		Operation: vote.Index.Operation,
 		Validator: vote.Index.Validator,
 		Vote:      vote.Vote,
+		Tx:        tx,
+		Height:    height,
 	}
 }
 

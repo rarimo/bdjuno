@@ -15,9 +15,9 @@ func (m *Module) UpdateParams(height int64) error {
 		return fmt.Errorf("error while getting params: %s", err)
 	}
 
-	err = m.saveParams(params, height)
+	err = m.saveNetworks(params)
 	if err != nil {
-		return fmt.Errorf("error while storing params during update tokenmanager params: %s", err)
+		return fmt.Errorf("error while storing params during update tokenmanager networks: %s", err)
 	}
 
 	return nil

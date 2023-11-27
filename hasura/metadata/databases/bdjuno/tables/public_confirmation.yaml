@@ -11,6 +11,24 @@ object_relationships:
         remote_table:
           name: account
           schema: public
+  - name: transaction
+    using:
+      manual_configuration:
+        column_mapping:
+          tx: hash
+        insertion_order: null
+        remote_table:
+          name: transaction
+          schema: public
+  - name: block
+    using:
+      manual_configuration:
+        column_mapping:
+          height: height
+        insertion_order: null
+        remote_table:
+          name: block
+          schema: public
 select_permissions:
   - permission:
       allow_aggregations: true
@@ -19,5 +37,7 @@ select_permissions:
         - indexes
         - signature_ecdsa
         - creator
+        - height
+        - tx
       filter: {}
     role: anonymous

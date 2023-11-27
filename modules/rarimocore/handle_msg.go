@@ -67,9 +67,13 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *oracletypes.MsgVote) error {
 
 	op := types.OperationFromCore(rawOp)
 
-	err = m.db.SaveRarimoCoreVotes(
-		[]types.RarimoCoreVote{types.NewRarimoCoreVote(msg.Operation, msg.Index.Account, int32(msg.Vote))},
-	)
+	err = m.db.SaveRarimoCoreVotes([]types.RarimoCoreVote{types.NewRarimoCoreVote(
+		msg.Operation,
+		msg.Index.Account,
+		int32(msg.Vote),
+		tx.Height,
+		&tx.TxHash,
+	)})
 	if err != nil {
 		return fmt.Errorf("failed to save vote: %s", err)
 	}
@@ -215,7 +219,7 @@ func (m *Module) handleMsgCreateConfirmation(tx *juno.Tx, msg *rarimocoretypes.M
 		return fmt.Errorf("failed to update operations: %s", err)
 	}
 
-	err = m.saveConfirmations([]rarimocoretypes.Confirmation{confirmation})
+	err = m.saveConfirmations([]rarimocoretypes.Confirmation{confirmation}, tx.Height, &tx.TxHash)
 	if err != nil {
 		return fmt.Errorf("failed to save confirmation: %s", err)
 	}
