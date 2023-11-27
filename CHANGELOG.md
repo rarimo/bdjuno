@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
+
+## [v1.0.4] - 2023-11-27
 ### Added
 - `MsgCreateIdentityGISTTransferOp`, `MsgCreateIdentityStateTransferOp` messages handling
 - `tx` and `height` columns for the `confirmation` and `vote` tables
@@ -34,7 +36,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Initiated project
 
-[Unreleased]: https://github.com/rarimo/bdjuno/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/rarimo/bdjuno/compare/v1.0.4...HEAD
+[v1.0.4]: https://github.com/rarimo/bdjuno/compare/v1.0.3...v1.0.4
 [v1.0.3]: https://github.com/rarimo/bdjuno/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/rarimo/bdjuno/releases/tag/v1.0.2
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
