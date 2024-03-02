@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.14.0
-	github.com/rarimo/rarimo-core v1.1.0-rc0
+	github.com/rarimo/rarimo-core v1.0.7-0.20231223143005-ee4a6950e6bf
 	github.com/rs/zerolog v1.29.1
 	github.com/rubenv/sql-migrate v1.2.0
 	github.com/spf13/cobra v1.7.0
