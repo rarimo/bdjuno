@@ -63,91 +63,99 @@ func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidat
 }
 
 func (m *Module) handleBlockEvents(height int64, events []abci.Event) error {
-	events = juno.FindEventsByType(events, govtypes.EventTypeSubmitProposal)
-
 	for _, event := range events {
-		proposalIdAttribute, err := juno.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
-		if err != nil {
-			// error means to such attribute - normal logic
-			continue
+		switch event.Type {
+		case govtypes.EventTypeSubmitProposal:
+			if err := m.handleBlockEventSubmitProposal(height, event); err != nil {
+				return err
+			}
+			// Add other events handling if required
 		}
-
-		proposalId, err := strconv.ParseUint(string(proposalIdAttribute.Value), 10, 64)
-		if err != nil {
-			return fmt.Errorf("error while parsing proposal id atribute: %s", err)
-		}
-
-		// !! Logic partially copied from handleMsgSubmitProposal method
-
-		proposal, err := m.source.Proposal(height, proposalId)
-		if err != nil {
-			return fmt.Errorf("error while getting proposal: %s", err)
-		}
-
-		// Unpack the content
-		var content govtypesv1beta1.Content
-		err = m.cdc.UnpackAny(proposal.Content, &content)
-		if err != nil {
-			return fmt.Errorf("error while unpacking proposal content: %s", err)
-		}
-
-		// Encode the content properly
-		protoContent, ok := content.(proto.Message)
-		if !ok {
-			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
-		}
-
-		anyContent, err := codectypes.NewAnyWithValue(protoContent)
-		if err != nil {
-			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
-		}
-
-		contentBz, err := m.db.EncodingConfig.Codec.MarshalJSON(anyContent)
-		if err != nil {
-			return fmt.Errorf("error while marshaling proposal content: %s", err)
-		}
-
-		metadata := map[string]string{
-			"title":       proposal.GetContent().GetTitle(),
-			"description": proposal.GetContent().GetDescription(),
-			"type":        proposal.ProposalType(),
-		}
-
-		metadataBz, err := json.Marshal(metadata)
-		if err != nil {
-			return fmt.Errorf("error while marshaling proposal metadata: %s", err)
-		}
-
-		// !! If proposal was created in Block events then the proposer will be defined as module account
-		govModuleAddress, err := bech32.ConvertAndEncode(
-			app.AccountAddressPrefix,
-			authtypes.NewModuleAddress(govtypes.ModuleName).Bytes(),
-		)
-		if err != nil {
-			panic(fmt.Errorf("failed to convert module address %s", err))
-		}
-
-		// Store the proposal
-		proposalObj := types.NewProposal(
-			proposal.ProposalId,
-			string(contentBz),
-			proposal.Status.String(),
-			proposal.SubmitBlock,
-			proposal.DepositEndBlock,
-			proposal.VotingStartBlock,
-			proposal.VotingEndBlock,
-			govModuleAddress,
-			string(metadataBz),
-		)
-		err = m.db.SaveProposals([]types.Proposal{proposalObj})
-		if err != nil {
-			return err
-		}
-
-		// Store the deposit
-		deposit := types.NewDeposit(proposal.ProposalId, govModuleAddress, proposal.TotalDeposit, height)
-		return m.db.SaveDeposits([]types.Deposit{deposit})
 	}
 
 	return nil
+}
+
+func (m *Module) handleBlockEventSubmitProposal(height int64, event abci.Event) error {
+	proposalIdAttribute, err := juno.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
+	if err != nil {
+		// error means to such attribute - normal logic
+		return nil
+	}
+
+	proposalId, err := strconv.ParseUint(string(proposalIdAttribute.Value), 10, 64)
+	if err != nil {
+		return fmt.Errorf("error while parsing proposal id atribute: %s", err)
+	}
+
+	// !! Logic partially copied from handleMsgSubmitProposal method
+
+	proposal, err := m.source.Proposal(height, proposalId)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	// Unpack the content
+	var content govtypesv1beta1.Content
+	err = m.cdc.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while unpacking proposal content: %s", err)
+	}
+
+	// Encode the content properly
+	protoContent, ok := content.(proto.Message)
+	if !ok {
+		return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
+	}
+
+	anyContent, err := codectypes.NewAnyWithValue(protoContent)
+	if err != nil {
+		return fmt.Errorf("error while wrapping proposal proto content: %s", err)
+	}
+
+	contentBz, err := m.db.EncodingConfig.Codec.MarshalJSON(anyContent)
+	if err != nil {
+		return fmt.Errorf("error while marshaling proposal content: %s", err)
+	}
+
+	metadata := map[string]string{
+		"title":       proposal.GetContent().GetTitle(),
+		"description": proposal.GetContent().GetDescription(),
+		"type":        proposal.ProposalType(),
+	}
+
+	metadataBz, err := json.Marshal(metadata)
+	if err != nil {
+		return fmt.Errorf("error while marshaling proposal metadata: %s", err)
+	}
+
+	// !! If proposal was created in Block events then the proposer will be defined as module account
+	govModuleAddress, err := bech32.ConvertAndEncode(
+		app.AccountAddressPrefix,
+		authtypes.NewModuleAddress(govtypes.ModuleName).Bytes(),
+	)
+	if err != nil {
+		panic(fmt.Errorf("failed to convert module address %s", err))
+	}
+
+	// Store the proposal
+	proposalObj := types.NewProposal(
+		proposal.ProposalId,
+		string(contentBz),
+		proposal.Status.String(),
+		proposal.SubmitBlock,
+		proposal.DepositEndBlock,
+		proposal.VotingStartBlock,
+		proposal.VotingEndBlock,
+		govModuleAddress,
+		string(metadataBz),
+	)
+	err = m.db.SaveProposals([]types.Proposal{proposalObj})
+	if err != nil {
+		return err
+	}
+
+	// Store the deposit
+	deposit := types.NewDeposit(proposal.ProposalId, govModuleAddress, proposal.TotalDeposit, height)
+	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
