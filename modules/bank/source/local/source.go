@@ -1,10 +1,13 @@
 package local
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	tmclient "github.com/tendermint/tendermint/rpc/client/http"
+	"log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v4/node/local"
@@ -20,14 +23,21 @@ var (
 // Source represents the implementation of the bank keeper that works on a local node
 type Source struct {
 	*local.Source
-	q banktypes.QueryServer
+	q      banktypes.QueryServer
+	client *tmclient.HTTP
 }
 
 // NewSource builds a new Source instance
-func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
+func NewSource(source *local.Source, bk banktypes.QueryServer, rpcURL string) *Source {
+	client, err := tmclient.New(rpcURL, "")
+	if err != nil {
+		log.Fatalf("Failed to create Tendermint RPC client: %v", err)
+	}
+
 	return &Source{
 		Source: source,
 		q:      bk,
+		client: client,
 	}
 }
 
@@ -95,4 +105,26 @@ func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, err
 	}
 
 	return balRes.Balances, nil
+}
+
+func (s Source) GetEventsByBlockHeight(height int64) []source.TxEvent {
+	// Get block results which include events
+	blockResults, err := s.client.BlockResults(context.Background(), &height)
+	if err != nil {
+		log.Fatalf("Failed to get block results: %v", err)
+	}
+
+	res := make([]source.TxEvent, 0)
+
+	// Iterate over the transactions in the block and print the events
+	for _, txResult := range blockResults.TxsResults {
+		for _, event := range txResult.Events {
+			fmt.Println("event.String()", event.String())
+
+			for _, attribute := range event.Attributes {
+				s.Logger.Debug(" - %s: %s\n", string(attribute.Key), string(attribute.Value))
+			}
+		}
+	}
+	return res
 }

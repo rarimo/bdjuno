@@ -12,4 +12,13 @@ type Source interface {
 
 	// -- For hasura action --
 	GetAccountBalance(address string, height int64) ([]sdk.Coin, error)
+	GetEventsByBlockHeight(height int64) []TxEvent
+}
+
+type TxEvent struct {
+	BlockHeight int64
+	Event       string
+	Address     string
+	Amount      sdk.Coins
+	TxHash      string
 }
