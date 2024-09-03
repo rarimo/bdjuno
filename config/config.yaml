@@ -1,0 +1,33 @@
+chain:
+    bech32_prefix: rarimo
+    modules:
+        - bank
+
+node:
+    type: remote
+    config:
+        rpc:
+            client_name: juno
+            address:
+            max_connections: 20
+        grpc:
+            address: localhost:9090
+            insecure: true
+parsing:
+    workers: 1
+    start_height: 1
+    average_block_time: 5s
+    listen_new_blocks: true
+    parse_old_blocks: true
+    parse_genesis: true
+database:
+    url:
+    max_open_connections: 1
+    max_idle_connections: 1
+    partition_size: 100000
+    partition_batch: 1000
+logging:
+    level: debug
+    format: text
+actions:
+    port: 3000

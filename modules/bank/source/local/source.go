@@ -1,15 +1,14 @@
 package local
 
 import (
-	"context"
 	"fmt"
-
-	"github.com/cosmos/cosmos-sdk/types/query"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	tmclient "github.com/tendermint/tendermint/rpc/client/http"
-	"log"
+	juno "github.com/forbole/juno/v4/types"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/forbole/juno/v4/node/local"
 
 	"github.com/rarimo/bdjuno/modules/bank/source"
@@ -17,27 +16,24 @@ import (
 )
 
 var (
-	_ source.Source = &Source{}
+	_      source.Source = &Source{}
+	events               = map[string]interface{}{
+		"coin_spent":    nil,
+		"coin_received": nil,
+	}
 )
 
 // Source represents the implementation of the bank keeper that works on a local node
 type Source struct {
 	*local.Source
-	q      banktypes.QueryServer
-	client *tmclient.HTTP
+	q banktypes.QueryServer
 }
 
 // NewSource builds a new Source instance
-func NewSource(source *local.Source, bk banktypes.QueryServer, rpcURL string) *Source {
-	client, err := tmclient.New(rpcURL, "")
-	if err != nil {
-		log.Fatalf("Failed to create Tendermint RPC client: %v", err)
-	}
-
+func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
 		q:      bk,
-		client: client,
 	}
 }
 
@@ -107,24 +103,31 @@ func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, err
 	return balRes.Balances, nil
 }
 
-func (s Source) GetEventsByBlockHeight(height int64) []source.TxEvent {
-	// Get block results which include events
-	blockResults, err := s.client.BlockResults(context.Background(), &height)
-	if err != nil {
-		log.Fatalf("Failed to get block results: %v", err)
-	}
-
+// GetEventsFromTxs implements bankkeeper.Source
+func (s Source) GetEventsFromTxs(txs []*juno.Tx) ([]source.TxEvent, error) {
 	res := make([]source.TxEvent, 0)
 
-	// Iterate over the transactions in the block and print the events
-	for _, txResult := range blockResults.TxsResults {
-		for _, event := range txResult.Events {
-			fmt.Println("event.String()", event.String())
+	var commonError error
+	for _, tx := range txs {
+		for _, event := range tx.Events {
+			if _, ok := events[event.Type]; ok {
+				coin, err := sdk.ParseCoinNormalized(string(event.Attributes[1].Value))
+				if err != nil {
+					log.Err(err).Msg("failed to parse coins")
+					commonError = errors.Wrap(err, "failed to parse coins")
+					continue
+				}
 
-			for _, attribute := range event.Attributes {
-				s.Logger.Debug(" - %s: %s\n", string(attribute.Key), string(attribute.Value))
+				res = append(res, source.TxEvent{
+					BlockHeight: tx.Height,
+					Address:     string(event.Attributes[0].Value),
+					Event:       event.Type,
+					Amount:      sdk.NewCoins(coin),
+					TxHash:      tx.TxHash,
+				})
 			}
 		}
 	}
-	return res
+
+	return res, commonError
 }

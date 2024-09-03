@@ -95,7 +95,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper), "http://localhost:26657"),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
@@ -134,7 +134,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:          remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn), cfg.RPC.Address),
+		BankSource:          remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:         remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:           remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn), govtypesv1beta1.NewQueryClient(source.GrpcConn)),
 		MintSource:          remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),

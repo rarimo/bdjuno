@@ -5,7 +5,8 @@ CREATE TABLE  coin_transfer
     event      TEXT,
     address    TEXT,
     coins      COIN[] NOT NULL,
-    height     BIGINT  NOT NULL
+    height     BIGINT NOT NULL,
+    tx_hash    TEXT
 );
 
 -- +migrate Down

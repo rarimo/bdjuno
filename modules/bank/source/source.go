@@ -2,6 +2,7 @@ package source
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	juno "github.com/forbole/juno/v4/types"
 
 	"github.com/rarimo/bdjuno/types"
 )
@@ -12,7 +13,7 @@ type Source interface {
 
 	// -- For hasura action --
 	GetAccountBalance(address string, height int64) ([]sdk.Coin, error)
-	GetEventsByBlockHeight(height int64) []TxEvent
+	GetEventsFromTxs(txs []*juno.Tx) ([]TxEvent, error)
 }
 
 type TxEvent struct {

@@ -9,5 +9,6 @@ select_permissions:
     - height
     - address
     - event
+    - tx_hash
     filter: {}
   role: anonymous
