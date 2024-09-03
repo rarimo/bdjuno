@@ -2,6 +2,10 @@ package remote
 
 import (
 	"fmt"
+	juno "github.com/forbole/juno/v4/types"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
+	tmclient "github.com/tendermint/tendermint/rpc/client/http"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -13,12 +17,17 @@ import (
 )
 
 var (
-	_ bankkeeper.Source = &Source{}
+	_      bankkeeper.Source = &Source{}
+	events                   = map[string]interface{}{
+		"coin_spent":    nil,
+		"coin_received": nil,
+	}
 )
 
 type Source struct {
 	*remote.Source
 	bankClient banktypes.QueryClient
+	client     *tmclient.HTTP
 }
 
 // NewSource builds a new Source instance
@@ -76,4 +85,33 @@ func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 	}
 
 	return coins, nil
+}
+
+// GetEventsFromTxs implements bankkeeper.Source
+func (s Source) GetEventsFromTxs(txs []*juno.Tx) ([]bankkeeper.TxEvent, error) {
+	res := make([]bankkeeper.TxEvent, 0)
+
+	var commonError error
+	for _, tx := range txs {
+		for _, event := range tx.Events {
+			if _, ok := events[event.Type]; ok {
+				coin, err := sdk.ParseCoinNormalized(string(event.Attributes[1].Value))
+				if err != nil {
+					log.Err(err).Msg("failed to parse coins")
+					commonError = errors.Wrap(err, "failed to parse coins")
+					continue
+				}
+
+				res = append(res, bankkeeper.TxEvent{
+					BlockHeight: tx.Height,
+					Address:     string(event.Attributes[0].Value),
+					Event:       event.Type,
+					Amount:      sdk.NewCoins(coin),
+					TxHash:      tx.TxHash,
+				})
+			}
+		}
+	}
+
+	return res, commonError
 }

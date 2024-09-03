@@ -1,0 +1,14 @@
+table:
+  name: coin_transfer
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - coins
+    - height
+    - address
+    - event
+    - tx_hash
+    filter: {}
+  role: anonymous

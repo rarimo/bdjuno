@@ -12,3 +12,4 @@ CREATE INDEX supply_height_index ON supply (height);
 
 -- +migrate Down
 DROP TABLE supply;
+

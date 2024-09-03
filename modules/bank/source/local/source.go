@@ -2,11 +2,13 @@ package local
 
 import (
 	"fmt"
-
-	"github.com/cosmos/cosmos-sdk/types/query"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	juno "github.com/forbole/juno/v4/types"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/forbole/juno/v4/node/local"
 
 	"github.com/rarimo/bdjuno/modules/bank/source"
@@ -14,7 +16,11 @@ import (
 )
 
 var (
-	_ source.Source = &Source{}
+	_      source.Source = &Source{}
+	events               = map[string]interface{}{
+		"coin_spent":    nil,
+		"coin_received": nil,
+	}
 )
 
 // Source represents the implementation of the bank keeper that works on a local node
@@ -95,4 +101,33 @@ func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, err
 	}
 
 	return balRes.Balances, nil
+}
+
+// GetEventsFromTxs implements bankkeeper.Source
+func (s Source) GetEventsFromTxs(txs []*juno.Tx) ([]source.TxEvent, error) {
+	res := make([]source.TxEvent, 0)
+
+	var commonError error
+	for _, tx := range txs {
+		for _, event := range tx.Events {
+			if _, ok := events[event.Type]; ok {
+				coin, err := sdk.ParseCoinNormalized(string(event.Attributes[1].Value))
+				if err != nil {
+					log.Err(err).Msg("failed to parse coins")
+					commonError = errors.Wrap(err, "failed to parse coins")
+					continue
+				}
+
+				res = append(res, source.TxEvent{
+					BlockHeight: tx.Height,
+					Address:     string(event.Attributes[0].Value),
+					Event:       event.Type,
+					Amount:      sdk.NewCoins(coin),
+					TxHash:      tx.TxHash,
+				})
+			}
+		}
+	}
+
+	return res, commonError
 }
